@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
 	return sequelize.define('cs_user', {
 		user_id: {
 			type: DataTypes.INTEGER(10),
@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		user_name: {
 			type: DataTypes.STRING(50),
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
 		password: {
 			type: DataTypes.STRING(100),
@@ -27,7 +28,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		mobile: {
 			type: DataTypes.STRING(20),
-			allowNull: true
+			allowNull: true,
+			unique: true
 		},
 		mail: {
 			type: DataTypes.STRING(60),

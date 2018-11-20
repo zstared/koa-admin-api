@@ -1,4 +1,6 @@
 'use strict';
 
 require('babel-register');
-require('./app.js');
+const server = require('./app.js');
+
+module.exports = server;

@@ -8,9 +8,9 @@
     "test": "mocha ./src/test  --reporter spec ",
     "prod": "NODE_ENV=production node src/index.js ",
     "build": "babel src -d dist",
-    "model": "sequelize-auto -o ./src/model/table  -h localhost -d caihong_dev -u root -x abc123456 -p 3306 -e mysql -a ./sequelize-auto.json  ",
-    "doc": "apidoc -i ./src/controller/ -o apidoc/ ",
-    "doc-server": "node ./apidoc_server.js",
+    "model": "sequelize-auto -o ./src/model/table  -h localhost -d caihong_dev -u root -x abc123456 -p 3306 -e mysql -a ./sequelize-auto.json ",
+    "model-table": "sequelize-auto -o ./src/model/table  -h localhost -d caihong_dev -u root -x abc123456 -p 3306 -e mysql -a ./sequelize-auto.json -t ",
+    "doc": "apidoc -i ./src/controller/ -o apidoc/ && node ./apidoc_server.js",
     "eslint": "eslint . --fix"
   },
   "author": "zxh",

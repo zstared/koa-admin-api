@@ -81,7 +81,7 @@ class UserController extends BaseController {
 	/**
 	 * @api {post} /core/user/login 1.登录
 	 * @apiName login
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 *
 	 * @apiParam  {String} user_name 用户名
@@ -131,7 +131,7 @@ class UserController extends BaseController {
 	 * 
 	 * @api {post} /core/user/logout 2.退出、注销
 	 * @apiName logout
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -167,7 +167,7 @@ class UserController extends BaseController {
 	 * 
 	 * @api {post} /core/user/updatePassword 3.修改密码
 	 * @apiName updatePassword
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -186,6 +186,7 @@ class UserController extends BaseController {
 	async updatePassword(ctx) {
 		try {
 			const params = ctx.request.body;
+			console.log(params);
 			//接口参数验证规则
 			const validRule = {
 				user_name: {
@@ -220,7 +221,7 @@ class UserController extends BaseController {
 	 * 新增用户
 	 * @api {post} /core/user/create 4.新增用户
 	 * @apiName create
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -251,6 +252,7 @@ class UserController extends BaseController {
 					max: 50
 				},
 				password: {
+					required:false,
 					type: 'string',
 					allowEmpty: true,
 					min: 4,
@@ -267,7 +269,6 @@ class UserController extends BaseController {
 				},
 				mobile: {
 					type: 'mobile',
-					allowEmpty: true
 				}
 			};
 			parameterValidate.validate(validRule, params);
@@ -286,7 +287,7 @@ class UserController extends BaseController {
 	 * 修改用户
 	 * @api {post} /core/user/update 5.修改用户
 	 * @apiName update
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -351,7 +352,7 @@ class UserController extends BaseController {
 	 * 修改用户状态
 	 * @api {post} /core/user/updateState 6.修改用户状态
 	 * @apiName updateState
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -396,7 +397,7 @@ class UserController extends BaseController {
 	 * 删除用户
 	 * @api {delete} /core/user/delete 7.删除用户
 	 * @apiName delete
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -434,7 +435,7 @@ class UserController extends BaseController {
 	 * 用户详情
 	 * @api {get} /core/user/details/:user_id 8.用户详情
 	 * @apiName details
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header
@@ -467,7 +468,7 @@ class UserController extends BaseController {
 	 * 获取用户列表
 	 * @api {get} /core/user/list/ 9.获取用户列表
 	 * @apiName list
-	 * @apiGroup core/user
+	 * @apiGroup  user
 	 * @apiVersion  0.1.0
 	 * 
 	 * @apiUse  Header

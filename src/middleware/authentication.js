@@ -50,10 +50,11 @@ export default async (ctx, next) => {
 	 * @param {*} code 
 	 * @param {*} msg 
 	 */
-	ctx.error = function (code = 1000, msg = '请求失败...') {
+	ctx.error = function (code = 1000, msg = '请求失败!') {
 		ctx.body = {
 			code: code,
-			message: msg
+			message: msg,
+			desc:'',
 		};
 	};
 	await next();

@@ -102,11 +102,11 @@ class UserService {
 		} = params;
 		let user = await m_user.getUserByName(user_name);
 		if (!user) {
-			throw new ApiError(ErrorCode.VerifyFail, '用户名有误');
+			throw new ApiError(ErrorCode.VerifyFail, '用户名或旧密码有误');
 		}
 		user = await m_user.getUserByName(user_name, md5(old_password + user.encrypt));
 		if (!user) {
-			throw new ApiError(ErrorCode.VerifyFail, '旧密码有误');
+			throw new ApiError(ErrorCode.VerifyFail, '用户名或旧密码有误');
 		}
 
 		const encrypt = randomString(16); //密码加盐
@@ -123,12 +123,22 @@ class UserService {
 	async create(params) {
 		const {
 			user_name,
+			sex,
+			mail,
+			mobile,
+			password,
 		} = params;
 		let user = await m_user.getUserByName(user_name);
 		if (user) {
 			throw new ApiError(ErrorCode.VerifyFail, '用户名已存在');
 		}
-		user = params;
+		user ={
+			user_name,
+			sex,
+			mail,
+			mobile,
+			password
+		};
 		user.encrypt = randomString(16);
 		user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
 		let result = await m_user.create(user);

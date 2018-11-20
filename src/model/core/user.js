@@ -82,13 +82,12 @@ class UserModel {
 	}
 
 	/**
-	 * 
+	 * 获取用户列表
 	 * @param {array} attrs  查询字段
 	 * @param {object} where  查询条件
 	 * @param {array} order   排序
 	 */
 	async getList(attrs,where,order) {
-		console.log(where);
 		let option={
 			where: where
 		};
