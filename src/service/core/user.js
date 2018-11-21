@@ -160,7 +160,7 @@ class UserService {
 		let user = {
 			user_id: user_id,
 		};
-		const user_exist = await m_user.getUserById(user_id);
+		const user_exist = await m_user.getDetailsById(user_id);
 		if (!user_exist) {
 			throw new ApiError(ErrorCode.ParamError, '用户ID不存在');
 		}
@@ -219,7 +219,7 @@ class UserService {
 		const {
 			user_id
 		} = params;
-		return await m_user.getUserById(user_id, ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state']);
+		return await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state']);
 	}
 
 	/**

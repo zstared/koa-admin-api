@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.INTEGER(3).UNSIGNED,
 			allowNull: false
 		},
-		url: {
+		path: {
 			type: DataTypes.STRING(200),
 			allowNull: true
 		},
@@ -27,6 +27,11 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		sort_no: {
 			type: DataTypes.INTEGER(10).UNSIGNED,
+			allowNull: true,
+			defaultValue: '1'
+		},
+		is_visiable: {
+			type: DataTypes.INTEGER(4),
 			allowNull: true,
 			defaultValue: '1'
 		},

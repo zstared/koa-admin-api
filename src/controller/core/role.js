@@ -147,7 +147,7 @@ class RoleController extends BaseController {
 
 	/**
      * 角色详情
-     * @api {get} /core/role/details:role_id 4.角色详情
+     * @api {get} /core/role/details/:role_id 4.角色详情
      * @apiName details
      * @apiGroup  role 
      * @apiVersion  0.1.0

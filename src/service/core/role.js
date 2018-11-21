@@ -55,7 +55,7 @@ class RoleService {
 			role_desc: role_desc,
 			sort_no: sort_no
 		};
-		const role_exist = await m_role.getRoleById(role_id);
+		const role_exist = await m_role.getDetailsById(role_id);
 		if (!role_exist) {
 			throw new ApiError(ErrorCode.ParamError, '角色ID不存在');
 		}
@@ -83,7 +83,7 @@ class RoleService {
 		const {
 			role_id
 		} = params;
-		return await m_role.getRoleById(role_id, ['role_id', 'role_name', 'role_desc']);
+		return await m_role.getDetailsById(role_id, ['role_id', 'role_name', 'role_desc']);
 	}
 
 	/**

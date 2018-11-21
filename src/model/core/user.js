@@ -12,7 +12,7 @@ class UserModel {
 	 * @param {string} password 
 	 * @param {array}  attr
 	 */
-	async getUserById(user_id, attr = null, ) {
+	async getDetailsById(user_id, attr = null, ) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
