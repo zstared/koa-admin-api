@@ -1,10 +1,9 @@
-
-const config=require('./config');
+const config = require('./config');
 const request = require('supertest')(config.app);
 const assert = require('power-assert');
 const Mock = require('mockjs');
-const qs=require('querystring')
-const reg_mobile =config.reg_mobile
+const qs = require('querystring')
+const reg_mobile = config.reg_mobile
 /**用户接口 */
 describe('/core/user', () => {
 	const prefix = '/core/user';
@@ -28,10 +27,10 @@ describe('/core/user', () => {
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		token = body.data.token;
 		//获取用户信息
-		const query=qs.stringify({
-			user_name:'test',
-			mobile:'',
-			state:''
+		const query = qs.stringify({
+			user_name: 'test',
+			mobile: '',
+			state: ''
 		})
 		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 			.expect('Content-Type', /json/).set('token', token).expect(200);
@@ -110,6 +109,7 @@ describe('/core/user', () => {
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
 					'mail': '',
+					'role': [1, 2]
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -125,6 +125,20 @@ describe('/core/user', () => {
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
 					'mail': '@email',
+					'role': [2]
+				})).expect(200);
+			const body = res.body;
+			assert.equal(body.code, 0, body.message + '|' + body.desc);
+		})
+	})
+
+	/**关联角色 */
+	describe(`POST ${prefix}/relateRole`, () => {
+		it('relate role', async () => {
+			let res = await request.post(`${prefix}/relateRole`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+					'user_id': test_details.user_id,
+					'role': [1,2]
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -157,11 +171,11 @@ describe('/core/user', () => {
 	/**用户列表 */
 	describe(`GET ${prefix}/list`, () => {
 		it('get user list', async () => {
-			const query=qs.stringify({
-				user_name:'test',
-				mobile:'',
-				state:'',
-				order_by:'mobile|desc'
+			const query = qs.stringify({
+				user_name: 'test',
+				mobile: '',
+				state: '',
+				order_by: 'mobile|desc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).expect(200);
@@ -174,13 +188,13 @@ describe('/core/user', () => {
 	/**用户分页列表 */
 	describe(`GET ${prefix}/pageList`, () => {
 		it('get user pageList', async () => {
-			const query=qs.stringify({
-				user_name:'test',
-				mobile:'',
-				state:'',
-				page_index:1,
-				page_size:20,
-				order_by:'user_name|desc'
+			const query = qs.stringify({
+				user_name: 'test',
+				mobile: '',
+				state: '',
+				page_index: 1,
+				page_size: 20,
+				order_by: 'user_name|desc'
 			})
 			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).expect(200);

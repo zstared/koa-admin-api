@@ -127,6 +127,7 @@ class UserService {
 			mail,
 			mobile,
 			password,
+			role,
 		} = params;
 		let user = await m_user.getUserByName(user_name);
 		if (user) {
@@ -137,7 +138,8 @@ class UserService {
 			sex,
 			mail,
 			mobile,
-			password
+			password,
+			role,
 		};
 		user.encrypt = randomString(16);
 		user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
@@ -156,9 +158,11 @@ class UserService {
 			mail,
 			mobile,
 			password,
+			role,
 		} = params;
 		let user = {
 			user_id: user_id,
+			role,
 		};
 		const user_exist = await m_user.getDetailsById(user_id);
 		if (!user_exist) {
@@ -179,7 +183,7 @@ class UserService {
 		}
 
 		let result = await m_user.update(user);
-		return result[0];
+		return result;
 	}
 
 	/**
@@ -195,8 +199,8 @@ class UserService {
 			user_id,
 			state
 		};
-		let result = await m_user.update(user);
-		return result[0];
+		let result = await m_user.update(user,false);
+		return result;
 	}
 
 	/**
@@ -254,7 +258,6 @@ class UserService {
 		if (order_by) {
 			order.unshift(order_by.split('|'));
 		}
-		console.log(order);
 		let attr = ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state', 'create_time'];
 		return await m_user.getList(attr, where, order);
 	}
@@ -300,6 +303,18 @@ class UserService {
 			state
 		};
 		return await m_user.getPageList(params, attrs, table, where, order);
+	}
+
+	/**
+	 * 关联角色
+	 * @param {*} params 
+	 */
+	async relateRole(params) {
+		const {
+			user_id,
+			role
+		} = params;
+		return await m_user.relateRole(user_id, role);
 	}
 }
 export default new UserService();

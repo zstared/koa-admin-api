@@ -34,7 +34,7 @@ import userService from '../../service/core/user';
  *
  * @apiSuccess  (Response) {Number} code  0
  * @apiSuccess  (Response) {String} message 提示
- * @apiSuccess  (Response) {Array} data 数据列表[] 
+ * @apiSuccess  (Response) {Object[]} data 数据列表[] 
  *
  * @apiSuccessExample   {json} Success-Response:
  *     {
@@ -45,13 +45,17 @@ import userService from '../../service/core/user';
  */
 
 /**
- * @apiDefine ResultSuccessListPage
+ * @apiDefine ResultSuccessPageList
  *
  * @apiSuccess  (Response) {Number} code  0
  * @apiSuccess  (Response) {String} message 提示
  * @apiSuccess  (Response) {Object} data 数据对象{}
- * @apiSuccess  (Response) {Array}  data.rows 数据列表[]
  * @apiSuccess  (Response) {Number} data.count  数据总记录数
+ * @apiSuccess  (Response) {Number} data.page_index  页码
+ * @apiSuccess  (Response) {Number} data.page_size  每页记录数
+ * @apiSuccess  (Response) {Boolean} data.is_more    是否还能加载数据
+ * @apiSuccess  (Response) {Boolean} data.is_paging  是否分页
+ * @apiSuccess  (Response) {Object[]} data.rows 数据列表[]
  *
  * @apiSuccessExample   {json} Success-Response:
  *     {
@@ -59,7 +63,11 @@ import userService from '../../service/core/user';
  *       message:"Success",
  *       data:{
  *          rows:[],
- *          count:90       
+ *          count:90,
+ *          page_index:1,
+ *          page_size:20,
+ *          is_more:true,
+ *          is_paging:true      
  *       }
  *     }
  */
@@ -228,10 +236,11 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {String} user_name 用户名
-	 * @apiParam  {String} password 密码
+	 * @apiParam  {String} [password] 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
 	 * @apiParam  {String} mobile 手机号码
+	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     user_name : 'bruce',
@@ -239,6 +248,7 @@ class UserController extends BaseController {
 	 *     sex : 1,
 	 *     mail : 'bruce@163.com',
 	 *     mobile :'13922889900',
+	 *     role:['1','3']
 	 * }
 	 */
 	async create(ctx) {
@@ -252,7 +262,7 @@ class UserController extends BaseController {
 					max: 50
 				},
 				password: {
-					required:false,
+					required: false,
 					type: 'string',
 					allowEmpty: true,
 					min: 4,
@@ -269,6 +279,10 @@ class UserController extends BaseController {
 				},
 				mobile: {
 					type: 'mobile',
+				},
+				role: {
+					type: 'array',
+					min: 1
 				}
 			};
 			parameterValidate.validate(validRule, params);
@@ -298,6 +312,7 @@ class UserController extends BaseController {
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
 	 * @apiParam  {String} mobile 手机号码
+	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     user_id : '1',
@@ -334,6 +349,10 @@ class UserController extends BaseController {
 				mobile: {
 					type: 'mobile',
 					allowEmpty: true
+				},
+				role: {
+					type: 'array',
+					min: 1
 				}
 			};
 			parameterValidate.validate(validRule, params);
@@ -511,7 +530,7 @@ class UserController extends BaseController {
 					type: 'string',
 				},
 				order_by: {
-					required:false,
+					required: false,
 					allowEmpty: true,
 					type: 'order',
 				}
@@ -537,20 +556,20 @@ class UserController extends BaseController {
 	 * 
 	 * @apiUse  Header
 	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccessList
+	 * @apiUse  ResultSuccessPageList
 	 * @apiParam  {String} user_name 用户名
 	 * @apiParam  {Number} mobile 手机号码
 	 * @apiParam  {Number} state  状态0-正常；1-禁用
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
-	 * @apiSuccess  (Response) {String} data.user_name 用户名
-	 * @apiSuccess  (Response) {String} data.mobile 手机号码
-	 * @apiSuccess  (Response) {Number} data.sex 性别1-男；2-女
-	 * @apiSuccess  (Response) {Number} data.state 状态；0-正常；1-禁用；2-删除
-	 * @apiSuccess  (Response) {String} data.mail 邮箱
-	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
-	 * @apiSuccessExample  {json} data :
+	 * @apiSuccess  (Response) {String} data.rows.user_name 用户名
+	 * @apiSuccess  (Response) {String} data.rows.mobile 手机号码
+	 * @apiSuccess  (Response) {Number} data.rows.sex 性别1-男；2-女
+	 * @apiSuccess  (Response) {Number} data.rows.state 状态；0-正常；1-禁用；2-删除
+	 * @apiSuccess  (Response) {String} data.rows.mail 邮箱
+	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
+	 * @apiSuccessExample  {json} data.rows :
 	 * {
 	 *     user_name : 'test',
 	 *     mobile : '13922882541',
@@ -579,15 +598,15 @@ class UserController extends BaseController {
 				page_index: {
 					type: 'int',
 					convertType: 'int',
-					min:1
+					min: 1
 				},
 				page_size: {
 					type: 'int',
 					convertType: 'int',
-					min:1
+					min: 1
 				},
 				order_by: {
-					required:false,
+					required: false,
 					allowEmpty: true,
 					type: 'order',
 				}
@@ -596,6 +615,44 @@ class UserController extends BaseController {
 			let result = await userService.getPageList(params);
 			if (result) {
 				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 关联角色
+	 * @api {post} /core/user/relateRole A11.关联角色
+	 * @apiName relateRole
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParam  {[Number[]]} role[] 角色ID[]
+	 */
+	async relateRole(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				user_id: {
+					type: 'int',
+					convertType: 'int'
+				},
+				role: {
+					type: 'array',
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.relateRole(params);
+			if (result) {
+				ctx.success();
 			} else {
 				ctx.error();
 			}

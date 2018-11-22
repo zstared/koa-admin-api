@@ -16,4 +16,5 @@ user.delete('/delete',userController.delete);
 user.get('/details/:user_id',userController.details);
 user.get('/list',userController.list);
 user.get('/pageList', userController.pageList);
+user.post('/relateRole', userController.relateRole);
 module.exports=user;

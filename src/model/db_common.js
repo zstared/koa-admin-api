@@ -33,8 +33,8 @@ class DbCommon {
 	 */
 	async excutePagingProc(params, attrs, table, where, group = '',order = '') {
 		const {
-			pageIndex,
-			pageSize
+			page_index,
+			page_size
 		} = params;
 		let sql = `call sp_paging(:page_index,:page_size,"${attrs}","${table} ${where}","${order}","${group}");`;
 		let option = {
@@ -52,11 +52,19 @@ class DbCommon {
 		return {
 			rows: list,
 			count: count,
-			pageIndex: pageIndex,
-			pageSize: pageSize,
-			isPaging: true,
-			isMore: count > (pageIndex * pageSize)
+			page_index: page_index,
+			page_size: page_size,
+			is_paging: true,
+			is_more: count > (page_index * page_size)
 		};
+	}
+
+	/**
+	 * 执行事务
+	 * @returns sequelize.Transaction
+	 */
+	async transaction(){
+		return await sequelize.transaction();
 	}
 }
 

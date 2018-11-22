@@ -4,7 +4,9 @@ import {
 	ErrorCode
 } from '../lib/enum';
 
-const parameter = new Parameter();
+const parameter = new Parameter({
+	convert:true
+});
 
 /*
  * mobile 手机号码验证规则

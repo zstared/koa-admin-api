@@ -182,7 +182,7 @@ class RoleController extends BaseController {
 	 * 
 	 * @apiUse  Header
 	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
+	 * @apiUse  ResultSuccessList
 	 * @apiParam  {String} role_name 用户名
 	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.role_name 角色名称
@@ -227,15 +227,15 @@ class RoleController extends BaseController {
 	 * 
 	 * @apiUse  Header
 	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
+	 * @apiUse  ResultSuccessPageList
 	 * @apiParam  {String} role_name 用户名
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
-	 * @apiSuccess  (Response) {String} data.role_name 角色名称
-	 * @apiSuccess  (Response) {String} data.role_desc 角色描述
-	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
-	 * @apiSuccessExample  {json} data :
+	 * @apiSuccess  (Response) {String} data.rows.role_name 角色名称
+	 * @apiSuccess  (Response) {String} data.rows.role_desc 角色描述
+	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
+	 * @apiSuccessExample  {json} data.rows :
 	 * {
 	 *     role_name : 'test',
 	 *     role_desc : '角色描述',
