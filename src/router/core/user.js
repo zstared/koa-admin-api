@@ -15,4 +15,5 @@ user.post('/updateState',userController.updateState);
 user.delete('/delete',userController.delete);
 user.get('/details/:user_id',userController.details);
 user.get('/list',userController.list);
+user.get('/pageList', userController.pageList);
 module.exports=user;

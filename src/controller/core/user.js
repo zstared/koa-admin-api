@@ -477,6 +477,7 @@ class UserController extends BaseController {
 	 * @apiParam  {String} user_name 用户名
 	 * @apiParam  {Number} mobile 手机号码
 	 * @apiParam  {Number} state  状态0-正常；1-禁用
+	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.user_name 用户名
 	 * @apiSuccess  (Response) {String} data.mobile 手机号码
 	 * @apiSuccess  (Response) {Number} data.sex 性别1-男；2-女
@@ -496,7 +497,103 @@ class UserController extends BaseController {
 	async list(ctx) {
 		try {
 			const params = ctx.request.query;
+			const validRule = {
+				user_name: {
+					allowEmpty: true,
+					type: 'string'
+				},
+				mobile: {
+					allowEmpty: true,
+					type: 'string'
+				},
+				state: {
+					allowEmpty: true,
+					type: 'string',
+				},
+				order_by: {
+					required:false,
+					allowEmpty: true,
+					type: 'order',
+				}
+			};
+			parameterValidate.validate(validRule, params);
 			let result = await userService.getList(params);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 获取用户分页列表
+	 * @api {get} /core/user/pageList/ 10.获取用户分页列表
+	 * @apiName pageList
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccessList
+	 * @apiParam  {String} user_name 用户名
+	 * @apiParam  {Number} mobile 手机号码
+	 * @apiParam  {Number} state  状态0-正常；1-禁用
+	 * @apiParam  {String} page_index 页码
+	 * @apiParam  {String} page_size 页记录数
+	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+	 * @apiSuccess  (Response) {String} data.user_name 用户名
+	 * @apiSuccess  (Response) {String} data.mobile 手机号码
+	 * @apiSuccess  (Response) {Number} data.sex 性别1-男；2-女
+	 * @apiSuccess  (Response) {Number} data.state 状态；0-正常；1-禁用；2-删除
+	 * @apiSuccess  (Response) {String} data.mail 邮箱
+	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
+	 * @apiSuccessExample  {json} data :
+	 * {
+	 *     user_name : 'test',
+	 *     mobile : '13922882541',
+	 *     sex : 1,
+	 *     state : 0,
+	 *     mail : 'test@163.com',
+	 *     create_time : '2018-11-14T01:23:57.000Z',
+	 * }
+	 */
+	async pageList(ctx) {
+		try {
+			const params = ctx.request.query;
+			const validRule = {
+				user_name: {
+					allowEmpty: true,
+					type: 'string'
+				},
+				mobile: {
+					allowEmpty: true,
+					type: 'string'
+				},
+				state: {
+					allowEmpty: true,
+					type: 'string',
+				},
+				page_index: {
+					type: 'int',
+					convertType: 'int',
+					min:1
+				},
+				page_size: {
+					type: 'int',
+					convertType: 'int',
+					min:1
+				},
+				order_by: {
+					required:false,
+					allowEmpty: true,
+					type: 'order',
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.getPageList(params);
 			if (result) {
 				ctx.success(result);
 			} else {

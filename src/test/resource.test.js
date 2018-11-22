@@ -3,7 +3,7 @@ const config=require('./config');
 const request = require('supertest')(config.app);
 const assert = require('power-assert');
 const Mock = require('mockjs');
-
+const qs=require('querystring')
 /**资源接口 */
 describe('/core/resource', () => {
 	const prefix = '/core/resource';
@@ -25,11 +25,9 @@ describe('/core/resource', () => {
 		let body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		token = body.data.token;
-		//获取详情信息
+
 		res = await request.get(`${prefix}/treeList`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).send({
-				resource_name: 'role'
-			}).expect(200);
+			.expect('Content-Type', /json/).set('token', token).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -80,13 +78,11 @@ describe('/core/resource', () => {
 		})
 	})
 
-	/**资源列表 */
+	/**资源树形列表 */
 	describe(`GET ${prefix}/treeList`, () => {
 		it('get role treeList', async () => {
 			let res = await request.get(`${prefix}/treeList`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
-					resource_name: 'role'
-				}).expect(200);
+				.expect('Content-Type', /json/).set('token', token).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);

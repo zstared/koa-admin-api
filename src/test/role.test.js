@@ -1,8 +1,8 @@
-
-const config=require('./config');
+const config = require('./config');
 const request = require('supertest')(config.app);
 const assert = require('power-assert');
 const Mock = require('mockjs');
+const qs=require('querystring');
 
 /**角色接口 */
 describe('/core/role', () => {
@@ -26,10 +26,11 @@ describe('/core/role', () => {
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		token = body.data.token;
 		//获取角色信息
-		res = await request.get(`${prefix}/list`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).send({
-				role_name: 'role'
-			}).expect(200);
+		const query=qs.stringify({
+			role_name:'role',
+		})
+		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
+			.expect('Content-Type', /json/).set('token', token).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -41,8 +42,8 @@ describe('/core/role', () => {
 			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
 					'role_name': 'role@cword(2,10)',
-                    'role_desc':'@cparagraph(2)',
-                    'sort_no|1-100':1
+					'role_desc': '@cparagraph(2)',
+					'sort_no|1-100': 1
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -55,8 +56,8 @@ describe('/core/role', () => {
 				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
 					'role_id': test_details.role_id,
 					'role_name': /^role\d{10}$/,
-                    'role_desc':'@cparagraph(2)',
-                    'sort_no|1-100':100
+					'role_desc': '@cparagraph(2)',
+					'sort_no|1-100': 100
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -77,13 +78,42 @@ describe('/core/role', () => {
 	/**角色列表 */
 	describe(`GET ${prefix}/list`, () => {
 		it('get role list', async () => {
-			let res = await request.get(`${prefix}/list`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
-					role_name: 'role'
-				}).expect(200);
+			const query=qs.stringify({
+				role_name:'role',
+				order_by:'role_name|asc'
+			})
+			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);
+		})
+
+		it('parameter error', async () => {
+			const query=qs.stringify({
+				role_name:'role',
+				order_by:'role_name'
+			})
+			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).expect(200);
+			const body = res.body;
+			assert.equal(body.code, 2001, body.message + '|' + body.desc);
+		})
+	})
+	/**角色分页列表 */
+	describe(`GET ${prefix}/pageList`, () => {
+		it('get role pageList', async () => {
+			const query=qs.stringify({
+				role_name:'role',
+				page_index:1,
+				page_size:20,
+				order_by:'role_name|asc'
+			})
+			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).expect(200);
+			const body = res.body;
+			assert.equal(body.code, 0, body.message + '|' + body.desc);
+			assert(body.data.rows.length > 0);
 		})
 	})
 	/**删除角色 */

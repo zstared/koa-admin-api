@@ -1,6 +1,6 @@
 import sequelize from '../db_init';
+import db_common from '../db_common';
 const t_user = require('../table/cs_user')(sequelize, sequelize.Sequelize);
-
 
 class UserModel {
 	constructor() {}
@@ -87,17 +87,31 @@ class UserModel {
 	 * @param {object} where  查询条件
 	 * @param {array} order   排序
 	 */
-	async getList(attrs,where,order) {
-		let option={
+	async getList(attrs, where, order) {
+		let option = {
 			where: where
 		};
-		if(order){
-			option.order=order;
+		if (order) {
+			option.order = order;
 		}
-		if(attrs){
-			option.attributes=attrs;
+		if (attrs) {
+			option.attributes = attrs;
 		}
 		return await t_user.findAll(option);
+	}
+
+	/**
+	 * @method 获取分页数据与总记录数
+	 * @param {*} params 参数对象 包含pageInex,pageSize
+	 * @param {*} attrs  查询字段 
+	 * @param {*} table  查询表
+	 * @param {*} where  查询条件
+	 * @param {*} group  分组
+	 * @param {*} order  排序
+	 * @returns {object}
+	 */
+	async getPageList(params, attrs, table, where, order = '', group = '') {
+		return db_common.excutePagingProc(params, attrs, table, where, group, order);
 	}
 
 }

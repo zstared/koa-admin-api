@@ -13,9 +13,9 @@ class RoleService {
 	constructor() {}
 
 	/**
-     * 创建角色
-     * @param {*} params 
-     */
+	 * 创建角色
+	 * @param {*} params 
+	 */
 	async create(params) {
 		const {
 			role_name,
@@ -35,9 +35,9 @@ class RoleService {
 	}
 
 	/**
-     * 修改用户
-     * @param {*} params 
-     */
+	 * 修改用户
+	 * @param {*} params 
+	 */
 	async update(params) {
 		const {
 			role_id,
@@ -64,9 +64,9 @@ class RoleService {
 	}
 
 	/**
-     * 删除角色
-     * @param {*} params 
-     */
+	 * 删除角色
+	 * @param {*} params 
+	 */
 	async delete(params) {
 		const {
 			role_id
@@ -76,9 +76,9 @@ class RoleService {
 	}
 
 	/**
-     * 根据ID获取角色详情信息
-     * @param {*} params 
-     */
+	 * 根据ID获取角色详情信息
+	 * @param {*} params 
+	 */
 	async details(params) {
 		const {
 			role_id
@@ -87,13 +87,13 @@ class RoleService {
 	}
 
 	/**
-     * 获取角色列表
-     * @param {*} params 
-     */
+	 * 获取角色列表
+	 * @param {*} params 
+	 */
 	async getList(params) {
 		const {
 			role_name,
-			orderBy
+			order_by
 		} = params;
 		let where = {};
 		if (!isNull(role_name)) {
@@ -105,11 +105,42 @@ class RoleService {
 			['is_system', 'desc'],
 			['create_time']
 		]; //排序
-		if (orderBy) {
-			order.unshift(orderBy.split('|'));
+		if (order_by) {
+			order.unshift(order_by.split('|'));
 		}
-		let attr = ['role_id', 'role_name', 'role_desc', 'create_time'];
+		let attr = ['role_id', 'role_name', 'role_desc', 'sort_no', 'is_system', 'create_time'];
 		return await m_role.getList(attr, where, order);
+	}
+
+	/**
+	 * 获取角色分页列表
+	 * @param {*} _params 
+	 */
+	async getPageList(_params) {
+		let {
+			page_index,
+			page_size,
+			role_name,
+			order_by,
+		} = _params;
+
+		let attrs = ' role_id,role_name,role_desc,sort_no,is_system,create_time ';
+		let table = ' cs_role ';
+		let where = ' where 1=1 ';
+		if (!isNull(role_name)) {
+			role_name = role_name + '%';
+			where += ' and role_name like  :role_name ';
+		}
+		let order = ' order by is_system desc,create_time ';
+		if (!isNull(order_by)) {
+			order = `order by ${order_by.split('|').join(' ')} `;
+		}
+		let params = {
+			page_index,
+			page_size,
+			role_name
+		};
+		return await m_role.getPageList(params, attrs, table, where, order);
 	}
 
 }

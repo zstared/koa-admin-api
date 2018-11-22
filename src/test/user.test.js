@@ -3,6 +3,7 @@ const config=require('./config');
 const request = require('supertest')(config.app);
 const assert = require('power-assert');
 const Mock = require('mockjs');
+const qs=require('querystring')
 const reg_mobile =config.reg_mobile
 /**用户接口 */
 describe('/core/user', () => {
@@ -27,10 +28,13 @@ describe('/core/user', () => {
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		token = body.data.token;
 		//获取用户信息
-		res = await request.get(`${prefix}/list`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).send({
-				user_name: 'test'
-			}).expect(200);
+		const query=qs.stringify({
+			user_name:'test',
+			mobile:'',
+			state:''
+		})
+		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
+			.expect('Content-Type', /json/).set('token', token).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -153,13 +157,36 @@ describe('/core/user', () => {
 	/**用户列表 */
 	describe(`GET ${prefix}/list`, () => {
 		it('get user list', async () => {
-			let res = await request.get(`${prefix}/list`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
-					user_name: 'test'
-				}).expect(200);
+			const query=qs.stringify({
+				user_name:'test',
+				mobile:'',
+				state:'',
+				order_by:'mobile|desc'
+			})
+			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);
+		})
+	})
+
+	/**用户分页列表 */
+	describe(`GET ${prefix}/pageList`, () => {
+		it('get user pageList', async () => {
+			const query=qs.stringify({
+				user_name:'test',
+				mobile:'',
+				state:'',
+				page_index:1,
+				page_size:20,
+				order_by:'user_name|desc'
+			})
+			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).expect(200);
+			const body = res.body;
+			assert.equal(body.code, 0, body.message + '|' + body.desc);
+			assert(body.data.rows.length > 0);
 		})
 	})
 	/**删除用户 */

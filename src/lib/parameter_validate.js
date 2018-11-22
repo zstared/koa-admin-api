@@ -19,6 +19,18 @@ parameter.addRule('mobile', (rule, value) => {
 	}
 });
 
+/**
+ * order 排序字段规则
+ */
+parameter.addRule('order',(rule,value)=>{
+	if (!(rule.allowEmpty && value === '')) { //允许空且值为空的情况不验证
+		const reg = /^\w{2,50}\|(desc|asc)$/;
+		if (!reg.test(value)) {
+			return 'format is wrong';
+		}
+	}
+});
+
 class ParameterValidate {
 	/**
 	 * 验证参数

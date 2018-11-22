@@ -1,4 +1,5 @@
 import sequelize from '../db_init';
+//import db from '../db_common';
 const Op = sequelize.Op;
 const t_resource = require('../table/cs_resource')(sequelize, sequelize.Sequelize);
 class ResourceModel {
@@ -74,45 +75,58 @@ class ResourceModel {
      * 获取资源树状列表
      */
 	async getTreeList(attrs) {
-		// let where = {
-		// 	parent_id: 0
-		// };
-		// let order=[['sort_no','create_time']];
-		// let root_list = await t_resource.findAll({
-		// 	attributes: attrs,
-		// 	where: where,
-		// 	order:order
-		// });
-		// console.log(root_list);
-		// for (let item of root_list) {
-		// 	item.dataValues.children = await this._getChildList(item.resource_id, attrs,order);
-		// }
-		let root_list = await sequelize.query('select * from cs_resource where parent_id=0 ');
-		console.log(root_list);
+		let where = {
+			parent_id: 0
+		};
+		let order = [
+			['sort_no'],
+			['create_time']
+		];
+		let root_list = await t_resource.findAll({
+			attributes: attrs,
+			where: where,
+			order: order
+		});
 		for (let item of root_list) {
-			let child_list = await sequelize.query(' SELECT * FROM cs_resource WHERE FIND_IN_SET(resource_id, fn_getResourceChild(:resource_id)) ', {
-				replacements: {
-					resource_id: item.resource_id
-				},
-				type: sequelize.QueryTypes.SELECT
-			});
-			item.children = this.filterChild(item, child_list);
+			item.dataValues.children = await this._getChildList(item.resource_id, attrs, order);
 		}
 		return root_list;
+
+
+		// let root_list = await db.query('select * from cs_resource where parent_id=0 ');
+		// for (let item of root_list) {
+		// 	let child_list = await db.query(' SELECT * FROM cs_resource WHERE FIND_IN_SET(resource_id, fn_getResourceChild(:resource_id)) ', {
+		// 		resource_id: item.resource_id
+		// 	});
+		// 	item.children = this.filterChild(item, child_list);
+		// }
+		// return root_list;
 	}
 
+	/**
+     * 过滤树形结构
+     * @param {*} father 
+     * @param {*} child_list 
+     */
 	filterChild(father, child_list) {
 		if (child_list && child_list.length > 0) {
-			let child_list_first = child_list.filter((item) => {
-				return item.parent_id == father.id;
+			let list_index=[];
+			let child_list_first = child_list.filter((item, index) => {
+				if (item.parent_id == father.resource_id) {
+					list_index.push(index);
+					return item;
+				}
 			});
+			for(let index of list_index){
+				child_list.splice(index);
+			}
 			for (let child of child_list_first) {
 				this.filterChild(child, child_list);
 			}
 			father.children = child_list_first;
+			return father.children;
 		} else {
-			father.children = [];
-			return father;
+			return [];
 		}
 	}
 
@@ -134,5 +148,6 @@ class ResourceModel {
 		}
 		return child_list;
 	}
+    
 }
 export default new ResourceModel();

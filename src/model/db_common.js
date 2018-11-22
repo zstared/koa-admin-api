@@ -7,8 +7,8 @@ class DbCommon {
 
 	/**
 	 * sql 原生查询
-	 * @param {string} sql 
-	 * @param {Object} replacements 
+	 * @param {string} sql语句
+	 * @param {Object} replacements 参数对象 
 	 */
 	async query(sql, replacements = null) {
 		let option = {
@@ -23,9 +23,7 @@ class DbCommon {
 
 	/**
 	 * @method 执行分页存储过程 获取分页数据与总记录数
-	 * @param {*} pageInex 页码
-	 * @param {*} pageSize 行数
-	 * @param {*} replacements 包含pageInex,pageSize
+	 * @param {*} params 参数对象 包含pageInex,pageSize
 	 * @param {*} attrs  查询字段 
 	 * @param {*} table  查询表
 	 * @param {*} where  查询条件
@@ -33,30 +31,30 @@ class DbCommon {
 	 * @param {*} order  排序
 	 * @returns {object}
 	 */
-	async excutePagingProc(replacements, attrs, table, where, order = '', group = '') {
+	async excutePagingProc(params, attrs, table, where, group = '',order = '') {
 		const {
 			pageIndex,
 			pageSize
-		} = replacements;
-		let sql = `call sp_paging(:pageIndex,:pageSize,"${attrs}","${table} ${where}","${order}","${group}");`;
+		} = params;
+		let sql = `call sp_paging(:page_index,:page_size,"${attrs}","${table} ${where}","${order}","${group}");`;
 		let option = {
-			type: sequelize.db.QueryTypes.SELECT
+			type: sequelize.QueryTypes.SELECT
 		};
-		if (replacements instanceof Object || replacements instanceof Array) {
-			option.replacements = replacements;
+		if (params instanceof Object) {
+			option.replacements = params;
 		}
-		let data = await sequelize.db.query(sql, option);
+		let data = await sequelize.query(sql, option);
 		let list = [];
 		for (let key in data[0]) {
 			list.push(data[0][key]);
 		}
-		let count=data[1][0].count;
+		let count = data[1][0].count;
 		return {
 			rows: list,
 			count: count,
 			pageIndex: pageIndex,
 			pageSize: pageSize,
-			isPaging:true,
+			isPaging: true,
 			isMore: count > (pageIndex * pageSize)
 		};
 	}

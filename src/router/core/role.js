@@ -11,4 +11,5 @@ role.post('/update', roleController.update);
 role.delete('/delete', roleController.delete);
 role.get('/details/:role_id', roleController.details);
 role.get('/list', roleController.list);
+role.get('/pageList', roleController.pageList);
 module.exports = role;

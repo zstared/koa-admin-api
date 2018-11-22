@@ -85,7 +85,7 @@ class UserService {
 			await redis.del(config.session_user_prefix + token);
 			await redis.del(config.session_token_prefix + user_name);
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -132,7 +132,7 @@ class UserService {
 		if (user) {
 			throw new ApiError(ErrorCode.VerifyFail, '用户名已存在');
 		}
-		user ={
+		user = {
 			user_name,
 			sex,
 			mail,
@@ -231,7 +231,7 @@ class UserService {
 			user_name,
 			mobile,
 			state,
-			orderBy
+			order_by
 		} = params;
 		let where = {};
 		if (!isNull(user_name)) {
@@ -247,12 +247,59 @@ class UserService {
 		if (!isNull(state)) {
 			where.state = state;
 		}
-		let order=[['is_system','desc'],['create_time']];//排序
-		if(orderBy){
-			order.unshift(orderBy.split('|'));
+		let order = [
+			['is_system', 'desc'],
+			['create_time']
+		]; //排序
+		if (order_by) {
+			order.unshift(order_by.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state','create_time'];
+		console.log(order);
+		let attr = ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state', 'create_time'];
 		return await m_user.getList(attr, where, order);
+	}
+
+	/**
+	 * 获取用户分页列表
+	 * @param {*} _params 
+	 */
+	async getPageList(_params) {
+		let {
+			page_index,
+			page_size,
+			user_name,
+			mobile,
+			state,
+			order_by,
+		} = _params;
+
+		let attrs = ' user_id,user_name,sex,mail,mobile,state,create_time ';
+		let table = ' cs_user ';
+		let where = ' where 1=1 ';
+		if (!isNull(user_name)) {
+			user_name = user_name + '%';
+			where += ' and user_name like  :user_name ';
+		}
+		if (!isNull(mobile)) {
+			mobile = mobile + '%';
+			where += ' and mobile like  :mobile ';
+		}
+		if (!isNull(state)) {
+			where += ' and state=:state ';
+		}
+		let order = ' order by  is_system desc,create_time ';
+		if (!isNull(order_by)) {
+			order = `order by ${order_by.split('|').join(' ')} `;
+		}
+
+		let params = {
+			page_index,
+			page_size,
+			user_name,
+			mobile,
+			state
+		};
+		return await m_user.getPageList(params, attrs, table, where, order);
 	}
 }
 export default new UserService();

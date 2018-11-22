@@ -6,7 +6,7 @@ const sequelize = new Sequelize(config.mysql_db, config.mysql_userid, config.mys
 	port: config.mysql_port,
 	dialect: 'mysql',
 	pool: {
-		max: 5,
+		max: 20,
 		min: 0,
 		acquire: 30000,
 		idle: 10000

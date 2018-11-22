@@ -11,25 +11,25 @@ class RoleController extends BaseController {
 	}
 
 	/**
-     * 新增角色
-     * @api {post} /core/role/create 1.新增角色
-     * @apiName create
-     * @apiGroup  role 
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     * @apiParam  {String} role_name 角色名称
-     * @apiParam  {String} role_desc 角色描述
-     * @apiParam  {Number} sort_no 排序
-     * @apiParamExample  {Object} Request-Example:
-     * {
-     *     role_name : 'test',
-     *     role_desc:'',
-     *     sort_no : 1,
-     * }
-     */
+	 * 新增角色
+	 * @api {post} /core/role/create 1.新增角色
+	 * @apiName create
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {String} role_name 角色名称
+	 * @apiParam  {String} role_desc 角色描述
+	 * @apiParam  {Number} sort_no 排序
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     role_name : 'test',
+	 *     role_desc:'',
+	 *     sort_no : 1,
+	 * }
+	 */
 	async create(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
@@ -59,27 +59,27 @@ class RoleController extends BaseController {
 	}
 
 	/**
-     * 修改角色
-     * @api {post} /core/role/update 2.修改角色
-     * @apiName update
-     * @apiGroup  role 
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     * @apiParam  {Number} role_id 角色ID
-     * @apiParam  {String} role_name 角色名称
-     * @apiParam  {String} role_desc 角色描述
-     * @apiParam  {Number} sort_no 排序
-     * @apiParamExample  {Object} Request-Example:
-     * {
-     *     role_id:2,
-     *     role_name : 'test',
-     *     role_desc:'',
-     *     sort_no : 1,
-     * }
-     */
+	 * 修改角色
+	 * @api {post} /core/role/update 2.修改角色
+	 * @apiName update
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {String} role_name 角色名称
+	 * @apiParam  {String} role_desc 角色描述
+	 * @apiParam  {Number} sort_no 排序
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     role_id:2,
+	 *     role_name : 'test',
+	 *     role_desc:'',
+	 *     sort_no : 1,
+	 * }
+	 */
 	async update(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
@@ -113,21 +113,21 @@ class RoleController extends BaseController {
 	}
 
 	/**
-     * 删除角色
-     * @api {delete} /core/role/delete 3.删除角色
-     * @apiName delete
-     * @apiGroup  role 
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     * @apiParam  {Number} role_id 角色ID
-     * @apiParamExample  {Object} Request-Example:
-     * {
-     *     role_id:2,
-     * }
-     */
+	 * 删除角色
+	 * @api {delete} /core/role/delete 3.删除角色
+	 * @apiName delete
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     role_id:2,
+	 * }
+	 */
 	async delete(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
@@ -146,16 +146,16 @@ class RoleController extends BaseController {
 	}
 
 	/**
-     * 角色详情
-     * @api {get} /core/role/details/:role_id 4.角色详情
-     * @apiName details
-     * @apiGroup  role 
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     */
+	 * 角色详情
+	 * @api {get} /core/role/details/:role_id 4.角色详情
+	 * @apiName details
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 */
 	async details(ctx) {
 		const params = ctx.params;
 		const validRule = {
@@ -174,29 +174,92 @@ class RoleController extends BaseController {
 	}
 
 	/**
-     * 获取角色列表
-     * @api {get} /core/role/list 5.获取角色列表
-     * @apiName list
-     * @apiGroup  role 
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     * @apiParam  {String} role_name 用户名
-     * @apiSuccess  (Response) {String} data.role_name 角色名称
-     * @apiSuccess  (Response) {String} data.role_desc 角色描述
-     * @apiSuccess  (Response) {Date} data.create_time 创建时间
-     * @apiSuccessExample  {json} data :
-     * {
-     *     role_name : 'test',
-     *     role_desc : '角色描述',
-     *     create_time : '2018-11-14T01:23:57.000Z',
-     * }
-     */
+	 * 获取角色列表
+	 * @api {get} /core/role/list 5.获取角色列表
+	 * @apiName list
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {String} role_name 用户名
+	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+	 * @apiSuccess  (Response) {String} data.role_name 角色名称
+	 * @apiSuccess  (Response) {String} data.role_desc 角色描述
+	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
+	 * @apiSuccessExample  {json} data :
+	 * {
+	 *     role_name : 'test',
+	 *     role_desc : '角色描述',
+	 *     create_time : '2018-11-14T01:23:57.000Z',
+	 * }
+	 */
 	async list(ctx) {
-		const params = ctx.request.body;
+		const params = ctx.request.query;
 		const validRule = {
+			role_name: {
+				allowEmpty: true,
+				type: 'string',
+				max: 50
+			},
+			order_by: {
+				required: false,
+				allowEmpty: true,
+				type: 'order',
+			},
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await roleService.getList(params);
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 获取角色分页列表
+	 * @api {get} /core/role/pageList 6.获取角色分页列表
+	 * @apiName pageList
+	 * @apiGroup  role 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {String} role_name 用户名
+	 * @apiParam  {String} page_index 页码
+	 * @apiParam  {String} page_size 页记录数
+	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+	 * @apiSuccess  (Response) {String} data.role_name 角色名称
+	 * @apiSuccess  (Response) {String} data.role_desc 角色描述
+	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
+	 * @apiSuccessExample  {json} data :
+	 * {
+	 *     role_name : 'test',
+	 *     role_desc : '角色描述',
+	 *     create_time : '2018-11-14T01:23:57.000Z',
+	 * }
+	 */
+	async pageList(ctx) {
+		const params = ctx.request.query;
+		const validRule = {
+			page_index: {
+				type: 'int',
+				convertType: 'int',
+				min: 1
+			},
+			page_size: {
+				type: 'int',
+				convertType: 'int',
+				min: 1
+			},
+			order_by: {
+				required: false,
+				allowEmpty: true,
+				type: 'order',
+			},
 			role_name: {
 				allowEmpty: true,
 				type: 'string',
@@ -204,7 +267,7 @@ class RoleController extends BaseController {
 			}
 		};
 		parameterValidate.validate(validRule, params);
-		let result = await roleService.getList(params);
+		let result = await roleService.getPageList(params);
 		if (result) {
 			ctx.success(result);
 		} else {
