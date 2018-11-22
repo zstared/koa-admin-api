@@ -5,8 +5,8 @@ module.exports = function(sequelize, DataTypes) {
 		resource_id: {
 			type: DataTypes.INTEGER(10).UNSIGNED,
 			allowNull: false,
-			primaryKey: true,
-			autoIncrement: true
+	  primaryKey: true,
+	  autoIncrement: true
 		},
 		resource_name: {
 			type: DataTypes.STRING(50),

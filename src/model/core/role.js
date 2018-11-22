@@ -10,7 +10,7 @@ class RoleModel {
 	 * @param {string} role_id 
 	 * @param {array}  attr
 	 */
-	async getDetailsById(role_id, attr = null, ) {
+	async getDetailsById(role_id, attr = null ) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;

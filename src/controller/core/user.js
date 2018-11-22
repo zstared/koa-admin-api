@@ -530,7 +530,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 获取用户分页列表
-	 * @api {get} /core/user/pageList/ 10.获取用户分页列表
+	 * @api {get} /core/user/pageList/ A10.获取用户分页列表
 	 * @apiName pageList
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
