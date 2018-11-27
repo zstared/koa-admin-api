@@ -274,6 +274,45 @@ class RoleController extends BaseController {
 			ctx.error();
 		}
 	}
+
+	/**
+	 * 关联资源
+	 * @api {post} /core/role/relateResource 7.关联资源
+	 * @apiName relateResource
+	 * @apiGroup  role
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {[Number[]]} resource_list[] 资源ID[]
+	 */
+	async relateResource(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				role_id: {
+					type: 'int',
+					convertType: 'int'
+				},
+				resource_list: {
+					type: 'array',
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await roleService.relateResource(params);
+			if (result) {
+				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+	
 }
 
 export default new RoleController();

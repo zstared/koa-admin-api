@@ -2,6 +2,7 @@ import sequelize from '../db_init';
 import db_common from '../db_common';
 const t_user = require('../table/cs_user')(sequelize, sequelize.Sequelize);
 const t_user_role = require('../table/cs_user_role')(sequelize, sequelize.Sequelize);
+const t_resource_user = require('../table/cs_resource_user')(sequelize, sequelize.Sequelize);
 class UserModel {
 	constructor() {}
 
@@ -199,6 +200,28 @@ class UserModel {
 	 */
 	async getPageList(params, attrs, table, where, order = '', group = '') {
 		return db_common.excutePagingProc(params, attrs, table, where, group, order);
+	}
+
+	/**
+	 * 关联资源（菜单、权限、接口)
+	 * @param {*} user_id 
+	 * @param {*} list 
+	 */
+	async relateResource(user_id, list) {
+		let t = await db_common.transaction();
+		try {
+			await t_resource_user.destroy({
+				where: {
+					user_id: user_id
+				}
+			});
+			await t_resource_user.bulkCreate(list);
+			await t.commit();
+			return true;
+		} catch (e) {
+			await t.rollback();
+			throw e;
+		}
 	}
 
 }

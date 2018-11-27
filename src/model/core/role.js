@@ -2,6 +2,7 @@ import sequelize from '../db_init';
 import db_common from '../db_common';
 const Op = sequelize.Op;
 const t_role = require('../table/cs_role')(sequelize, sequelize.Sequelize);
+const t_resource_role = require('../table/cs_resource_role')(sequelize, sequelize.Sequelize);
 class RoleModel {
 	constructor() {}
 
@@ -10,7 +11,7 @@ class RoleModel {
 	 * @param {string} role_id 
 	 * @param {array}  attr
 	 */
-	async getDetailsById(role_id, attr = null ) {
+	async getDetailsById(role_id, attr = null) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
@@ -99,8 +100,30 @@ class RoleModel {
 	 * @param {*} order  排序
 	 * @returns {object}
 	 */
-	async getPageList(params, attrs, table, where, order = '',group = '') {
+	async getPageList(params, attrs, table, where, order = '', group = '') {
 		return db_common.excutePagingProc(params, attrs, table, where, group, order);
+	}
+
+	/**
+	 * 关联资源（菜单、权限、接口)
+	 * @param {*} role_id 
+	 * @param {*} list 
+	 */
+	async relateResource(role_id, list) {
+		let t = await db_common.transaction();
+		try {
+			await t_resource_role.destroy({
+				where: {
+					role_id: role_id
+				}
+			});
+			await t_resource_role.bulkCreate(list);
+			await t.commit();
+			return true;
+		} catch (e) {
+			await t.rollback();
+			throw e;
+		}
 	}
 }
 export default new RoleModel();

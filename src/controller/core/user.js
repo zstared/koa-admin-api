@@ -661,6 +661,44 @@ class UserController extends BaseController {
 		}
 	}
 
+	/**
+	 * 关联资源
+	 * @api {post} /core/user/relateResource A12.关联资源
+	 * @apiName relateResource
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParam  {[Number[]]} resource_list[] 资源ID[]
+	 */
+	async relateResource(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				user_id: {
+					type: 'int',
+					convertType: 'int'
+				},
+				resource_list: {
+					type: 'array',
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.relateResource(params);
+			if (result) {
+				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
 }
 
 export default new UserController();

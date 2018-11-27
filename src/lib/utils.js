@@ -1,4 +1,3 @@
-
 import crypto from 'crypto';
 
 
@@ -173,8 +172,8 @@ export const sortDict = function (dict) {
 /**
  * 获取客户端IP
  */
-export const getClientIp = function (req) {
-	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+export const getClientIp = function (ctx) {
+	let ip = ctx.ip || ctx.headers['x-forwarded-for'];
 	if (ip != undefined) {
 		ip = ip.replace('::ffff:', '').replace('::1', '');
 		return ip;

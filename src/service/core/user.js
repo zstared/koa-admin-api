@@ -199,7 +199,7 @@ class UserService {
 			user_id,
 			state
 		};
-		let result = await m_user.update(user,false);
+		let result = await m_user.update(user, false);
 		return result;
 	}
 
@@ -315,6 +315,25 @@ class UserService {
 			role
 		} = params;
 		return await m_user.relateRole(user_id, role);
+	}
+
+	/**
+	 * 关联资源（菜单、权限、接口)
+	 * @param {*} resource_user
+	 */
+	async relateResource(resource_user) {
+		const {
+			user_id,
+			resource_list
+		} = resource_user;
+		let list = [];
+		for (let resource_id of resource_list) {
+			list.push({
+				user_id: user_id,
+				resource_id: resource_id
+			});
+		}
+		return await m_user.relateResource(user_id, list);
 	}
 }
 export default new UserService();

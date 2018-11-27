@@ -1,5 +1,7 @@
 export const config = {
 
+	test_token:'123456',
+
 	/**设置 signed cookie 的密钥 */
 	app_keys: ['caihong', 'zxhlcl'],
 	/**是否限制用户唯一登录 */

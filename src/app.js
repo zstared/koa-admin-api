@@ -9,15 +9,19 @@ import config from './config';
 //中间件
 import authentication from './middleware/authentication.js';
 import exception from './middleware/exception';
+import operationLog from './middleware/operation_log';
+
 import { ErrorCode } from './lib/enum.js';
 
 const app = new Koa();
 
 //挂载中间件
 app.use(cors());
+
 app.use(bodyParser());
 app.use(exception);
 app.use(authentication);
+app.use(operationLog);
 
 //挂载路由
 app.use(router.routes());

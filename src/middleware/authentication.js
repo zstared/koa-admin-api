@@ -19,8 +19,8 @@ export default async (ctx, next) => {
 	if (whiteList.findIndex((item) => {
 		return item === url;
 	}) < 0) {
-		//开发环境测试时设置token=123456 跳过验证
-		if(!(process.env.NODE_ENV == 'development' && token == '123456')){
+		//开发环境测试时设置token=config.test_token 跳过验证
+		if(!(process.env.NODE_ENV == 'development' && token == config.test_token)){
 			if (!token) {
 				throw new ApiError(ErrorCode.TokenLoss, '缺少访问令牌【token】');
 			}
@@ -28,7 +28,7 @@ export default async (ctx, next) => {
 			if (!user) {
 				throw new ApiError(ErrorCode.TokenError, '访问令牌【token】已过期或不存在,请重新登录!');
 			}
-			ctx.userInfo=user;//缓存token用户信息
+			ctx.user_info=user;//缓存token用户信息
 		}
 	}
 

@@ -143,6 +143,21 @@ class RoleService {
 		return await m_role.getPageList(params, attrs, table, where, order);
 	}
 
+	/**
+	 * 关联资源（菜单、权限、接口)
+	 * @param {*} resource_role
+	 */
+	async relateResource(resource_role) {
+		const {
+			role_id,
+			resource_list
+		} = resource_role;
+		let list=[];
+		for(let resource_id of resource_list){
+			list.push({role_id:role_id,resource_id:resource_id});
+		}
+		return await m_role.relateResource(role_id,list);
+	}
 }
 
 export default new RoleService();
