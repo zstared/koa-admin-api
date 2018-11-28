@@ -131,14 +131,13 @@ describe('/core/user', () => {
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 		})
 	})
-
 	/**关联角色 */
 	describe(`POST ${prefix}/relateRole`, () => {
 		it('relate role', async () => {
 			let res = await request.post(`${prefix}/relateRole`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
 					'user_id': test_details.user_id,
-					'role': [1,2]
+					'role': [1, 2]
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -201,6 +200,18 @@ describe('/core/user', () => {
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.rows.length > 0);
+		})
+	})
+	/**用户关联资源 */
+	describe(`POST ${prefix}/relateResource`, () => {
+		it('user relate resource success', async () => {
+			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
+				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+					'user_id': test_details.user_id,
+					'resource_list|10-30': ['@integer(250, 300)']
+				})).expect(200);
+			const body = res.body;
+			assert.equal(body.code, 0, body.message + '|' + body.desc);
 		})
 	})
 	/**删除用户 */

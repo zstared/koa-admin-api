@@ -63,12 +63,29 @@ class RoleModel {
 	 * @param {*} role_id 
 	 */
 	async delete(role_id) {
-		return t_role.destroy({
-			where: {
-				role_id: role_id,
-				is_system: 0
-			}
-		});
+		const t = await db_common.transaction();
+		try {
+			await t_resource_role.destroy({
+				where: {
+					role_id: role_id
+				},
+				transaction: t
+			});
+
+			await t_role.destroy({
+				where: {
+					role_id: role_id,
+					is_system: 0
+				},
+				transaction: t
+			});
+			await t.commit();
+			return true;
+
+		} catch (e) {
+			await t.rollback();
+			throw e;
+		}
 	}
 
 	/**

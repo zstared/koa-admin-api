@@ -15,11 +15,12 @@ const whiteList = [
  * @param {Koa.Context} ctx
  */
 export default async (ctx, next) => {
+	console.log(ctx.method);
 	if (ctx.method === 'GET') {
 		await next();
 	} else {
 		const url = ctx.url.split('/');
-		let params = ctx.request.body || ctx.params;
+		let params = ctx.request.body != {} ? ctx.request.body : ctx.params;
 		let log = {
 			system: url[0],
 			module: url[1],
@@ -30,13 +31,14 @@ export default async (ctx, next) => {
 			option_ip: getClientIp(ctx)
 		};
 
-		// 不保存涉及密码的参数
+		// 敏感信息不保存
 		if (whiteList.findIndex((item) => {
 			return item === ctx.url;
 		}) > -1) {
 			log.params = null;
 			log.option_user = params.user_name;
 		}
+		
 		await next();
 		if (ctx.body.code === 0) {
 			log.state = 1;
