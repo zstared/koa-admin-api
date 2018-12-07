@@ -33,7 +33,7 @@ describe('/core/user', () => {
 			state: ''
 		})
 		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).expect(200);
+			.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -62,7 +62,7 @@ describe('/core/user', () => {
 				.expect('Content-Type', /json/)
 				.expect(200);
 			const body = res.body;
-			assert.equal(body.code, 2000, body.message + '|' + body.desc);
+			assert.equal(body.code, 2000001, body.message + '|' + body.desc);
 		});
 	});
 
@@ -91,7 +91,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/updatePassword`, () => {
 		it('update password success', async () => {
 			let res = await request.post(`${prefix}/updatePassword`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					user_name: test_details.user_name,
 					old_password: default_password,
 					new_password: default_password
@@ -104,7 +104,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/create`, () => {
 		it('create user success', async () => {
 			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_name': /^test\d{10}$/,
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
@@ -119,7 +119,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/update`, () => {
 		it('update user success', async () => {
 			let res = await request.post(`${prefix}/update`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_id': test_details.user_id,
 					'password': password,
 					'sex|1': [1, 2],
@@ -135,7 +135,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/relateRole`, () => {
 		it('relate role', async () => {
 			let res = await request.post(`${prefix}/relateRole`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_id': test_details.user_id,
 					'role': [1, 2]
 				})).expect(200);
@@ -147,7 +147,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/updateState`, () => {
 		it('update user state success', async () => {
 			let res = await request.post(`${prefix}/updateState`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'user_id': test_details.user_id,
 					'state': test_details.state ? 0 : 1
 				}).expect(200);
@@ -160,7 +160,7 @@ describe('/core/user', () => {
 	describe(`GET ${prefix}/details`, () => {
 		it('get user details', async () => {
 			let res = await request.get(`${prefix}/details/${test_details.user_id}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert.equal(body.data.user_id, test_details.user_id);
@@ -177,7 +177,7 @@ describe('/core/user', () => {
 				order_by: 'mobile|desc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);
@@ -196,7 +196,7 @@ describe('/core/user', () => {
 				order_by: 'user_name|desc'
 			})
 			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.rows.length > 0);
@@ -206,7 +206,7 @@ describe('/core/user', () => {
 	describe(`POST ${prefix}/relateResource`, () => {
 		it('user relate resource success', async () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_id': test_details.user_id,
 					'resource_list|10-30': ['@integer(250, 300)']
 				})).expect(200);
@@ -218,7 +218,7 @@ describe('/core/user', () => {
 	describe(`DELETE ${prefix}/delete`, () => {
 		it('delete user success', async () => {
 			let res = await request.delete(`${prefix}/delete`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'user_id': test_details.user_id
 				}).expect(200);
 			const body = res.body;

@@ -1,6 +1,6 @@
 import ApiError from '../../lib/api_error';
 import {
-	ErrorCode
+	RCode
 } from '../../lib/enum';
 import m_role from '../../model/core/role';
 import {
@@ -24,7 +24,7 @@ class RoleService {
 		} = params;
 		let is_exist = await m_role.isExist(role_name);
 		if (is_exist) {
-			throw new ApiError(ErrorCode.VerifyFail, '角色名称已存在');
+			throw new ApiError(RCode.core.C2001000, '角色名称已存在');
 		}
 		let role = {
 			role_name,
@@ -47,7 +47,7 @@ class RoleService {
 		} = params;
 		let is_exist = await m_role.isExist(role_name, role_id);
 		if (is_exist) {
-			throw new ApiError(ErrorCode.VerifyFail, '角色名称已存在');
+			throw new ApiError(RCode.core.C2010000, '角色名称已存在');
 		}
 		let role = {
 			role_id: role_id,
@@ -57,7 +57,7 @@ class RoleService {
 		};
 		const role_exist = await m_role.getDetailsById(role_id);
 		if (!role_exist) {
-			throw new ApiError(ErrorCode.ParamError, '角色ID不存在');
+			throw new ApiError(RCode.common.C1, '角色不存在,操作失败');
 		}
 		let result = await m_role.update(role);
 		return result[0];

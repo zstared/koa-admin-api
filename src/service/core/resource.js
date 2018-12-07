@@ -1,6 +1,6 @@
 import ApiError from '../../lib/api_error';
 import {
-	ErrorCode
+	RCode
 } from '../../lib/enum';
 import m_resource from '../../model/core/resource';
 import {
@@ -23,28 +23,28 @@ class ResourceService {
 		} = params;
 		let is_exist = await m_resource.isExist(resource_name, parent_id);
 		if (is_exist) {
-			throw new ApiError(ErrorCode.VerifyFail, '资源名称已存在');
+			throw new ApiError(RCode.core.C2002000, '资源名称已存在');
 		}
 		if (parent_id != 0) {
 			let parent_resource = await m_resource.getDetailsById(parent_id);
 			if (!parent_resource) {
-				throw new ApiError(ErrorCode.VerifyFail, '上级资源不存在');
+				throw new ApiError(RCode.core.C2002001, '上级资源不存在');
 			}
 			if (parent_resource.resource_type == 1 && resource_type == 3) {
-				throw new ApiError(ErrorCode.VerifyFail, '资源类型有误,菜单类型的下级资源只能是菜单或权限');
+				throw new ApiError(RCode.core.C2002002, '资源类型有误,菜单类型的下级资源只能是菜单或权限');
 			}
 			if (parent_resource.resource_type == 2 && (resource_type == 1 || resource_type == 2)) {
-				throw new ApiError(ErrorCode.VerifyFail, '资源类型有误,权限类型的下级资源只能是接口');
+				throw new ApiError(RCode.core.C2002002, '资源类型有误,权限类型的下级资源只能是接口');
 			}
 			if (parent_resource.resource_type == 3) {
-				throw new ApiError(ErrorCode.VerifyFail, '资源类型有误,接口类型的没有下级资源');
+				throw new ApiError(RCode.core.C2002002, '资源类型有误,接口类型的没有下级资源');
 			}
 			if (resource_type == 3 && isNull(path)) {
-				throw new ApiError(ErrorCode.VerifyFail, '接口类型Path不能为空');
+				throw new ApiError(RCode.core.C2002003, '接口类型Path不能为空');
 			}
 		} else {
 			if (resource_type != 1) {
-				throw new ApiError(ErrorCode.VerifyFail, '顶级资源类型只能是菜单类型');
+				throw new ApiError(RCode.core.C2002004, '顶级资源类型只能是菜单类型');
 			}
 		}
 		let resource = {
@@ -72,7 +72,7 @@ class ResourceService {
 		} = params;
 		let is_exist = await m_resource.isExist(resource_name, parent_id, resource_id);
 		if (is_exist) {
-			throw new ApiError(ErrorCode.VerifyFail, '资源名称已存在');
+			throw new ApiError(RCode.core.C2002000, '资源名称已存在');
 		}
 		let role = {
 			resource_id,
@@ -84,7 +84,7 @@ class ResourceService {
 		};
 		const role_exist = await m_resource.getDetailsById(resource_id);
 		if (!role_exist) {
-			throw new ApiError(ErrorCode.ParamError, '资源ID不存在');
+			throw new ApiError(RCode.common.C1, '资源不存在');
 		}
 		let result = await m_resource.update(role);
 		return result[0];

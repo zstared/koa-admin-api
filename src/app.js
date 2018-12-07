@@ -11,7 +11,7 @@ import authentication from './middleware/authentication.js';
 import exception from './middleware/exception';
 import operationLog from './middleware/operation_log';
 
-import { ErrorCode } from './lib/enum.js';
+import { RCode } from './lib/enum.js';
 
 const app = new Koa();
 
@@ -26,7 +26,7 @@ app.use(operationLog);
 //挂载路由
 app.use(router.routes());
 app.use(async(ctx)=>{
-	ctx.error(ErrorCode.NotFound,`请求地址[${ctx.URL}]有误!`);
+	ctx.error(RCode.common.E1000003,`请求地址[${ctx.URL}]有误!`);
 });
 
 const server=app.listen(config.port, () => {

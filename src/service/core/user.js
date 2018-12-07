@@ -1,6 +1,6 @@
 import ApiError from '../../lib/api_error';
 import {
-	ErrorCode
+	RCode
 } from '../../lib/enum';
 import m_user from '../../model/core/user';
 import {
@@ -30,17 +30,17 @@ class UserService {
 			} = params;
 			let user = await m_user.getUserByName(user_name);
 			if (!user) {
-				throw new ApiError(ErrorCode.ParamError, '用户名或密码有误');
+				throw new ApiError(RCode.core.C2000001, '用户名或密码有误');
 			}
 			user = await m_user.getUserByName(user_name, md5(password + user.encrypt));
 			if (!user) {
-				throw new ApiError(ErrorCode.ParamError, '用户名或密码有误');
+				throw new ApiError(RCode.core.C2000001, '用户名或密码有误');
 			}
 			if (user.state === 1) {
-				throw new ApiError(ErrorCode.VerifyFail, '用户已禁用');
+				throw new ApiError(RCode.core.C2000003, '用户已禁用');
 			}
 			if (user.state === 2) {
-				throw new ApiError(ErrorCode.VerifyFail, '用户已注销');
+				throw new ApiError(RCode.core.C2000004, '用户已注销');
 			}
 			let token = md5(user.user_name + Date.now().toString());
 
@@ -102,11 +102,11 @@ class UserService {
 		} = params;
 		let user = await m_user.getUserByName(user_name);
 		if (!user) {
-			throw new ApiError(ErrorCode.VerifyFail, '用户名或旧密码有误');
+			throw new ApiError(RCode.core.C2000005, '用户名或旧密码有误');
 		}
 		user = await m_user.getUserByName(user_name, md5(old_password + user.encrypt));
 		if (!user) {
-			throw new ApiError(ErrorCode.VerifyFail, '用户名或旧密码有误');
+			throw new ApiError(RCode.core.C2000005, '用户名或旧密码有误');
 		}
 
 		const encrypt = randomString(16); //密码加盐
@@ -131,7 +131,7 @@ class UserService {
 		} = params;
 		let user = await m_user.getUserByName(user_name);
 		if (user) {
-			throw new ApiError(ErrorCode.VerifyFail, '用户名已存在');
+			throw new ApiError(RCode.core.C2000000, '用户名已存在');
 		}
 		user = {
 			user_name,
@@ -166,7 +166,7 @@ class UserService {
 		};
 		const user_exist = await m_user.getDetailsById(user_id);
 		if (!user_exist) {
-			throw new ApiError(ErrorCode.ParamError, '用户ID不存在');
+			throw new ApiError(RCode.common.C1, '用户不存在');
 		}
 		if (sex != null) {
 			user.sex = sex;

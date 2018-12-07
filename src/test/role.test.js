@@ -30,7 +30,7 @@ describe('/core/role', () => {
 			role_name: 'role',
 		})
 		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).expect(200);
+			.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -40,7 +40,7 @@ describe('/core/role', () => {
 	describe(`POST ${prefix}/create`, () => {
 		it('create role success', async () => {
 			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).set('language',config.language).send(Mock.mock({
 					'role_name': 'role@cword(2,10)',
 					'role_desc': '@cparagraph(2)',
 					'sort_no|1-100': 1
@@ -53,7 +53,7 @@ describe('/core/role', () => {
 	describe(`POST ${prefix}/update`, () => {
 		it('update role success', async () => {
 			let res = await request.post(`${prefix}/update`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'role_id': test_details.role_id,
 					'role_name': /^role\d{10}$/,
 					'role_desc': '@cparagraph(2)',
@@ -68,7 +68,7 @@ describe('/core/role', () => {
 	describe(`GET ${prefix}/details`, () => {
 		it('get role details', async () => {
 			let res = await request.get(`${prefix}/details/${test_details.role_id}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert.equal(body.data.role_id, test_details.role_id);
@@ -83,7 +83,7 @@ describe('/core/role', () => {
 				order_by: 'role_name|asc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);
@@ -95,9 +95,9 @@ describe('/core/role', () => {
 				order_by: 'role_name'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
-			assert.equal(body.code, 2001, body.message + '|' + body.desc);
+			assert.equal(body.code, 1000005, body.message + '|' + body.desc);
 		})
 	})
 	/**角色分页列表 */
@@ -110,7 +110,7 @@ describe('/core/role', () => {
 				order_by: 'role_name|asc'
 			})
 			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.rows.length > 0);
@@ -120,7 +120,7 @@ describe('/core/role', () => {
 	describe(`POST ${prefix}/relateResource`, () => {
 		it('role relate resource success', async () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'role_id': test_details.role_id,
 					'resource_list|10-30':['@integer(250, 300)']
 				})).expect(200);
@@ -132,7 +132,7 @@ describe('/core/role', () => {
 	describe(`DELETE ${prefix}/delete`, () => {
 		it('delete role success', async () => {
 			let res = await request.delete(`${prefix}/delete`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'role_id': test_details.role_id
 				}).expect(200);
 			const body = res.body;

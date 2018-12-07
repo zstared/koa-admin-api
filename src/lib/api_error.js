@@ -5,7 +5,7 @@
 export default class ApiError extends Error {
 	/**
      * @constructs 
-     * @param {ErrorCode} code -ErrorCode 错误编码 
+     * @param {RCode} code -RCode 错误编码 
      * @param {string} msg 错误信息
      * @param {string} desc 错误描述
      */

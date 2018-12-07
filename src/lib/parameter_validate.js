@@ -1,7 +1,7 @@
 import Parameter from 'parameter';
 import ApiError from './api_error';
 import {
-	ErrorCode
+	RCode
 } from '../lib/enum';
 
 const parameter = new Parameter({
@@ -42,7 +42,7 @@ class ParameterValidate {
 	validate(rule, data) {
 		const result = parameter.validate(rule, data);
 		if (result) {
-			throw new ApiError(result[0].code == 'missing_field' ? ErrorCode.ParamError : ErrorCode.VerifyFail, result[0].field + ' ' + result[0].message);
+			throw new ApiError(result[0].code == 'missing_field' ? RCode.common.C1000004: RCode.common.C1000005, result[0].field + ' ' + result[0].message);
 		}
 	}
 

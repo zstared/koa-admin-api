@@ -21,13 +21,13 @@ describe('/core/resource', () => {
 			.send({
 				user_name: user_name,
 				password: password
-			}).expect(200);
+			}).set('language',config.language).expect(200);
 		let body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		token = body.data.token;
 
 		res = await request.get(`${prefix}/treeList`).set('Accept', 'application/json')
-			.expect('Content-Type', /json/).set('token', token).expect(200);
+			.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 		body = res.body;
 		assert.equal(body.code, 0, body.message + '|' + body.desc);
 		test_details = body.data.length > 1 ? body.data[body.data.length - 1] : {}
@@ -37,7 +37,7 @@ describe('/core/resource', () => {
 	describe(`POST ${prefix}/create`, () => {
 		it('create role success', async () => {
 			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'resource_name': '@cword(2,20)',
                     'resource_type|1':[1,2,3],
                     'path':'@url',
@@ -53,7 +53,7 @@ describe('/core/resource', () => {
 	describe(`POST ${prefix}/update`, () => {
 		it('update role success', async () => {
 			let res = await request.post(`${prefix}/update`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send(Mock.mock({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'resource_id': test_details.resource_id,
 					'resource_name': '@cword(2,20)',
                     'resource_type':test_details.resource_type,
@@ -71,7 +71,7 @@ describe('/core/resource', () => {
 	describe(`GET ${prefix}/details`, () => {
 		it('get role details', async () => {
 			let res = await request.get(`${prefix}/details/${test_details.resource_id}`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert.equal(body.data.resource_id, test_details.resource_id);
@@ -82,7 +82,7 @@ describe('/core/resource', () => {
 	describe(`GET ${prefix}/treeList`, () => {
 		it('get role treeList', async () => {
 			let res = await request.get(`${prefix}/treeList`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).expect(200);
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
 			assert(body.data.length > 0);
@@ -92,7 +92,7 @@ describe('/core/resource', () => {
 	describe(`DELETE ${prefix}/delete`, () => {
 		it('delete role success', async () => {
 			let res = await request.delete(`${prefix}/delete`).set('Accept', 'application/json')
-				.expect('Content-Type', /json/).set('token', token).send({
+				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'resource_id': test_details.resource_id
 				}).expect(200);
 			const body = res.body;
