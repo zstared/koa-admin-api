@@ -88,7 +88,8 @@ class ResourceModel {
 			order: order
 		});
 		for (let item of root_list) {
-			item.dataValues.children = await this._getChildList(item.resource_id, attrs, order);
+			item.dataValues.locale=item.resource_code;
+			item.dataValues.children = await this._getChildList(item.resource_id, attrs, order,item.resource_code);
 		}
 		return root_list;
 
@@ -117,11 +118,11 @@ class ResourceModel {
 					return item;
 				}
 			});
-			for(let index of list_index){
+			for(let index of list_index){ //剔除掉已匹配的子菜单
 				child_list.splice(index);
 			}
 			for (let child of child_list_first) {
-				this.filterChild(child, child_list);
+				this.filterChild(child, child_list,child.locale);
 			}
 			father.children = child_list_first;
 			return father.children;
@@ -135,7 +136,7 @@ class ResourceModel {
      * @param {number} parent_id 
      * @param {[]} attrs
      */
-	async _getChildList(parent_id, attrs, order) {
+	async _getChildList(parent_id, attrs, order,parent_code) {
 		let child_list = await t_resource.findAll({
 			where: {
 				parent_id: parent_id
@@ -144,7 +145,8 @@ class ResourceModel {
 			order: order
 		});
 		for (let item of child_list) {
-			item.dataValues.children = await this._getChildList(item.resource_id, attrs, order);
+			item.dataValues.locale=parent_code+'.'+item.resource_code;
+			item.dataValues.children = await this._getChildList(item.resource_id, attrs, order,item.dataValues.locale);
 		}
 		return child_list;
 	}

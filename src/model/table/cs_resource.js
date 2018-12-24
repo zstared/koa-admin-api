@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
 	return sequelize.define('cs_resource', {
 		resource_id: {
 			type: DataTypes.INTEGER(10).UNSIGNED,
@@ -12,9 +12,17 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING(50),
 			allowNull: false
 		},
+		resource_code: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
 		resource_type: {
 			type: DataTypes.INTEGER(3).UNSIGNED,
 			allowNull: false
+		},
+		icon: {
+			type: DataTypes.STRING(100),
+			allowNull: true
 		},
 		path: {
 			type: DataTypes.STRING(200),

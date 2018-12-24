@@ -39,7 +39,9 @@ describe('/core/resource', () => {
 			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'resource_name': '@cword(2,20)',
-                    'resource_type|1':[1,2,3],
+					'resource_code': '@word(2,20)',
+					'resource_type|1':[1,2,3],
+					'icon': '@word(2,20)',
                     'path':'@url',
                     'parent_id|1-100':10,
                     'is_visiable|1':[0,1],
@@ -56,7 +58,9 @@ describe('/core/resource', () => {
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'resource_id': test_details.resource_id,
 					'resource_name': '@cword(2,20)',
-                    'resource_type':test_details.resource_type,
+					'resource_code': '@word(2,20)',
+					'resource_type':test_details.resource_type,
+					'icon': '@word(2,20)',
                     'path':test_details.path,
                     'parent_id':test_details.parent_id,
                     'is_visiable|1':[0,1],

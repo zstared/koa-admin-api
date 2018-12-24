@@ -64,7 +64,7 @@ class UserService {
 			};
 			redis.set(config.session_user_prefix + token, JSON.stringify(result), config.session_ttl); //设置用户缓存
 			return {
-				token: token
+				token: token,
 			};
 
 		} catch (e) {
@@ -88,6 +88,20 @@ class UserService {
 		} else {
 			return false;
 		}
+	}
+
+	/**获取用户菜单*/
+	async getMenus(){
+		return {menuData:[
+			{
+				resource_id: 1, icon:'setting',name: '系统管理', path: '',locale:'system', children: [
+					{ resource_id: 2, name: '用户管理',locale:'system.user', path: '/system/user', permission: [''] },
+					{ resource_id: 3, name: '角色管理',locale:'system.role', path: '/system/role' },
+					{ resource_id: 4, name: '菜单管理',locale:'system.menu', path: '/system/menu' },
+					{ resource_id: 5, name: '资源管理',locale:'system.resource', path: '/system/resource' },
+				]
+			}
+		]};
 	}
 
 	/**

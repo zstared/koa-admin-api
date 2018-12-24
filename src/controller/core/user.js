@@ -699,6 +699,30 @@ class UserController extends BaseController {
 		}
 	}
 
+	/**
+	 * 获取用户菜单
+	 * @api {get} /core/user/menus A13.获取用户菜单
+	 * @apiName menus
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 */
+	async menus(ctx) {
+		try {
+			let result = await userService.getMenus(ctx.user_info);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
 }
 
 export default new UserController();

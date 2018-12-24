@@ -21,14 +21,18 @@ class ResourceController extends BaseController {
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
      * @apiParam  {String} resource_name 资源名称
+	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
      * @apiParam  {Number} sort_no 排序
      * @apiParamExample  {Object} Request-Example:
      * {
      *     resource_name : '新增资源',
+     *     resource_code:'add',
      *     resource_type:'3',
+	 *     icon:'cog',
      *     path : /core/resource/create,
      *     parent_id:10,
      *     sort_no:1
@@ -42,10 +46,20 @@ class ResourceController extends BaseController {
 				min: 2,
 				max: 50
 			},
+			resource_code: {
+				type: 'string',
+				min: 2,
+				max: 50,
+				allowEmpty:true
+			},
 			resource_type: {
 				type: 'enum',
 				values: [1, 2, 3],
 				convertType: 'int',
+			},
+			icon: {
+				type: 'string',
+				allowEmpty: true,
 			},
 			path: {
 				type: 'string',
@@ -87,7 +101,9 @@ class ResourceController extends BaseController {
      * @apiUse  ResultSuccess
      * @apiParam  {String} resource_id 资源id
      * @apiParam  {String} resource_name 资源名称
+	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
      * @apiParam  {Number} sort_no 排序
@@ -95,7 +111,9 @@ class ResourceController extends BaseController {
      * {
      *     resource_id:20,
      *     resource_name : '新增资源',
+	 *     resource_code:'add',
      *     resource_type:'3',
+	 *     icon:'cog',
      *     path : /core/resource/create,
      *     parent_id:10,
      *     sort_no:1
@@ -113,10 +131,20 @@ class ResourceController extends BaseController {
 				min: 2,
 				max: 50
 			},
+			resource_code: {
+				type: 'string',
+				min: 2,
+				max: 50,
+				allowEmpty:true
+			},
 			resource_type: {
 				type: 'enum',
 				values: [1, 2, 3],
 				convertType: 'int',
+			},
+			icon: {
+				type: 'string',
+				allowEmpty: true,
 			},
 			path: {
 				type: 'string',
@@ -218,8 +246,10 @@ class ResourceController extends BaseController {
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
      * @apiSuccess  {String} resource_id 资源id
-     * @apiSuccess  {String} resource_name 资源名称
+     * @apiSuccess  {String} name 资源名称
+	 * @apiSuccess  {String} locale 本地化配置(前端配置)
      * @apiSuccess  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiSuccess  {String} icon 资源图标
      * @apiSuccess  {String} path 资源路径（菜单路由、接口地址）
      * @apiSuccess  {int} parent_id 父级资源ID
      * @apiSuccess  {Number} sort_no 排序
@@ -227,8 +257,10 @@ class ResourceController extends BaseController {
      * @apiSuccessExample  {json} data :
      * {
      *     resource_id:20,
-     *     resource_name : '新增资源',
+     *     name : '新增资源',
+	 *     locale:'resource.add',
      *     resource_type:'3',
+	 *     icon:'cog',
      *     path : /core/resource/create,
      *     parent_id:10,
      *     sort_no:1,

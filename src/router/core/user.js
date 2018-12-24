@@ -18,4 +18,5 @@ user.get('/list',userController.list);
 user.get('/pageList', userController.pageList);
 user.post('/relateRole', userController.relateRole);
 user.post('/relateResource', userController.relateResource);
+user.get('/menus', userController.menus);
 module.exports=user;

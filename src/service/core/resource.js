@@ -16,8 +16,10 @@ class ResourceService {
 	async create(params) {
 		const {
 			resource_name,
+			resource_code,
 			resource_type,
 			parent_id,
+			icon,
 			path,
 			sort_no
 		} = params;
@@ -49,9 +51,11 @@ class ResourceService {
 		}
 		let resource = {
 			resource_name,
+			resource_code,
 			resource_type,
 			parent_id,
 			path,
+			icon,
 			sort_no
 		};
 		return m_resource.create(resource);
@@ -65,8 +69,10 @@ class ResourceService {
 		const {
 			resource_id,
 			resource_name,
+			resource_code,
 			resource_type,
 			parent_id,
+			icon,
 			path,
 			sort_no
 		} = params;
@@ -77,9 +83,11 @@ class ResourceService {
 		let role = {
 			resource_id,
 			resource_name,
+			resource_code,
 			resource_type,
 			parent_id,
 			path,
+			icon,
 			sort_no
 		};
 		const role_exist = await m_resource.getDetailsById(resource_id);
@@ -110,14 +118,14 @@ class ResourceService {
 		const {
 			resource_id
 		} = params;
-		return await m_resource.getDetailsById(resource_id, ['resource_id', 'resource_name', 'resource_type', 'path', 'sort_no', 'parent_id']);
+		return await m_resource.getDetailsById(resource_id, ['resource_id', ['resource_name','name'],'resource_code', 'resource_type', 'icon','path', 'sort_no', 'parent_id','is_visiable']);
 	}
 
 	/**
      * 获取资源列表
      */
 	async getTreeList() {
-		let attrs = ['resource_id', 'resource_name', 'resource_type', 'parent_id', 'path', 'sort_no'];
+		let attrs = ['resource_id', ['resource_name','name'],'resource_code', 'resource_type', 'parent_id', 'icon','path', 'sort_no','is_visiable'];
 		return await m_resource.getTreeList(attrs);
 	}
 

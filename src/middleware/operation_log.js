@@ -27,7 +27,7 @@ export default async (ctx, next) => {
 			action: url[2],
 			path: ctx.url,
 			params: params,
-			option_user: ctx.user_info ? JSON.parse(ctx.user_info).user_name : '',
+			option_user: ctx.user_info ? ctx.user_info.user_name : '',
 			option_ip: getClientIp(ctx)
 		};
 

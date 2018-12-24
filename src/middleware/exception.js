@@ -52,7 +52,7 @@ async function log(ctx, body) {
 		error_code: body.code,
 		message: body.message,
 		description: body.desc,
-		option_user: ctx.user_info ? JSON.parse(ctx.user_info).user_name : '',
+		option_user: ctx.user_info ? ctx.user_info.user_name : '',
 		option_ip: getClientIp(ctx)
 	};
 	// 敏感信息不保存

@@ -47,6 +47,7 @@ class MockData {
                     //模拟一级菜单 
                     data = Mock.mock({
                         'resource_name': '@cword(2,20)',
+                        'resource_code': '@word(2,20)',
                         'resource_type': 1,
                         'path': '',
                         'parent_id': 0,
@@ -57,6 +58,7 @@ class MockData {
                     //模拟二级菜单
                     data = Mock.mock({
                         'resource_name': '@cword(2,20)',
+                        'resource_code': '@word(2,20)',
                         'resource_type': 1,
                         'path|1': ['', '@url'],
                         'parent_id|1-20': 20,
@@ -67,6 +69,7 @@ class MockData {
                     //模拟权限
                     data = Mock.mock({
                         'resource_name': '@cword(2,20)',
+                        'resource_code': '@word(2,20)',
                         'resource_type': 2,
                         'path': '',
                         'parent_id|20-40': 20,
@@ -77,6 +80,7 @@ class MockData {
                     //模拟接口
                     data = Mock.mock({
                         'resource_name': '@cword(2,20)',
+                        'resource_code': '@word(2,20)',
                         'resource_type': 3,
                         'path': '@url',
                         'parent_id|40-60': 40,
@@ -87,6 +91,7 @@ class MockData {
                     //随机模拟
                     data = Mock.mock({
                         'resource_name': '@cword(2,20)',
+                        'resource_code': '@word(2,20)',
                         'resource_type|1': [1, 2, 3],
                         'path|1': ['', '@url'],
                         'parent_id|1-200': 100,

@@ -30,7 +30,7 @@ export default async (ctx, next) => {
 			if (!user) {
 				throw new ApiError(RCode.common.C1000002, isCn(language)?'访问令牌【token】已过期或不存在,请重新登录!':getLocale(language)[RCode.common.C1000002]);
 			}
-			ctx.user_info=user;//缓存token用户信息
+			ctx.user_info=JSON.parse(user);//缓存token用户信息
 		}
 	}
 
@@ -52,7 +52,7 @@ export default async (ctx, next) => {
 	 * @param {*} code 
 	 * @param {*} msg 
 	 */
-	ctx.error = function (code = 1000, msg = '请求失败!') {
+	ctx.error = function (code = 100000, msg = '请求失败!') {
 		ctx.body = {
 			code: code,
 			message: isCn(language)?msg:getLocale(language)[code],
