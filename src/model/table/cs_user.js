@@ -17,6 +17,18 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.STRING(100),
 			allowNull: false
 		},
+		name_cn: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
+		name_en: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
+		avatar: {
+			type: DataTypes.STRING(100),
+			allowNull: true
+		},
 		encrypt: {
 			type: DataTypes.CHAR(16),
 			allowNull: false

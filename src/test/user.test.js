@@ -108,7 +108,9 @@ describe('/core/user', () => {
 					'user_name': /^test\d{10}$/,
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
-					'mail': '',
+					'name_cn':'@cname',
+					'name_en':'@name',
+					'mail': '@email',
 					'role': [1, 2]
 				})).expect(200);
 			const body = res.body;
@@ -124,6 +126,8 @@ describe('/core/user', () => {
 					'password': password,
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
+					'name_cn':'@cname',
+					'name_en':'@name',
 					'mail': '@email',
 					'role': [2]
 				})).expect(200);

@@ -57,6 +57,7 @@ class UserService {
 			}
 			await redis.set(config.session_token_prefix + user.user_name, token, config.session_ttl); //设置token 缓存
 			let result = {
+				user_id:user.user_id,
 				user_name: user.user_name,
 				state: user.state,
 				sex: user.sex,
@@ -94,7 +95,7 @@ class UserService {
 	async getMenus(){
 		return {menuData:[
 			{
-				resource_id: 1, icon:'setting',name: '系统管理', path: '',locale:'system', children: [
+				resource_id: 1, icon:'setting',name: '系统管理', path: '/system',locale:'system', children: [
 					{ resource_id: 2, name: '用户管理',locale:'system.user', path: '/system/user', permission: [''] },
 					{ resource_id: 3, name: '角色管理',locale:'system.role', path: '/system/role' },
 					{ resource_id: 4, name: '菜单管理',locale:'system.menu', path: '/system/menu' },
@@ -140,6 +141,8 @@ class UserService {
 			sex,
 			mail,
 			mobile,
+			name_en,
+			name_cn,
 			password,
 			role,
 		} = params;
@@ -152,6 +155,8 @@ class UserService {
 			sex,
 			mail,
 			mobile,
+			name_en,
+			name_cn,
 			password,
 			role,
 		};
@@ -171,12 +176,16 @@ class UserService {
 			sex,
 			mail,
 			mobile,
+			name_en,
+			name_cn,
 			password,
 			role,
 		} = params;
 		let user = {
 			user_id: user_id,
 			role,
+			name_cn,
+			name_en
 		};
 		const user_exist = await m_user.getDetailsById(user_id);
 		if (!user_exist) {
@@ -189,7 +198,7 @@ class UserService {
 			user.mail = mail;
 		}
 		if (mobile) {
-			user.mobile;
+			user.mobile=mobile;
 		}
 		if (password) {
 			user.encrypt = randomString(16);
@@ -237,7 +246,7 @@ class UserService {
 		const {
 			user_id
 		} = params;
-		return await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state']);
+		return await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn','name_en','avatar','sex', 'mail', 'mobile', 'state']);
 	}
 
 	/**
@@ -272,7 +281,7 @@ class UserService {
 		if (order_by) {
 			order.unshift(order_by.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'sex', 'mail', 'mobile', 'state', 'create_time'];
+		let attr = ['user_id', 'user_name','name_cn','name_en','avatar', 'sex', 'mail', 'mobile', 'state', 'create_time'];
 		return await m_user.getList(attr, where, order);
 	}
 
@@ -290,12 +299,12 @@ class UserService {
 			order_by,
 		} = _params;
 
-		let attrs = ' user_id,user_name,sex,mail,mobile,state,create_time ';
+		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,create_time ';
 		let table = ' cs_user ';
 		let where = ' where 1=1 ';
 		if (!isNull(user_name)) {
 			user_name = user_name + '%';
-			where += ' and user_name like  :user_name ';
+			where += ' and (user_name like  :user_name or name_cn like :user_name or name_en like :user_name) ';
 		}
 		if (!isNull(mobile)) {
 			mobile = mobile + '%';

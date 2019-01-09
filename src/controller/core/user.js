@@ -273,6 +273,18 @@ class UserController extends BaseController {
 					values: [1, 2],
 					convertType: 'int'
 				},
+				name_cn: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
+					max: 50
+				},
+				name_en: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
+					max: 50
+				},
 				mail: {
 					type: 'email',
 					allowEmpty: true
@@ -713,6 +725,35 @@ class UserController extends BaseController {
 	async menus(ctx) {
 		try {
 			let result = await userService.getMenus(ctx.user_info);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 当前用户信息
+	 * @api {get} /core/user/current A13.当前用户信息
+	 * @apiName current
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 */
+	async current(ctx) {
+		try {
+			const params = {
+				user_id: ctx.user_info.user_id
+			};
+			console.log(params);
+			//接口参数验证规则
+			let result = await userService.details(params);
 			if (result) {
 				ctx.success(result);
 			} else {
