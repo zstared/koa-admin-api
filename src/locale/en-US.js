@@ -27,4 +27,7 @@ export default{
 	'2002002': 'Incorrect resource type',
 	'2002003': 'The Path field of the interface type cannot be empty.',
 	'2002004': 'Top resources can only be menu types',
+
+	//文件上传
+	'2003000':'File upload failed'
 };

@@ -15,7 +15,6 @@ const whiteList = [
  * @param {Koa.Context} ctx
  */
 export default async (ctx, next) => {
-	console.log(ctx.method);
 	if (ctx.method === 'GET') {
 		await next();
 	} else {

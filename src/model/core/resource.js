@@ -15,7 +15,7 @@ class ResourceModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return t_resource.findById(resource_id, option);
+		return await  t_resource.findById(resource_id, option);
 	}
 
 	/**
@@ -34,7 +34,7 @@ class ResourceModel {
 				[Op.ne]: resource_id
 			};
 		}
-		return t_resource.count({
+		return await  t_resource.count({
 			'where': where
 		});
 	}
@@ -44,7 +44,7 @@ class ResourceModel {
      * @param {object} resource
      */
 	async create(resource) {
-		return t_resource.create(resource);
+		return await  t_resource.create(resource);
 	}
 
 	/**
@@ -52,7 +52,7 @@ class ResourceModel {
      * @param {object} resource
      */
 	async update(resource) {
-		return t_resource.update(resource, {
+		return await  t_resource.update(resource, {
 			where: {
 				resource_id: resource.resource_id
 			}
@@ -64,7 +64,7 @@ class ResourceModel {
      * @param {*} resource_id 
      */
 	async delete(resource_id) {
-		return t_resource.destroy({
+		return await t_resource.destroy({
 			where: {
 				resource_id: resource_id
 			}

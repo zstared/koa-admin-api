@@ -1,13 +1,15 @@
 import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
+import path from 'path';
+import koaBody from 'koa-body';
 import cors from 'koa2-cors';
+import koaStatic from 'koa-static';
 //路由
 const router = require('./router/index.js');
 //配置
 import config from './config';
 
 //中间件
-import authentication from './middleware/authentication.js';
+import authentication from './middleware/authentication';
 import exception from './middleware/exception';
 import operationLog from './middleware/operation_log';
 
@@ -16,12 +18,19 @@ import { RCode } from './lib/enum.js';
 const app = new Koa();
 
 //挂载中间件
-app.use(cors());
+app.use(cors()); //跨域
+app.use(koaStatic(path.join(__dirname,'../public/static'))); //静态资源
+app.use(koaBody({
+	multipart:true,
+	formidable:{
+		multiples:true,
+		maxFileSize: config.uploadFileLimit //最大文件 支持10M
+	}
+}));
+app.use(exception);//异常捕获
+app.use(authentication);//鉴权
+app.use(operationLog);//操作日志
 
-app.use(bodyParser());
-app.use(exception);
-app.use(authentication);
-app.use(operationLog);
 
 //挂载路由
 app.use(router.routes());

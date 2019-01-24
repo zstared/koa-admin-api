@@ -3,6 +3,7 @@ import {
 	RCode
 } from '../../lib/enum';
 import m_user from '../../model/core/user';
+import m_file from '../../model/core/file';
 import {
 	md5,
 	randomString
@@ -57,7 +58,7 @@ class UserService {
 			}
 			await redis.set(config.session_token_prefix + user.user_name, token, config.session_ttl); //设置token 缓存
 			let result = {
-				user_id:user.user_id,
+				user_id: user.user_id,
 				user_name: user.user_name,
 				state: user.state,
 				sex: user.sex,
@@ -92,17 +93,42 @@ class UserService {
 	}
 
 	/**获取用户菜单*/
-	async getMenus(){
-		return {menuData:[
-			{
-				resource_id: 1, icon:'setting',name: '系统管理', path: '/system',locale:'system', children: [
-					{ resource_id: 2, name: '用户管理',locale:'system.user', path: '/system/user', permission: [''] },
-					{ resource_id: 3, name: '角色管理',locale:'system.role', path: '/system/role' },
-					{ resource_id: 4, name: '菜单管理',locale:'system.menu', path: '/system/menu' },
-					{ resource_id: 5, name: '资源管理',locale:'system.resource', path: '/system/resource' },
+	async getMenus() {
+		return {
+			menuData: [{
+				resource_id: 1,
+				icon: 'setting',
+				name: '系统管理',
+				path: '/system',
+				locale: 'system',
+				children: [{
+					resource_id: 2,
+					name: '用户管理',
+					locale: 'system.user',
+					path: '/system/user',
+					permission: ['']
+				},
+				{
+					resource_id: 3,
+					name: '角色管理',
+					locale: 'system.role',
+					path: '/system/role'
+				},
+				{
+					resource_id: 4,
+					name: '菜单管理',
+					locale: 'system.menu',
+					path: '/system/menu'
+				},
+				{
+					resource_id: 5,
+					name: '资源管理',
+					locale: 'system.resource',
+					path: '/system/resource'
+				},
 				]
-			}
-		]};
+			}]
+		};
 	}
 
 	/**
@@ -180,12 +206,13 @@ class UserService {
 			name_cn,
 			password,
 			role,
+			avatar
 		} = params;
 		let user = {
-			user_id: user_id,
-			role,
+			user_id,
 			name_cn,
-			name_en
+			name_en,
+			avatar
 		};
 		const user_exist = await m_user.getDetailsById(user_id);
 		if (!user_exist) {
@@ -198,14 +225,28 @@ class UserService {
 			user.mail = mail;
 		}
 		if (mobile) {
-			user.mobile=mobile;
+			user.mobile = mobile;
+		}
+		if (role) {
+			user.role = role;
 		}
 		if (password) {
 			user.encrypt = randomString(16);
 			user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
 		}
 
-		let result = await m_user.update(user);
+		let result = await m_user.update(user, role ? true : false); //用户自己不能修改角色
+
+		//更新文件关联
+		if (result) {
+			if (user_exist.avatar != user.avatar) {
+				if (user_exist.avatar) {
+					m_file.updateFileByCode(user_exist.avatar, null, null);
+				}
+				m_file.updateFileByCode(user.avatar, user.user_id, 'cs_user');
+			}
+		}
+
 		return result;
 	}
 
@@ -246,7 +287,13 @@ class UserService {
 		const {
 			user_id
 		} = params;
-		return await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn','name_en','avatar','sex', 'mail', 'mobile', 'state']);
+		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state']);
+		if (user_info.avatar) {
+			let avatar_file = await m_file.getFileByCode(user_info.avatar);
+			user_info.dataValues.avatar_file = avatar_file;
+		}
+
+		return user_info;
 	}
 
 	/**
@@ -281,7 +328,7 @@ class UserService {
 		if (order_by) {
 			order.unshift(order_by.split('|'));
 		}
-		let attr = ['user_id', 'user_name','name_cn','name_en','avatar', 'sex', 'mail', 'mobile', 'state', 'create_time'];
+		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state', 'create_time'];
 		return await m_user.getList(attr, where, order);
 	}
 

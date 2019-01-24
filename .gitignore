@@ -6,3 +6,4 @@ dist/*
 apidoc
 apidoc/*
 node_modules/
+/public

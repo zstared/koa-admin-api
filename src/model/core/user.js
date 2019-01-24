@@ -18,7 +18,7 @@ class UserModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return t_user.findById(user_id, option);
+		return await t_user.findById(user_id, option);
 	}
 
 	/**
@@ -82,7 +82,7 @@ class UserModel {
 	/**
 	 * 修改用户
 	 * @param {*} user 
-	 * @param {Boolean} is_role
+	 * @param {Boolean} is_role 是否修改角色
 	 */
 	async update(user, is_role = true) {
 		const t = await db_common.transaction();

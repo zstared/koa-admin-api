@@ -16,7 +16,7 @@ class RoleModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return t_role.findById(role_id, option);
+		return await  t_role.findById(role_id, option);
 	}
 
 	/**
@@ -33,7 +33,7 @@ class RoleModel {
 				[Op.ne]: role_id
 			};
 		}
-		return t_role.count({
+		return await  t_role.count({
 			'where': where
 		});
 	}
@@ -43,7 +43,7 @@ class RoleModel {
 	 * @param {object} role
 	 */
 	async create(role) {
-		return t_role.create(role);
+		return await t_role.create(role);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 export const config = {
 
+	origin:'http://localhost:8081',
+
 	test_token:'123456',
 
 	/**设置 signed cookie 的密钥 */
@@ -19,6 +21,9 @@ export const config = {
 	session_key: 'sessionId',
 	/**过期时间 */
 	session_ttl: 60 * 60 * 24,
+	
+	/**上传文件限制  */
+	uploadFileLimit:5*1024*1024,
 
 	core:{
 		default_password:'abc123456',

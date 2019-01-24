@@ -194,7 +194,6 @@ class UserController extends BaseController {
 	async updatePassword(ctx) {
 		try {
 			const params = ctx.request.body;
-			console.log(params);
 			//接口参数验证规则
 			const validRule = {
 				user_name: {
@@ -347,6 +346,18 @@ class UserController extends BaseController {
 					type: 'string',
 					allowEmpty: true,
 					min: 4,
+					max: 50
+				},
+				name_cn: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
+					max: 50
+				},
+				name_en: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
 					max: 50
 				},
 				sex: {
@@ -751,7 +762,6 @@ class UserController extends BaseController {
 			const params = {
 				user_id: ctx.user_info.user_id
 			};
-			console.log(params);
 			//接口参数验证规则
 			let result = await userService.details(params);
 			if (result) {
@@ -764,6 +774,74 @@ class UserController extends BaseController {
 		}
 	}
 
+	/**
+	 * 修改当前用户信息
+	 * @api {get} /core/user/updateCurrent A14.修改当前用户信息
+	 * @apiName updateCurrent
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} user_id 用户id
+	 * @apiParam  {String} password 密码
+	 * @apiParam  {Number} sex 性别 1-男；2-女；
+	 * @apiParam  {String} mail 邮箱
+	 * @apiParam  {String} mobile 手机号码
+	 * @apiParam  {Number} role[] 角色ID[]
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     user_id : '1',
+	 *     password : '',
+	 *     sex : 1,
+	 *     mail : 'bruce@163.com',
+	 *     mobile :'13922889900',
+	 * }
+	 */
+	async updateCurrent(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				name_cn: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
+					max: 50
+				},
+				name_en: {
+					type: 'string',
+					allowEmpty: true,
+					min: 1,
+					max: 50
+				},
+				sex: {
+					type: 'enum',
+					values: [1, 2],
+					convertType: 'int',
+				},
+				mail: {
+					type: 'email',
+					allowEmpty: true
+				},
+				mobile: {
+					type: 'mobile',
+					allowEmpty: true
+				}
+			};
+			params.user_id=ctx.user_info.user_id;
+			parameterValidate.validate(validRule, params);
+			let result = await userService.update(params);
+			if (result) {
+				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
 }
 
 export default new UserController();

@@ -16,7 +16,7 @@ const whiteList = [
 export default async (ctx, next) => {
 
 	const url = ctx.url; //请求地址
-	const token = ctx.header['token']; //请求头中的token
+	const token = ctx.header['token']||ctx.query['token']; //请求头中的token 或 请求参数里token(文件下载用)
 	const language=ctx.header['language'];//请求的语言
 	if (whiteList.findIndex((item) => {
 		return item === url;

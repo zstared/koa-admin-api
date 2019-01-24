@@ -14,7 +14,7 @@ class LogModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return t_log.findById(log_id, option);
+		return await t_log.findById(log_id, option);
 	}
 
 	/**
@@ -22,7 +22,7 @@ class LogModel {
      * @param {object} role
      */
 	async create(role) {
-		return t_log.create(role);
+		return await t_log.create(role);
 	}
 
 	/**

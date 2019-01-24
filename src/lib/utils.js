@@ -1,8 +1,6 @@
 import crypto from 'crypto';
 
 
-
-
 /**
  * 转换日期格式
  * @param {DATE} date
