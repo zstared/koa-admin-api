@@ -212,3 +212,5 @@ export const getCurDateFormat = function () {
 	sec = sec < 10 ? '0' + sec : sec;
 	return '' + year + '-' + month + '-' + date + ' ' + hours + ':' + min + ':' + sec;
 };
+
+ 

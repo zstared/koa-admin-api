@@ -17,6 +17,11 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.STRING(100),
 			allowNull: false
 		},
+		password_strength: {
+			type: DataTypes.INTEGER(4),
+			allowNull: true,
+			defaultValue: '1'
+		},
 		name_cn: {
 			type: DataTypes.STRING(50),
 			allowNull: true

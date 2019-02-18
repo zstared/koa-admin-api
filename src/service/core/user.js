@@ -151,11 +151,34 @@ class UserService {
 		}
 
 		const encrypt = randomString(16); //密码加盐
-		let result = await m_user.updatePassword(user.user_id, md5(new_password + encrypt), encrypt);
-		return result[0];
-
+		const password_strength=this._checkPwdStrength(new_password);
+		let result = await m_user.updatePassword(user.user_id, md5(new_password + encrypt), encrypt,password_strength);
+		if(result){
+			return {password_strength:password_strength};
+		}
+		return false;
 	}
 
+	/**
+	 * 检测密码强度 1-弱；2-中；3-强
+	 * @param {string} password 
+	 */
+	_checkPwdStrength(password) {
+		const upper = /[A-Z]+/.test(password); //包含大写字母
+		const number = /\d+/.test(password); //包含数值
+		const length6 = /.{6}/.test(password); //长度不少于6
+		const length8 = /.{8}/.test(password); //长度不少于8
+		const special = /[^\w\s]+/.test(password); //饱含特殊字符
+
+		if ((upper && number && length8 && special) || (upper && length8 && special)) {
+			return 3;
+		}
+		if ((upper && number && length6 && special) || (upper && length6 && special) || (upper && length6 && number) || (upper && number && special) || length8) {
+			return 2;
+		}
+		return 1;
+
+	}
 
 	/**
 	 * 新增用户
@@ -188,6 +211,7 @@ class UserService {
 		};
 		user.encrypt = randomString(16);
 		user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
+		user.password_strength=this._checkPwdStrength(user.password);
 		let result = await m_user.create(user);
 		return result;
 	}
@@ -233,6 +257,7 @@ class UserService {
 		if (password) {
 			user.encrypt = randomString(16);
 			user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
+			user.password_strength=this._checkPwdStrength(user.password);
 		}
 
 		let result = await m_user.update(user, role ? true : false); //用户自己不能修改角色
@@ -287,7 +312,7 @@ class UserService {
 		const {
 			user_id
 		} = params;
-		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state']);
+		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength']);
 		if (user_info.avatar) {
 			let avatar_file = await m_file.getFileByCode(user_info.avatar);
 			user_info.dataValues.avatar_file = avatar_file;
@@ -328,7 +353,7 @@ class UserService {
 		if (order_by) {
 			order.unshift(order_by.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state', 'create_time'];
+		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength', 'create_time'];
 		return await m_user.getList(attr, where, order);
 	}
 
@@ -346,7 +371,7 @@ class UserService {
 			order_by,
 		} = _params;
 
-		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,create_time ';
+		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,password_strength,create_time ';
 		let table = ' cs_user ';
 		let where = ' where 1=1 ';
 		if (!isNull(user_name)) {

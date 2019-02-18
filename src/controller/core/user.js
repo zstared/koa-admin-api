@@ -215,7 +215,7 @@ class UserController extends BaseController {
 			parameterValidate.validate(validRule, params);
 			let result = await userService.updatePassword(params);
 			if (result) {
-				ctx.success();
+				ctx.success(result);
 			} else {
 				ctx.error();
 			}
@@ -542,15 +542,18 @@ class UserController extends BaseController {
 			const validRule = {
 				user_name: {
 					allowEmpty: true,
-					type: 'string'
+					type: 'string',
+					required:false,
 				},
 				mobile: {
 					allowEmpty: true,
-					type: 'string'
+					type: 'string',
+					required:false,
 				},
 				state: {
 					allowEmpty: true,
 					type: 'string',
+					required:false,
 				},
 				order_by: {
 					required: false,

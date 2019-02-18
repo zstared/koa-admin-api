@@ -39,10 +39,11 @@ class UserModel {
 	}
 
 	/**修改用户密码 */
-	async updatePassword(user_id, password, encrypt) {
+	async updatePassword(user_id, password, encrypt,strength) {
 		return await t_user.update({
 			password: password,
-			encrypt: encrypt
+			encrypt: encrypt,
+			password_strength:strength
 		}, {
 			where: {
 				user_id
