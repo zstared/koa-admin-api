@@ -330,7 +330,7 @@ class UserService {
 			user_name,
 			mobile,
 			state,
-			order_by
+			sorter
 		} = params;
 		let where = {};
 		if (!isNull(user_name)) {
@@ -350,10 +350,10 @@ class UserService {
 			['is_system', 'desc'],
 			['create_time']
 		]; //排序
-		if (order_by) {
-			order.unshift(order_by.split('|'));
+		if (sorter) {
+			order.unshift(sorter.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength', 'create_time'];
+		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength', 'create_time','is_system'];
 		return await m_user.getList(attr, where, order);
 	}
 
@@ -368,10 +368,10 @@ class UserService {
 			user_name,
 			mobile,
 			state,
-			order_by,
+			sorter,
 		} = _params;
 
-		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,password_strength,create_time ';
+		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,password_strength,create_time,is_system ';
 		let table = ' cs_user ';
 		let where = ' where 1=1 ';
 		if (!isNull(user_name)) {
@@ -386,8 +386,8 @@ class UserService {
 			where += ' and state=:state ';
 		}
 		let order = ' order by  is_system desc,create_time ';
-		if (!isNull(order_by)) {
-			order = `order by ${order_by.split('|').join(' ')} `;
+		if (!isNull(sorter)) {
+			order = `order by ${sorter.split('|').join(' ')} `;
 		}
 
 		let params = {

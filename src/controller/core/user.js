@@ -234,10 +234,12 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {String} user_name 用户名
+	 * @apiParam  {String} user_name 账号
 	 * @apiParam  {String} [password] 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
+	 * @apiParam  {String} name_cn 姓名
+	 * @apiParam  {String} name_en 英文名
 	 * @apiParam  {String} mobile 手机号码
 	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
@@ -291,10 +293,10 @@ class UserController extends BaseController {
 				mobile: {
 					type: 'mobile',
 				},
-				role: {
-					type: 'array',
-					min: 1
-				}
+				// role: {
+				// 	type: 'array',
+				// 	min: 1
+				// }
 			};
 			parameterValidate.validate(validRule, params);
 			let result = await userService.create(params);
@@ -322,6 +324,8 @@ class UserController extends BaseController {
 	 * @apiParam  {String} password 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
+	 * @apiParam  {String} name_cn 姓名
+	 * @apiParam  {String} name_en 英文名
 	 * @apiParam  {String} mobile 手机号码
 	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
@@ -437,7 +441,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 删除用户
-	 * @api {delete} /core/user/delete 7.删除用户
+	 * @api {post} /core/user/delete 7.删除用户
 	 * @apiName delete
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -519,13 +523,14 @@ class UserController extends BaseController {
 	 * @apiParam  {String} user_name 用户名
 	 * @apiParam  {Number} mobile 手机号码
 	 * @apiParam  {Number} state  状态0-正常；1-禁用
-	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.user_name 用户名
 	 * @apiSuccess  (Response) {String} data.mobile 手机号码
 	 * @apiSuccess  (Response) {Number} data.sex 性别1-男；2-女
 	 * @apiSuccess  (Response) {Number} data.state 状态；0-正常；1-禁用；2-删除
 	 * @apiSuccess  (Response) {String} data.mail 邮箱
 	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
+	 * @apiSuccess  (Response) {Number} data.is_system 是否为内置账号
 	 * @apiSuccessExample  {json} data :
 	 * {
 	 *     user_name : 'test',
@@ -555,7 +560,7 @@ class UserController extends BaseController {
 					type: 'string',
 					required:false,
 				},
-				order_by: {
+				sorter: {
 					required: false,
 					allowEmpty: true,
 					type: 'order',
@@ -588,13 +593,14 @@ class UserController extends BaseController {
 	 * @apiParam  {Number} state  状态0-正常；1-禁用
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
-	 * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.rows.user_name 用户名
 	 * @apiSuccess  (Response) {String} data.rows.mobile 手机号码
 	 * @apiSuccess  (Response) {Number} data.rows.sex 性别1-男；2-女
 	 * @apiSuccess  (Response) {Number} data.rows.state 状态；0-正常；1-禁用；2-删除
 	 * @apiSuccess  (Response) {String} data.rows.mail 邮箱
 	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
+	 * @apiSuccess  (Response) {Number} data.is_system 是否为内置账号
 	 * @apiSuccessExample  {json} data.rows :
 	 * {
 	 *     user_name : 'test',
@@ -611,15 +617,18 @@ class UserController extends BaseController {
 			const validRule = {
 				user_name: {
 					allowEmpty: true,
-					type: 'string'
+					type: 'string',
+					required: false,
 				},
 				mobile: {
 					allowEmpty: true,
-					type: 'string'
+					type: 'string',
+					required: false,
 				},
 				state: {
 					allowEmpty: true,
 					type: 'string',
+					required: false,
 				},
 				page_index: {
 					type: 'int',
@@ -631,7 +640,7 @@ class UserController extends BaseController {
 					convertType: 'int',
 					min: 1
 				},
-				order_by: {
+				sorter: {
 					required: false,
 					allowEmpty: true,
 					type: 'order',
@@ -660,7 +669,7 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {Number} user_id 用户ID
-	 * @apiParam  {[Number[]]} role[] 角色ID[]
+	 * @apiParam  {Number[]} role[] 角色ID[]
 	 */
 	async relateRole(ctx) {
 		try {
@@ -698,7 +707,7 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {Number} user_id 用户ID
-	 * @apiParam  {[Number[]]} resource_list[] 资源ID[]
+	 * @apiParam  {Number[]} resource_list[] 资源ID[]
 	 */
 	async relateResource(ctx) {
 		try {

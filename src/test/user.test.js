@@ -178,7 +178,7 @@ describe('/core/user', () => {
 				user_name: 'test',
 				mobile: '',
 				state: '',
-				order_by: 'mobile|desc'
+				sorter: 'mobile|desc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
@@ -197,7 +197,7 @@ describe('/core/user', () => {
 				state: '',
 				page_index: 1,
 				page_size: 20,
-				order_by: 'user_name|desc'
+				sorter: 'user_name|desc'
 			})
 			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);

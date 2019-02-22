@@ -176,7 +176,7 @@ class ResourceController extends BaseController {
 
 	/**
      * 删除资源
-     * @api {delete} /core/resource/delete 3.删除资源
+     * @api {post} /core/resource/delete 3.删除资源
      * @apiName delete
      * @apiGroup  resource
      * @apiVersion  0.1.0

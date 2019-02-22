@@ -80,7 +80,7 @@ describe('/core/role', () => {
 		it('get role list', async () => {
 			const query = qs.stringify({
 				role_name: 'role',
-				order_by: 'role_name|asc'
+				sorter: 'role_name|asc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
@@ -92,7 +92,7 @@ describe('/core/role', () => {
 		it('parameter error', async () => {
 			const query = qs.stringify({
 				role_name: 'role',
-				order_by: 'role_name'
+				sorter: 'role_name'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
@@ -107,7 +107,7 @@ describe('/core/role', () => {
 				role_name: 'role',
 				page_index: 1,
 				page_size: 20,
-				order_by: 'role_name|asc'
+				sorter: 'role_name|asc'
 			})
 			let res = await request.get(`${prefix}/pageList?${query}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);

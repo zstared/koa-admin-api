@@ -93,7 +93,7 @@ class RoleService {
 	async getList(params) {
 		const {
 			role_name,
-			order_by
+			sorter
 		} = params;
 		let where = {};
 		if (!isNull(role_name)) {
@@ -105,8 +105,8 @@ class RoleService {
 			['is_system', 'desc'],
 			['create_time']
 		]; //排序
-		if (order_by) {
-			order.unshift(order_by.split('|'));
+		if (sorter) {
+			order.unshift(sorter.split('|'));
 		}
 		let attr = ['role_id', 'role_name', 'role_desc', 'sort_no', 'is_system', 'create_time'];
 		return await m_role.getList(attr, where, order);
@@ -121,7 +121,7 @@ class RoleService {
 			page_index,
 			page_size,
 			role_name,
-			order_by,
+			sorter,
 		} = _params;
 
 		let attrs = ' role_id,role_name,role_desc,sort_no,is_system,create_time ';
@@ -132,8 +132,8 @@ class RoleService {
 			where += ' and role_name like  :role_name ';
 		}
 		let order = ' order by is_system desc,create_time ';
-		if (!isNull(order_by)) {
-			order = `order by ${order_by.split('|').join(' ')} `;
+		if (!isNull(sorter)) {
+			order = `order by ${sorter.split('|').join(' ')} `;
 		}
 		let params = {
 			page_index,

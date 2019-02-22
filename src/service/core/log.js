@@ -36,7 +36,7 @@ class LogService {
 			module,
 			action,
 			option_user,
-			order_by,
+			sorter,
 		} = _params;
 
 		let attrs = ' log_id,system,module,action,url,state,params,msg,option_user,option_ip ';
@@ -57,8 +57,8 @@ class LogService {
 			where += ' and option_user like  :option_user ';
 		}
 		let order = ' order by  option_time desc ';
-		if (!isNull(order_by)) {
-			order = `order by ${order_by.split('|').join(' ')} `;
+		if (!isNull(sorter)) {
+			order = `order by ${sorter.split('|').join(' ')} `;
 		}
 		let params = {
 			page_index,

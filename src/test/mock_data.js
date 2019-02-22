@@ -3,7 +3,7 @@ const request = require('supertest')(config.app);
 const assert = require('power-assert');
 const Mock = require('mockjs');
 const program = require('commander');
-
+const reg_mobile = config.reg_mobile
 program
     .version('0.0.1')
     .option('-m, --module <string>', 'init module data')
@@ -103,8 +103,30 @@ class MockData {
                 let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
                     .expect('Content-Type', /json/).set('token', this.token).send(data).expect(200);
                 //assert.equal(res.body.code, 0, res.body.message | res.body.desc)
-                console.log(res.body.code,res.body.message,res.body.desc)
+                console.log(res.body.code, res.body.message, res.body.desc)
             }
+        }
+    }
+
+    /**
+     * 模拟user数据
+     */
+    async user() {
+        await this.init();
+
+        for (let i = 0; i < 100; i++) {
+
+            let data = Mock.mock({
+                'user_name': /^test\d{10}$/,
+                'sex|1': [1, 2],
+                'mobile': reg_mobile,
+                'name_cn': '@cname',
+                'name_en': '@name',
+                'mail': '@email',
+                'role': [1, 2]
+            })
+            let res = await request.post(`/core/user/create`).set('Accept', 'application/json')
+                .expect('Content-Type', /json/).set('token', this.token).send(data).expect(200);
         }
     }
 }
@@ -115,6 +137,9 @@ async function run() {
     switch (program.module) {
         case 'resource':
             await mockData.resource();
+            break;
+        case 'user':
+            await mockData.user();
             break;
         default:
             break;

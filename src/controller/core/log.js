@@ -56,7 +56,7 @@ class LogController extends BaseController {
      * @apiParam  {String} option_user 操作人
      * @apiParam  {String} page_index 页码
      * @apiParam  {String} page_size 页记录数
-     * @apiParam  {String} order_by 排序字段 '字段名|排序规则'
+     * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
      * @apiSuccess  (Response) {Number} data.rows.log_id 日志ID
      * @apiSuccess  (Response) {String} data.rows.system 所属系统
      * @apiSuccess  (Response) {String} data.rows.module 所属角色
@@ -98,7 +98,7 @@ class LogController extends BaseController {
 				convertType: 'int',
 				min: 1
 			},
-			order_by: {
+			sorter: {
 				required: false,
 				allowEmpty: true,
 				type: 'order',

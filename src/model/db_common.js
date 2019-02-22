@@ -52,7 +52,7 @@ class DbCommon {
 		return {
 			rows: list,
 			count: count,
-			page_index: page_index,
+			page_index: count > (page_index * page_size)?page_index:1,
 			page_size: page_size,
 			is_paging: true,
 			is_more: count > (page_index * page_size)
