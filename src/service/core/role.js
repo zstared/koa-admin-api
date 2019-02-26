@@ -35,7 +35,7 @@ class RoleService {
 	}
 
 	/**
-	 * 修改用户
+	 * 修改角色
 	 * @param {*} params 
 	 */
 	async update(params) {
@@ -95,7 +95,11 @@ class RoleService {
 			role_name,
 			sorter
 		} = params;
-		let where = {};
+		let where = {
+			role_id: {
+				[Op.ne]: 1
+			}
+		};
 		if (!isNull(role_name)) {
 			where.role_name = {
 				[Op.like]: role_name + '%'
@@ -152,11 +156,14 @@ class RoleService {
 			role_id,
 			resource_list
 		} = resource_role;
-		let list=[];
-		for(let resource_id of resource_list){
-			list.push({role_id:role_id,resource_id:resource_id});
+		let list = [];
+		for (let resource_id of resource_list) {
+			list.push({
+				role_id: role_id,
+				resource_id: resource_id
+			});
 		}
-		return await m_role.relateResource(role_id,list);
+		return await m_role.relateResource(role_id, list);
 	}
 }
 

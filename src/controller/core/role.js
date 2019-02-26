@@ -185,11 +185,13 @@ class RoleController extends BaseController {
 	 * @apiUse  ResultSuccessList
 	 * @apiParam  {String} role_name 用户名
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
+	 * @apiParam  (Response) {Number} data.role_id 角色ID
 	 * @apiSuccess  (Response) {String} data.role_name 角色名称
 	 * @apiSuccess  (Response) {String} data.role_desc 角色描述
 	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
 	 * @apiSuccessExample  {json} data :
 	 * {
+	 *     role_id : 1,
 	 *     role_name : 'test',
 	 *     role_desc : '角色描述',
 	 *     create_time : '2018-11-14T01:23:57.000Z',
@@ -200,6 +202,7 @@ class RoleController extends BaseController {
 		const validRule = {
 			role_name: {
 				allowEmpty: true,
+				required: false,
 				type: 'string',
 				max: 50
 			},
@@ -232,11 +235,13 @@ class RoleController extends BaseController {
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
+	 * @apiParam  (Response) {Number} data.role_id 角色ID
 	 * @apiSuccess  (Response) {String} data.rows.role_name 角色名称
 	 * @apiSuccess  (Response) {String} data.rows.role_desc 角色描述
 	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
 	 * @apiSuccessExample  {json} data.rows :
 	 * {
+     *     role_id : 1,
 	 *     role_name : 'test',
 	 *     role_desc : '角色描述',
 	 *     create_time : '2018-11-14T01:23:57.000Z',

@@ -63,7 +63,7 @@ class LogController extends BaseController {
      * @apiSuccess  (Response) {String} data.rows.action 请求动作
      * @apiSuccess  (Response) {String} data.rows.url 请求路径
      * @apiSuccess  (Response) {Object} data.rows.params 请求数据
-     * @apiSuccess  (Response) {Number} data.rows.state 状态 0-失败；1-成功
+     * @apiSuccess  (Response) {Number} data.rows.status 状态 0-失败；1-成功
      * @apiSuccess  (Response) {String} data.rows.message 返回信息
      * @apiSuccess  (Response) {String} data.rows.description 返回描述
      * @apiSuccess  (Response) {String} data.rows.option_user 操作人
@@ -77,7 +77,7 @@ class LogController extends BaseController {
      *     action : 'login',
      *     url : '/core/user/login',
      *     params : '{user_name:'test'}',
-     *     state : '1',
+     *     status : '1',
      *     message : '请求成功',
      *     description : '',
      *     option_user : 'test',

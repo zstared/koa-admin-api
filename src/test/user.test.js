@@ -30,7 +30,7 @@ describe('/core/user', () => {
 		const query = qs.stringify({
 			user_name: 'test',
 			mobile: '',
-			state: ''
+			status: ''
 		})
 		res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
 			.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
@@ -149,11 +149,11 @@ describe('/core/user', () => {
 	})
 	/**修改用户状态 */
 	describe(`POST ${prefix}/updateState`, () => {
-		it('update user state success', async () => {
+		it('update user status success', async () => {
 			let res = await request.post(`${prefix}/updateState`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'user_id': test_details.user_id,
-					'state': test_details.state ? 0 : 1
+					'status': test_details.status ? 0 : 1
 				}).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -177,7 +177,7 @@ describe('/core/user', () => {
 			const query = qs.stringify({
 				user_name: 'test',
 				mobile: '',
-				state: '',
+				status: '',
 				sorter: 'mobile|desc'
 			})
 			let res = await request.get(`${prefix}/list?${query}`).set('Accept', 'application/json')
@@ -194,7 +194,7 @@ describe('/core/user', () => {
 			const query = qs.stringify({
 				user_name: 'test',
 				mobile: '',
-				state: '',
+				status: '',
 				page_index: 1,
 				page_size: 20,
 				sorter: 'user_name|desc'

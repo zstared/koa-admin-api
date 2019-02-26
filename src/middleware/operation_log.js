@@ -40,9 +40,9 @@ export default async (ctx, next) => {
 		
 		await next();
 		if (ctx.body.code === 0) {
-			log.state = 1;
+			log.status = 1;
 		} else {
-			log.state = 0;
+			log.status = 0;
 			log.error_code = ctx.body.code;
 		}
 		log.message = ctx.body.message;

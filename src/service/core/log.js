@@ -39,7 +39,7 @@ class LogService {
 			sorter,
 		} = _params;
 
-		let attrs = ' log_id,system,module,action,url,state,params,msg,option_user,option_ip ';
+		let attrs = ' log_id,system,module,action,url,status,params,msg,option_user,option_ip ';
 		let table = ' cs_log ';
 		let where = ' where 1=1 ';
 		if (!isNull(system)) {

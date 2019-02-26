@@ -48,7 +48,7 @@ async function log(ctx, body) {
 		action: url[2],
 		path: ctx.url,
 		params: params,
-		state: 0,
+		status: 0,
 		error_code: body.code,
 		message: body.message,
 		description: body.desc,

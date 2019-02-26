@@ -17,6 +17,7 @@ export default{
 	'2000003': 'User has been disabled',
 	'2000004': 'User has logged out',
 	'2000005': 'Username or old password is incorrect',
+	'2000006': 'Phone number already exists',
 
 	// 角色
 	'2001000': 'Role name already exists',

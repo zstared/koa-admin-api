@@ -283,20 +283,22 @@ class UserController extends BaseController {
 				name_en: {
 					type: 'string',
 					allowEmpty: true,
+					required: false,
 					min: 1,
 					max: 50
 				},
 				mail: {
 					type: 'email',
+					required: false,
 					allowEmpty: true
 				},
 				mobile: {
 					type: 'mobile',
 				},
-				// role: {
-				// 	type: 'array',
-				// 	min: 1
-				// }
+				role: {
+					type: 'array',
+					itemType: 'number'
+				}
 			};
 			parameterValidate.validate(validRule, params);
 			let result = await userService.create(params);
@@ -347,6 +349,7 @@ class UserController extends BaseController {
 					convertType: 'int'
 				},
 				password: {
+					required: false,
 					type: 'string',
 					allowEmpty: true,
 					min: 4,
@@ -361,6 +364,7 @@ class UserController extends BaseController {
 				name_en: {
 					type: 'string',
 					allowEmpty: true,
+					required: false,
 					min: 1,
 					max: 50
 				},
@@ -371,7 +375,8 @@ class UserController extends BaseController {
 				},
 				mail: {
 					type: 'email',
-					allowEmpty: true
+					allowEmpty: true,
+					required: false,
 				},
 				mobile: {
 					type: 'mobile',
@@ -405,11 +410,11 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {Number} user_id 用户id
-	 * @apiParam  {Number} state 状态 0-正常；1-禁用；
+	 * @apiParam  {Number} status 状态 0-正常；1-禁用；
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     user_id : '1',
-	 *     state : 1,
+	 *     status : 1,
 	 * }
 	 */
 	async updateState(ctx) {
@@ -421,7 +426,7 @@ class UserController extends BaseController {
 					type: 'int',
 					convertType: 'int'
 				},
-				state: {
+				status: {
 					type: 'enum',
 					values: [0, 1],
 					convertType: 'int',
@@ -522,12 +527,12 @@ class UserController extends BaseController {
 	 * @apiUse  ResultSuccessList
 	 * @apiParam  {String} user_name 用户名
 	 * @apiParam  {Number} mobile 手机号码
-	 * @apiParam  {Number} state  状态0-正常；1-禁用
+	 * @apiParam  {Number} status  状态0-正常；1-禁用
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.user_name 用户名
 	 * @apiSuccess  (Response) {String} data.mobile 手机号码
 	 * @apiSuccess  (Response) {Number} data.sex 性别1-男；2-女
-	 * @apiSuccess  (Response) {Number} data.state 状态；0-正常；1-禁用；2-删除
+	 * @apiSuccess  (Response) {Number} data.status 状态；0-正常；1-禁用；2-删除
 	 * @apiSuccess  (Response) {String} data.mail 邮箱
 	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
 	 * @apiSuccess  (Response) {Number} data.is_system 是否为内置账号
@@ -536,7 +541,7 @@ class UserController extends BaseController {
 	 *     user_name : 'test',
 	 *     mobile : '13922882541',
 	 *     sex : 1,
-	 *     state : 0,
+	 *     status : 0,
 	 *     mail : 'test@163.com',
 	 *     create_time : '2018-11-14T01:23:57.000Z',
 	 * }
@@ -548,17 +553,17 @@ class UserController extends BaseController {
 				user_name: {
 					allowEmpty: true,
 					type: 'string',
-					required:false,
+					required: false,
 				},
 				mobile: {
 					allowEmpty: true,
 					type: 'string',
-					required:false,
+					required: false,
 				},
-				state: {
+				status: {
 					allowEmpty: true,
 					type: 'string',
-					required:false,
+					required: false,
 				},
 				sorter: {
 					required: false,
@@ -590,14 +595,14 @@ class UserController extends BaseController {
 	 * @apiUse  ResultSuccessPageList
 	 * @apiParam  {String} user_name 用户名
 	 * @apiParam  {Number} mobile 手机号码
-	 * @apiParam  {Number} state  状态0-正常；1-禁用
+	 * @apiParam  {Number} status  状态0-正常；1-禁用
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
 	 * @apiSuccess  (Response) {String} data.rows.user_name 用户名
 	 * @apiSuccess  (Response) {String} data.rows.mobile 手机号码
 	 * @apiSuccess  (Response) {Number} data.rows.sex 性别1-男；2-女
-	 * @apiSuccess  (Response) {Number} data.rows.state 状态；0-正常；1-禁用；2-删除
+	 * @apiSuccess  (Response) {Number} data.rows.status 状态；0-正常；1-禁用；2-删除
 	 * @apiSuccess  (Response) {String} data.rows.mail 邮箱
 	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
 	 * @apiSuccess  (Response) {Number} data.is_system 是否为内置账号
@@ -606,7 +611,7 @@ class UserController extends BaseController {
 	 *     user_name : 'test',
 	 *     mobile : '13922882541',
 	 *     sex : 1,
-	 *     state : 0,
+	 *     status : 0,
 	 *     mail : 'test@163.com',
 	 *     create_time : '2018-11-14T01:23:57.000Z',
 	 * }
@@ -625,7 +630,7 @@ class UserController extends BaseController {
 					type: 'string',
 					required: false,
 				},
-				state: {
+				status: {
 					allowEmpty: true,
 					type: 'string',
 					required: false,
@@ -842,11 +847,95 @@ class UserController extends BaseController {
 					allowEmpty: true
 				}
 			};
-			params.user_id=ctx.user_info.user_id;
+			params.user_id = ctx.user_info.user_id;
 			parameterValidate.validate(validRule, params);
 			let result = await userService.update(params);
 			if (result) {
 				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 判断账号是否存在
+	 * @api {get} /core/user/existAccount A15.判断账号是否存在
+	 * @apiName existAccount
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} user_name 账号
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     user_name : 'test',
+	 * }
+	 */
+	async existAccount(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				user_name: {
+					type: 'string',
+					min: 1,
+					max: 50
+				},
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.existAccount(params.user_name);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 判断手机号是否存在
+	 * @api {get} /core/user/existMobile A16.判断手机号是否存在
+	 * @apiName existMobile
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} mobile 手机号码
+	 * @apiParam  {Number} user_id? 用户ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     mobile : '13922882541',
+	 *     user_id: '2'
+	 * }
+	 */
+	async existMobile(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				mobile: {
+					type: 'mobile',
+				},
+				user_id: {
+					type: 'int',
+					convertType: 'int',
+					required: false
+				},
+
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.existMobile(params.mobile,params.user_id);
+			if (result) {
+				ctx.success(result);
 			} else {
 				ctx.error();
 			}

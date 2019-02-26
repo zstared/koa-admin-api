@@ -37,10 +37,10 @@ class UserService {
 			if (!user) {
 				throw new ApiError(RCode.core.C2000001, '用户名或密码有误');
 			}
-			if (user.state === 1) {
+			if (user.status === 1) {
 				throw new ApiError(RCode.core.C2000003, '用户已禁用');
 			}
-			if (user.state === 2) {
+			if (user.status === 2) {
 				throw new ApiError(RCode.core.C2000004, '用户已注销');
 			}
 			let token = md5(user.user_name + Date.now().toString());
@@ -60,7 +60,7 @@ class UserService {
 			let result = {
 				user_id: user.user_id,
 				user_name: user.user_name,
-				state: user.state,
+				status: user.status,
 				sex: user.sex,
 				mobile: user.mobile
 			};
@@ -102,30 +102,30 @@ class UserService {
 				path: '/system',
 				locale: 'system',
 				children: [{
-					resource_id: 2,
-					name: '用户管理',
-					locale: 'system.user',
-					path: '/system/user',
-					permission: ['']
-				},
-				{
-					resource_id: 3,
-					name: '角色管理',
-					locale: 'system.role',
-					path: '/system/role'
-				},
-				{
-					resource_id: 4,
-					name: '菜单管理',
-					locale: 'system.menu',
-					path: '/system/menu'
-				},
-				{
-					resource_id: 5,
-					name: '资源管理',
-					locale: 'system.resource',
-					path: '/system/resource'
-				},
+						resource_id: 2,
+						name: '用户管理',
+						locale: 'system.user',
+						path: '/system/user',
+						permission: ['']
+					},
+					{
+						resource_id: 3,
+						name: '角色管理',
+						locale: 'system.role',
+						path: '/system/role'
+					},
+					{
+						resource_id: 4,
+						name: '菜单管理',
+						locale: 'system.menu',
+						path: '/system/menu'
+					},
+					{
+						resource_id: 5,
+						name: '资源管理',
+						locale: 'system.resource',
+						path: '/system/resource'
+					},
 				]
 			}]
 		};
@@ -151,10 +151,12 @@ class UserService {
 		}
 
 		const encrypt = randomString(16); //密码加盐
-		const password_strength=this._checkPwdStrength(new_password);
-		let result = await m_user.updatePassword(user.user_id, md5(new_password + encrypt), encrypt,password_strength);
-		if(result){
-			return {password_strength:password_strength};
+		const password_strength = this._checkPwdStrength(new_password);
+		let result = await m_user.updatePassword(user.user_id, md5(new_password + encrypt), encrypt, password_strength);
+		if (result) {
+			return {
+				password_strength: password_strength
+			};
 		}
 		return false;
 	}
@@ -199,6 +201,10 @@ class UserService {
 		if (user) {
 			throw new ApiError(RCode.core.C2000000, '用户名已存在');
 		}
+		user = await m_user.getUserByMobile(mobile);
+		if (user) {
+			throw new ApiError(RCode.core.C2000006, '手机号码已存在');
+		}
 		user = {
 			user_name,
 			sex,
@@ -211,7 +217,7 @@ class UserService {
 		};
 		user.encrypt = randomString(16);
 		user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
-		user.password_strength=this._checkPwdStrength(user.password);
+		user.password_strength = this._checkPwdStrength(user.password);
 		let result = await m_user.create(user);
 		return result;
 	}
@@ -242,6 +248,10 @@ class UserService {
 		if (!user_exist) {
 			throw new ApiError(RCode.common.C1, '用户不存在');
 		}
+		let user_mobile = await m_user.getUserByMobile(mobile, user_id);
+		if (user_mobile) {
+			throw new ApiError(RCode.core.C2000006, '手机号码已存在');
+		}
 		if (sex != null) {
 			user.sex = sex;
 		}
@@ -257,7 +267,7 @@ class UserService {
 		if (password) {
 			user.encrypt = randomString(16);
 			user.password = md5((user.password ? user.password : config.core.default_password) + user.encrypt);
-			user.password_strength=this._checkPwdStrength(user.password);
+			user.password_strength = this._checkPwdStrength(user.password);
 		}
 
 		let result = await m_user.update(user, role ? true : false); //用户自己不能修改角色
@@ -282,11 +292,11 @@ class UserService {
 	async updateState(params) {
 		const {
 			user_id,
-			state,
+			status,
 		} = params;
 		let user = {
 			user_id,
-			state
+			status
 		};
 		let result = await m_user.update(user, false);
 		return result;
@@ -312,7 +322,7 @@ class UserService {
 		const {
 			user_id
 		} = params;
-		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength']);
+		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength']);
 		if (user_info.avatar) {
 			let avatar_file = await m_file.getFileByCode(user_info.avatar);
 			user_info.dataValues.avatar_file = avatar_file;
@@ -329,7 +339,7 @@ class UserService {
 		const {
 			user_name,
 			mobile,
-			state,
+			status,
 			sorter
 		} = params;
 		let where = {};
@@ -343,17 +353,17 @@ class UserService {
 				[Op.like]: mobile + '%'
 			};
 		}
-		if (!isNull(state)) {
-			where.state = state;
+		if (!isNull(status)) {
+			where.status = status;
 		}
 		let order = [
 			['is_system', 'desc'],
-			['create_time']
+			['create_time', 'desc']
 		]; //排序
 		if (sorter) {
 			order.unshift(sorter.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'state','password_strength', 'create_time','is_system'];
+		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength', 'create_time', 'is_system'];
 		return await m_user.getList(attr, where, order);
 	}
 
@@ -367,11 +377,11 @@ class UserService {
 			page_size,
 			user_name,
 			mobile,
-			state,
+			status,
 			sorter,
 		} = _params;
 
-		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,state,password_strength,create_time,is_system ';
+		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,status,password_strength,create_time,is_system ';
 		let table = ' cs_user ';
 		let where = ' where 1=1 ';
 		if (!isNull(user_name)) {
@@ -382,10 +392,10 @@ class UserService {
 			mobile = mobile + '%';
 			where += ' and mobile like  :mobile ';
 		}
-		if (!isNull(state)) {
-			where += ' and state=:state ';
+		if (!isNull(status)) {
+			where += ' and status=:status ';
 		}
-		let order = ' order by  is_system desc,create_time ';
+		let order = ' order by  is_system desc,create_time desc';
 		if (!isNull(sorter)) {
 			order = `order by ${sorter.split('|').join(' ')} `;
 		}
@@ -395,9 +405,15 @@ class UserService {
 			page_size,
 			user_name,
 			mobile,
-			state
+			status
 		};
-		return await m_user.getPageList(params, attrs, table, where, order);
+		let pageList = await m_user.getPageList(params, attrs, table, where, order);
+		if (pageList.count) {
+			for (let item of pageList.rows) {
+				item.role = await m_user.getRoleByUserId(item.user_id);
+			}
+		}
+		return pageList;
 	}
 
 	/**
@@ -429,6 +445,38 @@ class UserService {
 			});
 		}
 		return await m_user.relateResource(user_id, list);
+	}
+
+	/**
+	 * 判断账号是否存在 
+	 * @param {string} user_name 
+	 */
+	async existAccount(user_name) {
+		let user = await m_user.getUserByName(user_name);
+		if (user) {
+			return {
+				exist: true
+			};
+		}
+		return {
+			exist: false
+		};
+	}
+
+	/**
+	 * 判断手机号是否存在 
+	 * @param {string} mobile 
+	 */
+	async existMobile(mobile, user_id) {
+		let user = await m_user.getUserByMobile(mobile, user_id);
+		if (user) {
+			return {
+				exist: true
+			};
+		}
+		return {
+			exist: false
+		};
 	}
 }
 export default new UserService();

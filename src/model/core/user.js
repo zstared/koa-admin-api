@@ -1,5 +1,6 @@
 import sequelize from '../db_init';
 import db_common from '../db_common';
+const Op = sequelize.Op;
 const t_user = require('../table/cs_user')(sequelize, sequelize.Sequelize);
 const t_user_role = require('../table/cs_user_role')(sequelize, sequelize.Sequelize);
 const t_resource_user = require('../table/cs_resource_user')(sequelize, sequelize.Sequelize);
@@ -28,7 +29,10 @@ class UserModel {
 	 */
 	async getUserByName(user_name, password = '') {
 		let where = {
-			user_name: user_name
+			user_name: user_name,
+			status: {
+				[Op.ne]: 2
+			}
 		};
 		if (password) {
 			where.password = password;
@@ -38,12 +42,33 @@ class UserModel {
 		});
 	}
 
+	/**
+	 * 根据手机号码获取用户
+	 * @param {string} mobile 
+	 */
+	async getUserByMobile(mobile, user_id = '') {
+		let where = {
+			mobile: mobile,
+			status: {
+				[Op.ne]: 2
+			}
+		};
+		if (user_id) {
+			where.user_id = {
+				[Op.ne]: user_id
+			};
+		}
+		return await t_user.findOne({
+			where: where
+		});
+	}
+
 	/**修改用户密码 */
-	async updatePassword(user_id, password, encrypt,strength) {
+	async updatePassword(user_id, password, encrypt, strength) {
 		return await t_user.update({
 			password: password,
 			encrypt: encrypt,
-			password_strength:strength
+			password_strength: strength
 		}, {
 			where: {
 				user_id
@@ -160,7 +185,7 @@ class UserModel {
 	 */
 	async delete(user_id) {
 		let result = await t_user.update({
-			state: 2,
+			status: 2,
 		}, {
 			where: {
 				user_id: user_id,
@@ -223,6 +248,14 @@ class UserModel {
 			await t.rollback();
 			throw e;
 		}
+	}
+
+	/**
+	 * 根据用户ID获取角色
+	 * @param {*} user_id 
+	 */
+	async getRoleByUserId(user_id) {
+		return await db_common.query('select b.role_id,b.role_name from cs_user_role a join cs_role b on a.role_id=b.role_id where user_id=:user_id',{user_id:user_id});
 	}
 
 }
