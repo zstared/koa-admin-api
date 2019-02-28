@@ -3,6 +3,7 @@ import db_common from '../db_common';
 const Op = sequelize.Op;
 const t_role = require('../table/cs_role')(sequelize, sequelize.Sequelize);
 const t_resource_role = require('../table/cs_resource_role')(sequelize, sequelize.Sequelize);
+const t_user_role = require('../table/cs_user_role')(sequelize, sequelize.Sequelize);
 class RoleModel {
 	constructor() {}
 
@@ -63,9 +64,18 @@ class RoleModel {
 	 * @param {*} role_id 
 	 */
 	async delete(role_id) {
+		let role=await this.getDetailsById(role_id);
+		if(role.is_system) return false;
 		const t = await db_common.transaction();
 		try {
 			await t_resource_role.destroy({
+				where: {
+					role_id: role_id
+				},
+				transaction: t
+			});
+
+			await t_user_role.destroy({
 				where: {
 					role_id: role_id
 				},

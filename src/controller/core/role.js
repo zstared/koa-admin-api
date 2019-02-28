@@ -35,7 +35,7 @@ class RoleController extends BaseController {
 		const validRule = {
 			role_name: {
 				type: 'string',
-				min: 3,
+				min: 2,
 				max: 50
 			},
 			role_desc: {
@@ -89,7 +89,7 @@ class RoleController extends BaseController {
 			},
 			role_name: {
 				type: 'string',
-				min: 3,
+				min: 2,
 				max: 50
 			},
 			role_desc: {
@@ -266,6 +266,7 @@ class RoleController extends BaseController {
 				type: 'order',
 			},
 			role_name: {
+				required: false,
 				allowEmpty: true,
 				type: 'string',
 				max: 50
@@ -310,6 +311,51 @@ class RoleController extends BaseController {
 			let result = await roleService.relateResource(params);
 			if (result) {
 				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 判断角色是否存在
+	 * @api {get} /core/role/existRole 8.判断角色是否存在
+	 * @apiName existRole
+	 * @apiGroup  role
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} role_name 角色
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     role_name : 'test',
+	 *     role_id : '1',
+	 * }
+	 */
+	async existRole(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				role_name: {
+					type: 'string',
+					min: 1,
+					max: 50
+				},
+				role_id:{
+					type: 'int',
+					convertType: 'int',
+					required: false
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await roleService.existRole(params.role_name,params.role_id);
+			if (result) {
+				ctx.success(result);
 			} else {
 				ctx.error();
 			}

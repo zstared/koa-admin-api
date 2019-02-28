@@ -13,4 +13,5 @@ role.get('/details/:role_id', roleController.details);
 role.get('/list', roleController.list);
 role.get('/pageList', roleController.pageList);
 role.post('/relateResource', roleController.relateResource);
+role.post('/existRole', roleController.existRole);
 module.exports = role;

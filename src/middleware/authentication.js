@@ -52,7 +52,7 @@ export default async (ctx, next) => {
 	 * @param {*} code 
 	 * @param {*} msg 
 	 */
-	ctx.error = function (code = 100000, msg = '请求失败!') {
+	ctx.error = function (code = 1000000, msg = '请求失败!') {
 		ctx.body = {
 			code: code,
 			message: isCn(language)?msg:getLocale(language)[code],

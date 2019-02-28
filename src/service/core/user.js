@@ -97,7 +97,7 @@ class UserService {
 		return {
 			menuData: [{
 				resource_id: 1,
-				icon: 'setting',
+				icon: 'cog',
 				name: '系统管理',
 				path: '/system',
 				locale: 'system',

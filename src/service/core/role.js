@@ -60,7 +60,7 @@ class RoleService {
 			throw new ApiError(RCode.common.C1, '角色不存在,操作失败');
 		}
 		let result = await m_role.update(role);
-		return result[0];
+		return result;
 	}
 
 	/**
@@ -165,6 +165,24 @@ class RoleService {
 		}
 		return await m_role.relateResource(role_id, list);
 	}
+
+	/**
+	 * 判断角色是否存在 
+	 * @param {string} role_name 
+	 * @param {string} role_id
+	 */
+	async existRole(role_name, role_id) {
+		let user = await m_role.isExist(role_name, role_id);
+		if (user) {
+			return {
+				exist: true
+			};
+		}
+		return {
+			exist: false
+		};
+	}
+
 }
 
 export default new RoleService();
