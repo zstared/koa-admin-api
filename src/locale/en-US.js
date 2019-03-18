@@ -9,8 +9,7 @@ export default{
 	'1000004': 'Missing parameter or parameter error',
 	'1000005': 'Parameter type or length, range, etc., conditional check failure',
 
-	/** Core ****/
-	// 用户
+	// Core 用户
 	'2000000': 'Username already exists',
 	'2000001': 'Username or password is incorrect',
 	'2000002': 'Verification code error',
@@ -19,16 +18,18 @@ export default{
 	'2000005': 'Username or old password is incorrect',
 	'2000006': 'Phone number already exists',
 
-	// 角色
+	// Core 角色
 	'2001000': 'Role name already exists',
     
-	// 资源
+	// Core 资源
 	'2002000': 'Resource name already exists',
 	'2002001': 'Superior resources do not exist',
 	'2002002': 'Incorrect resource type',
-	'2002003': 'The Path field of the interface type cannot be empty.',
-	'2002004': 'Top resources can only be menu types',
+	'2002003': 'Path cannot be empty.',
+	'2002004': 'Top resources can only be module or menu types',
+	'2002005': 'Incorrect permission type',
+	'2002006': 'Resource code already exists',
 
-	//文件上传
+	// Core 文件上传
 	'2003000':'File upload failed'
 };

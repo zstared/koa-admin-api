@@ -31,18 +31,16 @@ class DbCommon {
 	 * @param {*} order  排序
 	 * @returns {object}
 	 */
-	async excutePagingProc(params, attrs, table, where, group = '',order = '') {
+	async excutePagingProc(params, attrs, table, where, group = '', order = '') {
 		const {
 			page_index,
 			page_size
 		} = params;
 		let sql = `call sp_paging(:page_index,:page_size,"${attrs}","${table} ${where}","${order}","${group}");`;
 		let option = {
-			type: sequelize.QueryTypes.SELECT
+			type: sequelize.QueryTypes.SELECT,
+			replacements: params,
 		};
-		if (params instanceof Object) {
-			option.replacements = params;
-		}
 		let data = await sequelize.query(sql, option);
 		let list = [];
 		for (let key in data[0]) {
@@ -52,7 +50,7 @@ class DbCommon {
 		return {
 			rows: list,
 			count: count,
-			page_index: count > ((page_index-1) * page_size)?page_index:1,
+			page_index: count > ((page_index - 1) * page_size) ? page_index : 1,
 			page_size: page_size,
 			is_paging: true,
 			is_more: count > (page_index * page_size)
@@ -63,7 +61,7 @@ class DbCommon {
 	 * 执行事务
 	 * @returns sequelize.Transaction
 	 */
-	async transaction(){
+	async transaction() {
 		return await sequelize.transaction();
 	}
 }

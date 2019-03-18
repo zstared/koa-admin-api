@@ -23,6 +23,7 @@ class ResourceController extends BaseController {
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
@@ -50,7 +51,8 @@ class ResourceController extends BaseController {
 				type: 'string',
 				min: 2,
 				max: 50,
-				allowEmpty:true
+				allowEmpty:true,
+				required:false,
 			},
 			resource_type: {
 				type: 'enum',
@@ -60,24 +62,35 @@ class ResourceController extends BaseController {
 			icon: {
 				type: 'string',
 				allowEmpty: true,
+				required:false,
 			},
 			path: {
 				type: 'string',
 				allowEmpty: true,
+				required:false,
 			},
 			parent_id: {
 				type: 'int',
 				convertType: 'int',
+				required:false,
 			},
 			is_visiable:{
 				type:'enum',
 				values:[0,1],
-				convertType:'int'
+				convertType:'int',
+				required:false,
 			},
 			sort_no: {
 				type: 'int',
 				convertType: 'int',
 				allowEmpty: true,
+				required:false,
+			},
+			permission_type:{
+				type:'enum',
+				values:[1,2,3,4,5,6,99],
+				convertType:'int',
+				required:false,
 			}
 		};
 		parameterValidate.validate(validRule, params);
@@ -103,6 +116,7 @@ class ResourceController extends BaseController {
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
@@ -135,7 +149,8 @@ class ResourceController extends BaseController {
 				type: 'string',
 				min: 2,
 				max: 50,
-				allowEmpty:true
+				allowEmpty:true,
+				required:false,
 			},
 			resource_type: {
 				type: 'enum',
@@ -145,24 +160,34 @@ class ResourceController extends BaseController {
 			icon: {
 				type: 'string',
 				allowEmpty: true,
+				required:false,
 			},
 			path: {
 				type: 'string',
 				allowEmpty: true,
+				required:false,
 			},
 			parent_id: {
 				type: 'int',
 				convertType: 'int',
+				required:false,
 			},
 			is_visiable:{
 				type:'enum',
 				values:[0,1],
-				convertType:'int'
+				convertType:'int',
+				required:false,
 			},
 			sort_no: {
 				type: 'int',
 				convertType: 'int',
-				allowEmpty: true,
+				required:false,
+			},
+			permission_type:{
+				type:'enum',
+				values:[1,2,3,4,5,6,99],
+				convertType:'int',
+				required:false,
 			}
 		};
 		parameterValidate.validate(validRule, params);
@@ -246,7 +271,8 @@ class ResourceController extends BaseController {
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
      * @apiSuccess  {String} resource_id 资源id
-     * @apiSuccess  {String} name 资源名称
+     * @apiSuccess  {String} resource_name 资源名称
+	 * @apiSuccess  {String} resource_code 资源编码
 	 * @apiSuccess  {String} locale 本地化配置(前端配置)
      * @apiSuccess  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
      * @apiSuccess  {String} icon 资源图标
@@ -257,7 +283,8 @@ class ResourceController extends BaseController {
      * @apiSuccessExample  {json} data :
      * {
      *     resource_id:20,
-     *     name : '新增资源',
+     *     resource_name : '新增资源',
+	 *     resource_code :'add',
 	 *     locale:'resource.add',
      *     resource_type:'3',
 	 *     icon:'cog',
@@ -269,6 +296,138 @@ class ResourceController extends BaseController {
      */
 	async treeList(ctx) {
 		let result = await resourceService.getTreeList();
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 判断资源名称是否存在
+	 * @api {get} /core/resource/existResource 6.判断资源名称是否存在
+	 * @apiName existResource
+	 * @apiGroup  resource
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} resource_name 资源名称
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     resource_name : 'test',
+	 *     resource_id : '1',
+	 * }
+	 */
+	async existResource(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				resource_name: {
+					type: 'string',
+					min: 1,
+					max: 50
+				},
+				parent_id:{
+					type: 'int',
+					convertType: 'int',
+				},
+				resource_id:{
+					type: 'int',
+					convertType: 'int',
+					required: false
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await resourceService.existResource(params.resource_name,params.parent_id,params.resource_id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 判断资源编码是否存在
+	 * @api {get} /core/resource/existResourceCode 7.判断资源编码是否存在
+	 * @apiName existResourceCode
+	 * @apiGroup  resource
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} resource_code 资源编码
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     resource_code : 'test',
+	 *     resource_id : '1',
+	 * }
+	 */
+	async existResourceCode(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				resource_code: {
+					type: 'string',
+					min: 1,
+					max: 50
+				},
+				parent_id:{
+					type: 'int',
+					convertType: 'int',
+				},
+				resource_id:{
+					type: 'int',
+					convertType: 'int',
+					required: false
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await resourceService.existResourceCode(params.resource_code,params.parent_id,params.resource_id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+	/**
+     * 获取资源树形下拉列表(只有模块与菜单)
+     * @api {get} /core/resource/treeDropList 8.获取资源树形下拉列表(只有模块与菜单)
+     * @apiName treeDropList
+     * @apiGroup  resource
+     * @apiVersion  0.1.0
+     * 
+     * @apiUse  Header
+     * @apiUse  ResultError
+     * @apiUse  ResultSuccess
+     * @apiSuccess  {String} resource_id 资源id
+     * @apiSuccess  {String} resource_name 资源名称
+	 * @apiSuccess  {String} resource_code 资源编码
+	 * @apiSuccess  {String} locale 本地化配置(前端配置)
+     * @apiSuccess  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiSuccess  {Arrary} children 子级资源列表
+     * @apiSuccessExample  {json} data :
+     * {
+     *     resource_id:20,
+     *     resource_name : '新增资源',
+	 *     resource_code :'add',
+	 *     locale:'resource.add',
+     *     resource_type:'3',
+     *     children:[]
+     * }
+     */
+	async treeDropList(ctx) {
+		let result = await resourceService.getTreeDropList();
 		if (result) {
 			ctx.success(result);
 		} else {

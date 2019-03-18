@@ -1,11 +1,1 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-class BaseController {
-	constructor() {}
-}
-
-exports.default = BaseController;
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});class BaseController{constructor(){}}exports.default=BaseController;

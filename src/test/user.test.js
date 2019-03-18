@@ -103,7 +103,13 @@ describe('/core/user', () => {
 	/**新增用户 */
 	describe(`POST ${prefix}/create`, () => {
 		it('create user success', async () => {
-			let res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
+
+			let res = await request.post('/core/file/upload').expect('Content-Type', /json/).set('token', token)
+			.field('folder_name','banner')
+			.attach('file',__dirname+`/files/${Mock.Random.integer(1,4)}.jpg`)
+		    let file = res.body.data;
+
+			res = await request.post(`${prefix}/create`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_name': /^test\d{10}$/,
 					'sex|1': [1, 2],
@@ -111,6 +117,7 @@ describe('/core/user', () => {
 					'name_cn':'@cname',
 					'name_en':'@name',
 					'mail': '@email',
+					'avatar':file.code,
 					'role': [1, 2]
 				})).expect(200);
 			const body = res.body;
@@ -212,7 +219,7 @@ describe('/core/user', () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'user_id': test_details.user_id,
-					'resource_list|10-30': ['@integer(250, 300)']
+					'resource_list|1-5':['@integer(21, 28)']
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -221,7 +228,7 @@ describe('/core/user', () => {
 	/**删除用户 */
 	describe(`DELETE ${prefix}/delete`, () => {
 		it('delete user success', async () => {
-			let res = await request.delete(`${prefix}/delete`).set('Accept', 'application/json')
+			let res = await request.post(`${prefix}/delete`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'user_id': test_details.user_id
 				}).expect(200);

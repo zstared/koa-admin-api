@@ -235,7 +235,7 @@ class RoleController extends BaseController {
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
-	 * @apiParam  (Response) {Number} data.role_id 角色ID
+	 * @apiParam  (Response) {Number} data.rows.role_id 角色ID
 	 * @apiSuccess  (Response) {String} data.rows.role_name 角色名称
 	 * @apiSuccess  (Response) {String} data.rows.role_desc 角色描述
 	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间

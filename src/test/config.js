@@ -4,6 +4,6 @@ const config = {
     default_password: 'abc123456',
     reg_mobile:/^[1][345789][0-9]{9}$/,
     app:'localhost:8081',
-    language:'zh-tw',
+    language:'zh-cn',
 }
 module.exports = config;

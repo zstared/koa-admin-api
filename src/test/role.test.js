@@ -122,7 +122,7 @@ describe('/core/role', () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
 					'role_id': test_details.role_id,
-					'resource_list|10-30':['@integer(250, 300)']
+					'resource_list|1-5':['@integer(21, 28)']
 				})).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
@@ -131,7 +131,7 @@ describe('/core/role', () => {
 	/**删除角色 */
 	describe(`DELETE ${prefix}/delete`, () => {
 		it('delete role success', async () => {
-			let res = await request.delete(`${prefix}/delete`).set('Accept', 'application/json')
+			let res = await request.post(`${prefix}/delete`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
 					'role_id': test_details.role_id
 				}).expect(200);

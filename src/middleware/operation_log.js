@@ -39,14 +39,14 @@ export default async (ctx, next) => {
 		}
 		
 		await next();
-		if (ctx.body.code === 0) {
+		if (ctx.body && ctx.body.code === 0) {
 			log.status = 1;
 		} else {
 			log.status = 0;
-			log.error_code = ctx.body.code;
+			log.error_code = ctx.body ? ctx.body.code : 1000000;
 		}
-		log.message = ctx.body.message;
-		log.description = ctx.body.desc;
+		log.message = ctx.body?ctx.body.message:'';
+		log.description = ctx.body?ctx.body.desc:'';
 		m_log.create(log);
 	}
 

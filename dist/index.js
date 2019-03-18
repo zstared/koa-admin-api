@@ -1,6 +1,1 @@
-'use strict';
-
-require('babel-register');
-const server = require('./app.js');
-
-module.exports = server;
+'use strict';require('babel-register');const server=require('./app.js');module.exports=server;

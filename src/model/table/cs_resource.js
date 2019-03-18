@@ -20,6 +20,14 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.INTEGER(3).UNSIGNED,
 			allowNull: false
 		},
+		permission_type: {
+			type: DataTypes.INTEGER(4),
+			allowNull: true
+		},
+		permission_custom: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
 		icon: {
 			type: DataTypes.STRING(100),
 			allowNull: true
