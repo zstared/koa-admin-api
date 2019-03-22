@@ -363,6 +363,45 @@ class RoleController extends BaseController {
 			throw e;
 		}
 	}
+
+	/**
+	 * 获取角色权限
+	 * @api {get} /core/role/permisson 9.获取角色权限
+	 * @apiName current
+	 * @apiGroup  role
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     role_id: '2'
+	 * }
+	 */
+	async permission(ctx) {
+		try {
+			const params = ctx.request.query;
+			//接口参数验证规则
+			const validRule = {
+				role_id: {
+					type: 'int',
+					convertType: 'int'
+				},
+			};
+			parameterValidate.validate(validRule, params);
+			//接口参数验证规则
+			let result = await roleService.getPermission(params.role_id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
 	
 }
 

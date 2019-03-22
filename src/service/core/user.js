@@ -4,6 +4,8 @@ import {
 } from '../../lib/enum';
 import m_user from '../../model/core/user';
 import m_file from '../../model/core/file';
+import m_role from '../../model/core/role';
+import m_resource from '../../model/core/resource'
 import {
 	md5,
 	randomString
@@ -93,42 +95,45 @@ class UserService {
 	}
 
 	/**获取用户菜单*/
-	async getMenus() {
-		return {
-			menuData: [{
-				resource_id: 1,
-				icon: 'cogs',
-				name: '系统管理',
-				path: '/system',
-				locale: 'system',
-				children: [{
-					resource_id: 2,
-					name: '用户管理',
-					locale: 'system.user',
-					path: '/system/user',
-					permission: ['']
-				},
-				{
-					resource_id: 3,
-					name: '角色管理',
-					locale: 'system.role',
-					path: '/system/role'
-				},
-				{
-					resource_id: 4,
-					name: '菜单管理',
-					locale: 'system.menu',
-					path: '/system/menu'
-				},
-				{
-					resource_id: 5,
-					name: '资源管理',
-					locale: 'system.resource',
-					path: '/system/resource'
-				},
-				]
-			}]
-		};
+	async getMenus(user_id) {
+		let role_list = await m_user.getRoleByUserId(user_id);
+		let role_ids = role_list.map(item => item.role_id);
+		return await m_resource.getMenuList(role_ids, user_id);
+		// return {
+		// 	menuData: [{
+		// 		resource_id: 1,
+		// 		icon: 'cogs',
+		// 		name: '系统管理',
+		// 		path: '/system',
+		// 		locale: 'system',
+		// 		children: [{
+		// 			resource_id: 2,
+		// 			name: '用户管理',
+		// 			locale: 'system.user',
+		// 			path: '/system/user',
+		// 			permission: ['']
+		// 		},
+		// 		{
+		// 			resource_id: 3,
+		// 			name: '角色管理',
+		// 			locale: 'system.role',
+		// 			path: '/system/role'
+		// 		},
+		// 		{
+		// 			resource_id: 4,
+		// 			name: '菜单管理',
+		// 			locale: 'system.menu',
+		// 			path: '/system/menu'
+		// 		},
+		// 		{
+		// 			resource_id: 5,
+		// 			name: '资源管理',
+		// 			locale: 'system.resource',
+		// 			path: '/system/resource'
+		// 		},
+		// 		]
+		// 	}]
+		// };
 	}
 
 	/**
@@ -477,6 +482,22 @@ class UserService {
 		return {
 			exist: false
 		};
+	}
+
+	/**
+	 * 获取权限
+	 * @param {number} user_id
+	 */
+	async getPermission(user_id) {
+		let role_list = await m_user.getRoleByUserId(user_id);
+		let role_ids = role_list.map(item => item.role_id)
+
+		let user_per = await m_user.getPermissionByUserId(user_id);
+		let role_per = await m_role.getPermissionByRoleIds(role_ids)
+		return {
+			user: user_per && user_per.length > 0?user_per.map(item => item.resource_id): [],
+			role: role_per && role_per.length > 0?role_per.map(item => item.resource_id): [],
+		}
 	}
 }
 export default new UserService();

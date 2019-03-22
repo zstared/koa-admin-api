@@ -752,7 +752,7 @@ class UserController extends BaseController {
 	 */
 	async menus(ctx) {
 		try {
-			let result = await userService.getMenus(ctx.user_info);
+			let result=await userService.getMenus(ctx.user_info.user_id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -934,6 +934,45 @@ class UserController extends BaseController {
 			};
 			parameterValidate.validate(validRule, params);
 			let result = await userService.existMobile(params.mobile,params.user_id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 获取用户权限
+	 * @api {get} /core/user/permisson A17.获取用户权限
+	 * @apiName permisson
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     user_id: '2'
+	 * }
+	 */
+	async permission(ctx) {
+		try {
+			const params = ctx.request.query;
+			//接口参数验证规则
+			const validRule = {
+				user_id: {
+					type: 'int',
+					convertType: 'int'
+				},
+			};
+			parameterValidate.validate(validRule, params);
+			//接口参数验证规则
+			let result = await userService.getPermission(params.user_id);
 			if (result) {
 				ctx.success(result);
 			} else {

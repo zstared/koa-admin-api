@@ -255,7 +255,22 @@ class UserModel {
 	 * @param {*} user_id 
 	 */
 	async getRoleByUserId(user_id) {
-		return await db_common.query('select b.role_id,b.role_name from cs_user_role a join cs_role b on a.role_id=b.role_id where user_id=:user_id',{user_id:user_id});
+		return await db_common.query('select b.role_id,b.role_name from cs_user_role a join cs_role b on a.role_id=b.role_id where user_id=:user_id', {
+			user_id: user_id
+		});
+	}
+
+	/**
+	 * 获取用户权限
+	 * @param {Number} user_id 
+	 */
+	async getPermissionByUserId(user_id) {
+		return await t_resource_user.findAll({
+			attributes:['resource_id'],
+			where: {
+				user_id: user_id
+			}
+		})
 	}
 
 }

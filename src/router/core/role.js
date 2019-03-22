@@ -14,4 +14,5 @@ role.get('/list', roleController.list);
 role.get('/pageList', roleController.pageList);
 role.post('/relateResource', roleController.relateResource);
 role.post('/existRole', roleController.existRole);
+role.get('/permission', roleController.permission);
 module.exports = role;

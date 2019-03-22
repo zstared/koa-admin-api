@@ -183,6 +183,17 @@ class RoleService {
 		};
 	}
 
+	/**
+	 * 获取权限
+	 * @param {number} role_id
+	 */
+	async getPermission(role_id) {
+		let list=  await m_role.getPermissionByRoleId(role_id)
+		if(list&&list.length>0){
+			return list.map(item=>item.resource_id)
+		}
+		return []
+	}
 }
 
 export default new RoleService();

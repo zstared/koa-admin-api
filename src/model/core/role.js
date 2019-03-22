@@ -17,7 +17,7 @@ class RoleModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await  t_role.findById(role_id, option);
+		return await t_role.findById(role_id, option);
 	}
 
 	/**
@@ -34,7 +34,7 @@ class RoleModel {
 				[Op.ne]: role_id
 			};
 		}
-		return await  t_role.count({
+		return await t_role.count({
 			'where': where
 		});
 	}
@@ -64,8 +64,8 @@ class RoleModel {
 	 * @param {*} role_id 
 	 */
 	async delete(role_id) {
-		let role=await this.getDetailsById(role_id);
-		if(role.is_system) return false;
+		let role = await this.getDetailsById(role_id);
+		if (role.is_system) return false;
 		const t = await db_common.transaction();
 		try {
 			await t_resource_role.destroy({
@@ -152,5 +152,35 @@ class RoleModel {
 			throw e;
 		}
 	}
+
+	/**
+	 * 获取角色权限
+	 * @param {Number} role_id 
+	 */
+	async getPermissionByRoleId(role_id) {
+		return await t_resource_role.findAll({
+			attributes:['resource_id'],
+			where: {
+				role_id: role_id
+			}
+		})
+	}
+
+	/**
+	 * 获取角色权限
+	 * @param {Array} role_ids 
+	 */
+	async getPermissionByRoleIds(role_ids) {
+		return await t_resource_role.findAll({
+			attributes:['resource_id'],
+			where: {
+				role_id: {
+					[Op.in]: role_ids
+				}
+			}
+		})
+	}
+
+
 }
 export default new RoleModel();

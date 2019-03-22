@@ -134,15 +134,41 @@ class ResourceService {
 	 * 获取资源列表
 	 */
 	async getTreeList() {
-		let attrs = ['resource_id', 'resource_name', ['resource_id','key'], ['resource_name','title'],'resource_code', 'resource_type', 'parent_id', 'icon', 'path', 'sort_no', 'is_visiable', 'create_time', 'permission_type', 'permission_custom'];
+		let attrs = ['resource_id', 'resource_name', ['resource_id', 'key'],
+			['resource_name', 'title'], 'resource_code', 'resource_type', 'parent_id', 'icon', 'path', 'sort_no', 'is_visiable', 'create_time', 'permission_type', 'permission_custom'
+		];
 		return await m_resource.getTreeList(attrs);
+	}
+
+	/**
+	 * 获取权限资源
+	 */
+	async getTreePermissionList() {
+		let attrs = [
+			['resource_id', 'value'],
+			['resource_id', 'key'],
+			['resource_name', 'title'], 'resource_id', 'resource_code', 'resource_type', 'parent_id'
+		];
+		return await m_resource.getTreeList(attrs, {
+			resource_code: {
+				[Op.or]: {
+					[Op.ne]: 'resource',
+					[Op.eq]: null
+				},
+			}
+		});
+		// return await m_resource.getTreeList(attrs);
 	}
 
 	/**
 	 * 获取资源下拉列表
 	 */
 	async getTreeDropList() {
-		let attrs = [['resource_id','value'],['resource_id','key'], ['resource_name','title'],'resource_id', 'resource_code', 'resource_type'];
+		let attrs = [
+			['resource_id', 'value'],
+			['resource_id', 'key'],
+			['resource_name', 'title'], 'resource_id', 'resource_code', 'resource_type'
+		];
 		return await m_resource.getTreeList(attrs, {
 			resource_type: {
 				[Op.ne]: 3

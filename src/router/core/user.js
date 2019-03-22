@@ -23,4 +23,5 @@ user.get('/current', userController.current);
 user.post('/updateCurrent', userController.updateCurrent);
 user.post('/existAccount', userController.existAccount);
 user.post('/existMobile', userController.existMobile);
+user.get('/permission', userController.permission);
 module.exports=user;

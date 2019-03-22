@@ -22,7 +22,7 @@ class ResourceController extends BaseController {
      * @apiUse  ResultSuccess
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
-     * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiParam  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
 	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
@@ -115,7 +115,7 @@ class ResourceController extends BaseController {
      * @apiParam  {String} resource_id 资源id
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
-     * @apiParam  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiParam  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
 	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
@@ -274,7 +274,7 @@ class ResourceController extends BaseController {
      * @apiSuccess  {String} resource_name 资源名称
 	 * @apiSuccess  {String} resource_code 资源编码
 	 * @apiSuccess  {String} locale 本地化配置(前端配置)
-     * @apiSuccess  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiSuccess  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
      * @apiSuccess  {String} icon 资源图标
      * @apiSuccess  {String} path 资源路径（菜单路由、接口地址）
      * @apiSuccess  {int} parent_id 父级资源ID
@@ -410,11 +410,11 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiSuccess  {String} resource_id 资源id
-     * @apiSuccess  {String} resource_name 资源名称
+     * @apiSuccess  {String} key 资源id
+     * @apiSuccess  {String} title 资源名称
 	 * @apiSuccess  {String} resource_code 资源编码
 	 * @apiSuccess  {String} locale 本地化配置(前端配置)
-     * @apiSuccess  {Number} resource_type 资源类型1-菜单；2-权限；3-接口
+     * @apiSuccess  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
      * @apiSuccess  {Arrary} children 子级资源列表
      * @apiSuccessExample  {json} data :
      * {
@@ -428,6 +428,41 @@ class ResourceController extends BaseController {
      */
 	async treeDropList(ctx) {
 		let result = await resourceService.getTreeDropList();
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+     * 获取权限资源树形下拉列表
+     * @api {get} /core/resource/treePermissionList 9.获取权限资源树形下拉列表
+     * @apiName treePermissionList
+     * @apiGroup  resource
+     * @apiVersion  0.1.0
+     * 
+     * @apiUse  Header
+     * @apiUse  ResultError
+     * @apiUse  ResultSuccess
+     * @apiSuccess  {String} key 资源id
+     * @apiSuccess  {String} title 资源名称
+	 * @apiSuccess  {String} resource_code 资源编码
+	 * @apiSuccess  {String} locale 本地化配置(前端配置)
+     * @apiSuccess  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
+     * @apiSuccess  {Arrary} children 子级资源列表
+     * @apiSuccessExample  {json} data :
+     * {
+     *     key:20,
+     *     title : '新增资源',
+	 *     resource_code :'add',
+	 *     locale:'resource.add',
+     *     resource_type:'3',
+     *     children:[]
+     * }
+     */
+	async treePermissionList(ctx) {
+		let result = await resourceService.getTreePermissionList();
 		if (result) {
 			ctx.success(result);
 		} else {
