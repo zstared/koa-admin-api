@@ -163,7 +163,7 @@ class RoleModel {
 			where: {
 				role_id: role_id
 			}
-		})
+		});
 	}
 
 	/**
@@ -178,7 +178,7 @@ class RoleModel {
 					[Op.in]: role_ids
 				}
 			}
-		})
+		});
 	}
 
 

@@ -270,7 +270,7 @@ class UserModel {
 			where: {
 				user_id: user_id
 			}
-		})
+		});
 	}
 
 }

@@ -86,147 +86,10 @@ class UserController extends BaseController {
 		super();
 	}
 
-	/**
-	 * @api {post} /core/user/login 1.登录
-	 * @apiName login
-	 * @apiGroup  user
-	 * @apiVersion  0.1.0
-	 *
-	 * @apiParam  {String} user_name 用户名
-	 * @apiParam  {String} password 密码
-	 *
-	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
-	 * @apiSuccess  (Response) {String} data.token token
-	 * @apiParamExample  {Object} Request-Example:
-	 * {
-	 *     user_name : 'test',
-	 *     password : 'abc123'
-	 * }
-	 * @apiSuccessExample  {json} data :
-	 * {
-	 *     token : '0c461c4bb0d79ca8eef2bff810379fb3',
-	 * }
-	 *
-	 *
-	 */
-	async login(ctx) {
-		try {
-			const params = ctx.request.body;
-			//接口参数验证规则
-			const validRule = {
-				user_name: {
-					type: 'string',
-					min: 3,
-					max: 50
-				},
-				password: {
-					type: 'string',
-					min: 4,
-					max: 50
-				},
-			};
-			//验证接口参数
-			parameterValidate.validate(validRule, params);
-			let user = await userService.login(params);
-			ctx.success(user);
-		} catch (e) {
-			throw e;
-		}
-	}
-
-	/**
-	 * 
-	 * @api {post} /core/user/logout 2.退出、注销
-	 * @apiName logout
-	 * @apiGroup  user
-	 * @apiVersion  0.1.0
-	 * 
-	 * @apiUse  Header
-	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
-	 * @apiParam  {String} user_name 用户名
-	 * 
-	 */
-	async logout(ctx) {
-		try {
-			const params = ctx.request.body;
-			//接口参数验证规则
-			const validRule = {
-				user_name: {
-					type: 'string',
-					min: 3,
-					max: 50
-				},
-			};
-			parameterValidate.validate(validRule, params);
-			let result = await userService.logout(params);
-			if (result) {
-				ctx.success();
-			} else {
-				ctx.error();
-			}
-		} catch (e) {
-			throw e;
-		}
-	}
-
-	/**
-	 * 
-	 * @api {post} /core/user/updatePassword 3.修改密码
-	 * @apiName updatePassword
-	 * @apiGroup  user
-	 * @apiVersion  0.1.0
-	 * 
-	 * @apiUse  Header
-	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
-	 * @apiParam  {String} user_name 用户名
-	 * @apiParam  {String} old_password 旧密码
-	 * @apiParam  {String} new_password 新密码
-	 * @apiParamExample  {Object} Request-Example:
-	 * {
-	 *     user_name : 'test',
-	 *     old_password : 'abc123',
-	 *     new_password : '123abc'
-	 * }
-	 */
-	async updatePassword(ctx) {
-		try {
-			const params = ctx.request.body;
-			//接口参数验证规则
-			const validRule = {
-				user_name: {
-					type: 'string',
-					min: 3,
-					max: 50
-				},
-				old_password: {
-					type: 'string',
-					min: 4,
-					max: 50
-				},
-				new_password: {
-					type: 'string',
-					min: 4,
-					max: 50
-				},
-			};
-			parameterValidate.validate(validRule, params);
-			let result = await userService.updatePassword(params);
-			if (result) {
-				ctx.success(result);
-			} else {
-				ctx.error();
-			}
-		} catch (e) {
-			throw e;
-		}
-	}
 
 	/**
 	 * 新增用户
-	 * @api {post} /core/user/create 4.新增用户
+	 * @api {post} /core/user/create 1.新增用户
 	 * @apiName create
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -235,7 +98,7 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {String} user_name 账号
-	 * @apiParam  {String} [password] 密码
+	 * @apiParam  {String} password 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
 	 * @apiParam  {String} name_cn 姓名
@@ -314,7 +177,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 修改用户
-	 * @api {post} /core/user/update 5.修改用户
+	 * @api {post} /core/user/update 2.修改用户
 	 * @apiName update
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -401,7 +264,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 修改用户状态
-	 * @api {post} /core/user/updateState 6.修改用户状态
+	 * @api {post} /core/user/updateState 3.修改用户状态
 	 * @apiName updateState
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -445,8 +308,61 @@ class UserController extends BaseController {
 	}
 
 	/**
+	 * 
+	 * @api {post} /core/user/updatePassword 4.修改密码
+	 * @apiName updatePassword
+	 * @apiGroup  user
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {String} user_name 用户名
+	 * @apiParam  {String} old_password 旧密码
+	 * @apiParam  {String} new_password 新密码
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     user_name : 'test',
+	 *     old_password : 'abc123',
+	 *     new_password : '123abc'
+	 * }
+	 */
+	async updatePassword(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				user_name: {
+					type: 'string',
+					min: 3,
+					max: 50
+				},
+				old_password: {
+					type: 'string',
+					min: 4,
+					max: 50
+				},
+				new_password: {
+					type: 'string',
+					min: 4,
+					max: 50
+				},
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await userService.updatePassword(params);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
 	 * 删除用户
-	 * @api {post} /core/user/delete 7.删除用户
+	 * @api {post} /core/user/delete 5.删除用户
 	 * @apiName delete
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -484,7 +400,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 用户详情
-	 * @api {get} /core/user/details/:user_id 8.用户详情
+	 * @api {get} /core/user/details/:user_id 6.用户详情
 	 * @apiName details
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -517,7 +433,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 获取用户列表
-	 * @api {get} /core/user/list/ 9.获取用户列表
+	 * @api {get} /core/user/list/ 7.获取用户列表
 	 * @apiName list
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -585,7 +501,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 获取用户分页列表
-	 * @api {get} /core/user/pageList/ A10.获取用户分页列表
+	 * @api {get} /core/user/pageList/ 8.获取用户分页列表
 	 * @apiName pageList
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -665,7 +581,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 关联角色
-	 * @api {post} /core/user/relateRole A11.关联角色
+	 * @api {post} /core/user/relateRole 9.关联角色
 	 * @apiName relateRole
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -703,7 +619,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 关联资源
-	 * @api {post} /core/user/relateResource A12.关联资源
+	 * @api {post} /core/user/relateResource A10.关联资源
 	 * @apiName relateResource
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -740,32 +656,8 @@ class UserController extends BaseController {
 	}
 
 	/**
-	 * 获取用户菜单
-	 * @api {get} /core/user/menus A13.获取用户菜单
-	 * @apiName menus
-	 * @apiGroup  user
-	 * @apiVersion  0.1.0
-	 * 
-	 * @apiUse  Header
-	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
-	 */
-	async menus(ctx) {
-		try {
-			let result=await userService.getMenus(ctx.user_info.user_id);
-			if (result) {
-				ctx.success(result);
-			} else {
-				ctx.error();
-			}
-		} catch (e) {
-			throw e;
-		}
-	}
-
-	/**
 	 * 当前用户信息
-	 * @api {get} /core/user/current A13.当前用户信息
+	 * @api {get} /core/user/current A11.当前用户信息
 	 * @apiName current
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -780,9 +672,11 @@ class UserController extends BaseController {
 				user_id: ctx.user_info.user_id
 			};
 			//接口参数验证规则
-			let result = await userService.details(params);
-			if (result) {
-				ctx.success(result);
+			let user_info = {};
+			user_info.base = await userService.details(params);
+			if (user_info.base) {
+				user_info.menus = await userService.getMenus(params.user_id); //用户菜单
+				ctx.success(user_info);
 			} else {
 				ctx.error();
 			}
@@ -793,7 +687,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 修改当前用户信息
-	 * @api {get} /core/user/updateCurrent A14.修改当前用户信息
+	 * @api {get} /core/user/updateCurrent A12.修改当前用户信息
 	 * @apiName updateCurrent
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -862,7 +756,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 判断账号是否存在
-	 * @api {get} /core/user/existAccount A15.判断账号是否存在
+	 * @api {get} /core/user/existAccount A13.判断账号是否存在
 	 * @apiName existAccount
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -901,7 +795,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 判断手机号是否存在
-	 * @api {get} /core/user/existMobile A16.判断手机号是否存在
+	 * @api {get} /core/user/existMobile A14.判断手机号是否存在
 	 * @apiName existMobile
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -933,7 +827,7 @@ class UserController extends BaseController {
 
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await userService.existMobile(params.mobile,params.user_id);
+			let result = await userService.existMobile(params.mobile, params.user_id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -946,7 +840,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 获取用户权限
-	 * @api {get} /core/user/permisson A17.获取用户权限
+	 * @api {get} /core/user/permisson A15.获取用户权限
 	 * @apiName permisson
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0

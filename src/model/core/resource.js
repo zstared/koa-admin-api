@@ -164,17 +164,17 @@ class ResourceModel {
 			`, {
 			user_id: user_id,
 			role_id: role_ids.join(',')
-		})
+		});
 
 		let menu_list = [];
 		if (list && list.length > 0) {
-			menu_list = list.filter(item => item.parent_id == 0)
+			menu_list = list.filter(item => item.parent_id == 0);
 		}
 		for (let item of menu_list) {
 			item.locale = item.resource_code;
-			item.children = await this._getMenuChild(item.resource_id, list, item.resource_code)
+			item.children = await this._getMenuChild(item.resource_id, list, item.resource_code);
 		}
-		return menu_list
+		return menu_list;
 	}
 
 	/**
@@ -182,10 +182,10 @@ class ResourceModel {
 	 */
 	async _getMenuChild(parent_id, menu_list, parent_code) {
 		let child_list = [];
-		child_list = menu_list.filter(item => item.parent_id == parent_id)
+		child_list = menu_list.filter(item => item.parent_id == parent_id);
 		for (let item of child_list) {
 			item.locale = parent_code + '.' + item.resource_code;
-			item.children = await this._getMenuChild(item.resource_id, menu_list, item.resource_code)
+			item.children = await this._getMenuChild(item.resource_id, menu_list, item.resource_code);
 		}
 		return child_list;
 	}

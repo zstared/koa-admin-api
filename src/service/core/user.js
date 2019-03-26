@@ -5,7 +5,7 @@ import {
 import m_user from '../../model/core/user';
 import m_file from '../../model/core/file';
 import m_role from '../../model/core/role';
-import m_resource from '../../model/core/resource'
+import m_resource from '../../model/core/resource';
 import {
 	md5,
 	randomString
@@ -78,12 +78,9 @@ class UserService {
 
 	/**
 	 * 退出登录
-	 * @param {Object} params
+	 * @param {string} user_name
 	 */
-	async logout(params) {
-		const {
-			user_name
-		} = params;
+	async logout(user_name) {
 		const token = await redis.get(config.session_token_prefix + user_name);
 		if (token) {
 			await redis.del(config.session_user_prefix + token);
@@ -490,14 +487,14 @@ class UserService {
 	 */
 	async getPermission(user_id) {
 		let role_list = await m_user.getRoleByUserId(user_id);
-		let role_ids = role_list.map(item => item.role_id)
+		let role_ids = role_list.map(item => item.role_id);
 
 		let user_per = await m_user.getPermissionByUserId(user_id);
-		let role_per = await m_role.getPermissionByRoleIds(role_ids)
+		let role_per = await m_role.getPermissionByRoleIds(role_ids);
 		return {
 			user: user_per && user_per.length > 0?user_per.map(item => item.resource_id): [],
 			role: role_per && role_per.length > 0?role_per.map(item => item.resource_id): [],
-		}
+		};
 	}
 }
 export default new UserService();

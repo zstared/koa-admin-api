@@ -6,8 +6,6 @@ const user = new Router({
 	prefix: '/core/user'
 });
 
-user.post('/login', userController.login);
-user.post('/logout',userController.logout);
 user.post('/updatePassword',userController.updatePassword);
 user.post('/create',userController.create);
 user.post('/update',userController.update);
@@ -18,7 +16,6 @@ user.get('/list',userController.list);
 user.get('/pageList', userController.pageList);
 user.post('/relateRole', userController.relateRole);
 user.post('/relateResource', userController.relateResource);
-user.get('/menus', userController.menus);
 user.get('/current', userController.current);
 user.post('/updateCurrent', userController.updateCurrent);
 user.post('/existAccount', userController.existAccount);
