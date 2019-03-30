@@ -12,7 +12,7 @@ class LogController extends BaseController {
 
 	/**
      * 日志详情
-     * @api {get} /core/log/details/:log_id 2.日志详情
+     * @api {get} /core/log/details/:id 2.日志详情
      * @apiName details
      * @apiGroup  log 
      * @apiVersion  0.1.0
@@ -24,7 +24,7 @@ class LogController extends BaseController {
 	async details(ctx) {
 		const params = ctx.params;
 		const validRule = {
-			log_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			}
@@ -57,7 +57,7 @@ class LogController extends BaseController {
      * @apiParam  {String} page_index 页码
      * @apiParam  {String} page_size 页记录数
      * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
-     * @apiSuccess  (Response) {Number} data.rows.log_id 日志ID
+     * @apiSuccess  (Response) {Number} data.rows.id 日志ID
      * @apiSuccess  (Response) {String} data.rows.system 所属系统
      * @apiSuccess  (Response) {String} data.rows.module 所属角色
      * @apiSuccess  (Response) {String} data.rows.action 请求动作
@@ -71,7 +71,7 @@ class LogController extends BaseController {
      * @apiSuccess  (Response) {Date} data.rows.option_time 操作时间 
      * @apiSuccessExample  {json} data.rows :
      * {
-     *     log_id : '1',
+     *     id : '1',
      *     system : 'core',
      *     module : 'user',
      *     action : 'login',

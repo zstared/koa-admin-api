@@ -9,29 +9,29 @@ class RoleModel {
 
 	/**
 	 * 根据用户id获取角色
-	 * @param {string} role_id 
+	 * @param {string} id 
 	 * @param {array}  attr
 	 */
-	async getDetailsById(role_id, attr = null) {
+	async getDetailsById(id, attr = null) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_role.findById(role_id, option);
+		return await t_role.findById(id, option);
 	}
 
 	/**
 	 * 角色名称是否存在
 	 * @param {*} role_name 
-	 * @param {*} role_id 不包含的role_id
+	 * @param {*} id 不包含的role_id
 	 */
-	async isExist(role_name, role_id) {
+	async isExist(role_name, id) {
 		let where = {
 			role_name: role_name,
 		};
-		if (role_id) {
-			where.role_id = {
-				[Op.ne]: role_id
+		if (id) {
+			where.id = {
+				[Op.ne]: id
 			};
 		}
 		return await t_role.count({
@@ -54,37 +54,37 @@ class RoleModel {
 	async update(role) {
 		return t_role.update(role, {
 			where: {
-				role_id: role.role_id
+				id: role.id
 			}
 		});
 	}
 
 	/**
 	 * 删除角色
-	 * @param {*} role_id 
+	 * @param {*} id 
 	 */
-	async delete(role_id) {
-		let role = await this.getDetailsById(role_id);
+	async delete(id) {
+		let role = await this.getDetailsById(id);
 		if (role.is_system) return false;
 		const t = await db_common.transaction();
 		try {
 			await t_resource_role.destroy({
 				where: {
-					role_id: role_id
+					role_id: id
 				},
 				transaction: t
 			});
 
 			await t_user_role.destroy({
 				where: {
-					role_id: role_id
+					role_id: id
 				},
 				transaction: t
 			});
 
 			await t_role.destroy({
 				where: {
-					role_id: role_id,
+					id: id,
 					is_system: 0
 				},
 				transaction: t
@@ -133,15 +133,15 @@ class RoleModel {
 
 	/**
 	 * 关联资源（菜单、权限、接口)
-	 * @param {*} role_id 
+	 * @param {*} id 
 	 * @param {*} list 
 	 */
-	async relateResource(role_id, list) {
+	async relateResource(id, list) {
 		let t = await db_common.transaction();
 		try {
 			await t_resource_role.destroy({
 				where: {
-					role_id: role_id
+					role_id: id
 				}
 			});
 			await t_resource_role.bulkCreate(list);
@@ -155,13 +155,13 @@ class RoleModel {
 
 	/**
 	 * 获取角色权限
-	 * @param {Number} role_id 
+	 * @param {Number} id 
 	 */
-	async getPermissionByRoleId(role_id) {
+	async getPermissionByRoleId(id) {
 		return await t_resource_role.findAll({
 			attributes:['resource_id'],
 			where: {
-				role_id: role_id
+				role_id: id
 			}
 		});
 	}
@@ -170,15 +170,25 @@ class RoleModel {
 	 * 获取角色权限
 	 * @param {Array} role_ids 
 	 */
-	async getPermissionByRoleIds(role_ids) {
-		return await t_resource_role.findAll({
-			attributes:['resource_id'],
-			where: {
-				role_id: {
-					[Op.in]: role_ids
+	async getPermissionByRoleIds(role_ids,oauth=false) {
+		if(!oauth){
+			return await t_resource_role.findAll({
+				attributes:['resource_id'],
+				where: {
+					role_id: {
+						[Op.in]: role_ids
+					}
 				}
-			}
-		});
+			});
+		}else{
+			//用于鉴权
+			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.id  where role_id in (:role_id) and resource_type=3 ', {
+				role_id: role_ids.join(',')
+			});
+			permissions = permissions.map(item => item.path);
+			return permissions;
+		}
+
 	}
 
 

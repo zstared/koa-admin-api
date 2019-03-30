@@ -42,7 +42,7 @@ class ParameterValidate {
 	validate(rule, data) {
 		const result = parameter.validate(rule, data);
 		if (result) {
-			throw new ApiError(result[0].code == 'missing_field' ? RCode.common.C1000004: RCode.common.C1000005, result[0].field + ' ' + result[0].message);
+			throw new ApiError(result[0].code == 'missing_field' ? RCode.common.C1000005: RCode.common.C1000006, result[0].field + ' ' + result[0].message);
 		}
 	}
 

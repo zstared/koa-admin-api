@@ -13,10 +13,10 @@
     "rules": {
         "no-console": 0,
         "no-empty": "off",
-        "indent": [
-            "error",
-            "tab"
-        ],
+        // "indent": [
+        //     "error",
+        //     "tab"
+        // ],
         "linebreak-style": [
             "error",
             "unix"

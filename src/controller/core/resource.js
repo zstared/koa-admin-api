@@ -112,7 +112,7 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiParam  {String} resource_id 资源id
+     * @apiParam  {String} id 资源id
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
@@ -123,7 +123,7 @@ class ResourceController extends BaseController {
      * @apiParam  {Number} sort_no 排序
      * @apiParamExample  {Object} Request-Example:
      * {
-     *     resource_id:20,
+     *     id:20,
      *     resource_name : '新增资源',
 	 *     resource_code:'add',
      *     resource_type:'3',
@@ -136,7 +136,7 @@ class ResourceController extends BaseController {
 	async update(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
-			resource_id: {
+			id: {
 				type: 'int',
 				convertType:'int'
 			},
@@ -209,16 +209,16 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiParam  {Number} resource_id 资源ID
+     * @apiParam  {Number} id 资源ID
      * @apiParamExample  {Object} Request-Example:
      * {
-     *     resource_id:2,
+     *     id:2,
      * }
      */
 	async delete(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
-			resource_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			}
@@ -234,7 +234,7 @@ class ResourceController extends BaseController {
 
 	/**
      * 资源详情
-     * @api {get} /core/resource/details/:resource_id 4.资源详情
+     * @api {get} /core/resource/details/:id 4.资源详情
      * @apiName details
      * @apiGroup  resource
      * @apiVersion  0.1.0
@@ -246,7 +246,7 @@ class ResourceController extends BaseController {
 	async details(ctx) {
 		const params = ctx.params;
 		const validRule = {
-			resource_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			}
@@ -270,7 +270,7 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiSuccess  {String} resource_id 资源id
+     * @apiSuccess  {String} id 资源id
      * @apiSuccess  {String} resource_name 资源名称
 	 * @apiSuccess  {String} resource_code 资源编码
 	 * @apiSuccess  {String} locale 本地化配置(前端配置)
@@ -282,7 +282,7 @@ class ResourceController extends BaseController {
      * @apiSuccess  {Arrary} children 子级资源列表
      * @apiSuccessExample  {json} data :
      * {
-     *     resource_id:20,
+     *     id:20,
      *     resource_name : '新增资源',
 	 *     resource_code :'add',
 	 *     locale:'resource.add',
@@ -317,7 +317,7 @@ class ResourceController extends BaseController {
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     resource_name : 'test',
-	 *     resource_id : '1',
+	 *     id : '1',
 	 * }
 	 */
 	async existResource(ctx) {
@@ -334,14 +334,14 @@ class ResourceController extends BaseController {
 					type: 'int',
 					convertType: 'int',
 				},
-				resource_id:{
+				id:{
 					type: 'int',
 					convertType: 'int',
 					required: false
 				}
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await resourceService.existResource(params.resource_name,params.parent_id,params.resource_id);
+			let result = await resourceService.existResource(params.resource_name,params.parent_id,params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -366,7 +366,7 @@ class ResourceController extends BaseController {
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     resource_code : 'test',
-	 *     resource_id : '1',
+	 *     id : '1',
 	 * }
 	 */
 	async existResourceCode(ctx) {
@@ -383,14 +383,14 @@ class ResourceController extends BaseController {
 					type: 'int',
 					convertType: 'int',
 				},
-				resource_id:{
+				id:{
 					type: 'int',
 					convertType: 'int',
 					required: false
 				}
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await resourceService.existResourceCode(params.resource_code,params.parent_id,params.resource_id);
+			let result = await resourceService.existResourceCode(params.resource_code,params.parent_id,params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -418,7 +418,7 @@ class ResourceController extends BaseController {
      * @apiSuccess  {Arrary} children 子级资源列表
      * @apiSuccessExample  {json} data :
      * {
-     *     resource_id:20,
+     *     id:20,
      *     resource_name : '新增资源',
 	 *     resource_code :'add',
 	 *     locale:'resource.add',

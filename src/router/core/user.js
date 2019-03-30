@@ -11,7 +11,7 @@ user.post('/create',userController.create);
 user.post('/update',userController.update);
 user.post('/updateState',userController.updateState);
 user.post('/delete',userController.delete);
-user.get('/details/:user_id',userController.details);
+user.get('/details/:id',userController.details);
 user.get('/list',userController.list);
 user.get('/pageList', userController.pageList);
 user.post('/relateRole', userController.relateRole);

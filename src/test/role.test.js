@@ -11,7 +11,7 @@ describe('/core/role', () => {
 	let user_name = config.user_name
 	let password = config.password
 	let test_details = {
-		role_id: 0,
+		id: 0,
 		role_name: ''
 	}
 	/**运行前执行 */
@@ -54,7 +54,7 @@ describe('/core/role', () => {
 		it('update role success', async () => {
 			let res = await request.post(`${prefix}/update`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
-					'role_id': test_details.role_id,
+					'id': test_details.id,
 					'role_name': /^role\d{10}$/,
 					'role_desc': '@cparagraph(2)',
 					'sort_no|1-100': 100
@@ -67,11 +67,11 @@ describe('/core/role', () => {
 	/**角色详情 */
 	describe(`GET ${prefix}/details`, () => {
 		it('get role details', async () => {
-			let res = await request.get(`${prefix}/details/${test_details.role_id}`).set('Accept', 'application/json')
+			let res = await request.get(`${prefix}/details/${test_details.id}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
-			assert.equal(body.data.role_id, test_details.role_id);
+			assert.equal(body.data.id, test_details.id);
 		})
 	})
 
@@ -121,7 +121,7 @@ describe('/core/role', () => {
 		it('role relate resource success', async () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
-					'role_id': test_details.role_id,
+					'id': test_details.id,
 					'resource_list|1-5':['@integer(21, 28)']
 				})).expect(200);
 			const body = res.body;
@@ -133,7 +133,7 @@ describe('/core/role', () => {
 		it('delete role success', async () => {
 			let res = await request.post(`${prefix}/delete`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
-					'role_id': test_details.role_id
+					'id': test_details.id
 				}).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);

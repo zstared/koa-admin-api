@@ -13,7 +13,7 @@ class RedisClient {
 	}
 
 	/**
-     * 获取值
+     * 获取
      * @param {String} key 键
      */
 	async get(key) {
@@ -22,13 +22,33 @@ class RedisClient {
 	}
 
 	/**
-     * 设置键值
+     * 设置
      * @param {String} key -键
      * @param {String} value -值
      * @param {String} ex -过期时长 单位S 默认一天 
      */
 	async set(key, value, ex = 60 * 60 * 24) {
 		return await this.client.setAsync(key, value, 'EX', ex);
+	}
+
+	/**
+	 * 序列化设置 JSON.stringify
+      * @param {String} key -键
+      * @param {String} value -值
+      * @param {String} ex -过期时长 单位S 默认一天 
+	 */
+	async setSerializable(key, value, ex = 60 * 60 * 24) {
+		const serializable=JSON.stringify(value);
+		return await this.client.setAsync(key, serializable, 'EX', ex);
+	}
+
+	/**
+     * 序列化获取 JSON.parse
+     * @param {String} key 键
+     */
+	async getSerializable(key) {
+		let value = await this.client.getAsync(key);
+		return JSON.parse(value);
 	}
     
 	/**

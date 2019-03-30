@@ -40,22 +40,22 @@ class RoleService {
 	 */
 	async update(params) {
 		const {
-			role_id,
+			id,
 			role_name,
 			role_desc,
 			sort_no
 		} = params;
-		let is_exist = await m_role.isExist(role_name, role_id);
+		let is_exist = await m_role.isExist(role_name, id);
 		if (is_exist) {
 			throw new ApiError(RCode.core.C2010000, '角色名称已存在');
 		}
 		let role = {
-			role_id: role_id,
+			id: id,
 			role_name: role_name,
 			role_desc: role_desc,
 			sort_no: sort_no
 		};
-		const role_exist = await m_role.getDetailsById(role_id);
+		const role_exist = await m_role.getDetailsById(id);
 		if (!role_exist) {
 			throw new ApiError(RCode.common.C1, '角色不存在,操作失败');
 		}
@@ -69,9 +69,9 @@ class RoleService {
 	 */
 	async delete(params) {
 		const {
-			role_id
+			id
 		} = params;
-		let result = await m_role.delete(role_id);
+		let result = await m_role.delete(id);
 		return result;
 	}
 
@@ -81,9 +81,9 @@ class RoleService {
 	 */
 	async details(params) {
 		const {
-			role_id
+			id
 		} = params;
-		return await m_role.getDetailsById(role_id, ['role_id', 'role_name', 'role_desc']);
+		return await m_role.getDetailsById(id, ['id', 'role_name', 'role_desc']);
 	}
 
 	/**
@@ -96,7 +96,7 @@ class RoleService {
 			sorter
 		} = params;
 		let where = {
-			role_id: {
+			id: {
 				[Op.ne]: 1
 			}
 		};
@@ -112,7 +112,7 @@ class RoleService {
 		if (sorter) {
 			order.unshift(sorter.split('|'));
 		}
-		let attr = ['role_id', 'role_name', 'role_desc', 'sort_no', 'is_system', 'create_time'];
+		let attr = ['id', 'role_name', 'role_desc', 'sort_no', 'is_system', 'create_time'];
 		return await m_role.getList(attr, where, order);
 	}
 
@@ -128,7 +128,7 @@ class RoleService {
 			sorter,
 		} = _params;
 
-		let attrs = ' role_id,role_name,role_desc,sort_no,is_system,create_time ';
+		let attrs = ' id,role_name,role_desc,sort_no,is_system,create_time ';
 		let table = ' cs_role ';
 		let where = ' where 1=1 ';
 		if (!isNull(role_name)) {
@@ -153,26 +153,26 @@ class RoleService {
 	 */
 	async relateResource(resource_role) {
 		const {
-			role_id,
+			id,
 			resource_list
 		} = resource_role;
 		let list = [];
 		for (let resource_id of resource_list) {
 			list.push({
-				role_id: role_id,
+				role_id: id,
 				resource_id: resource_id
 			});
 		}
-		return await m_role.relateResource(role_id, list);
+		return await m_role.relateResource(id, list);
 	}
 
 	/**
 	 * 判断角色是否存在 
 	 * @param {string} role_name 
-	 * @param {string} role_id
+	 * @param {string} id
 	 */
-	async existRole(role_name, role_id) {
-		let user = await m_role.isExist(role_name, role_id);
+	async existRole(role_name, id) {
+		let user = await m_role.isExist(role_name, id);
 		if (user) {
 			return {
 				exist: true
@@ -185,10 +185,10 @@ class RoleService {
 
 	/**
 	 * 获取权限
-	 * @param {number} role_id
+	 * @param {number} id
 	 */
-	async getPermission(role_id) {
-		let list=  await m_role.getPermissionByRoleId(role_id);
+	async getPermission(id) {
+		let list=  await m_role.getPermissionByRoleId(id);
 		if(list&&list.length>0){
 			return list.map(item=>item.resource_id);
 		}

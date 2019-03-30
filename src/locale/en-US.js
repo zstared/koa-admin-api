@@ -5,9 +5,10 @@ export default{
 	'1000000': 'System Exception',
 	'1000001': 'Missing access token',
 	'1000002': 'User login has expired, please log in again',
-	'1000003': 'Request interface address error',
-	'1000004': 'Missing parameter or parameter error',
-	'1000005': 'Parameter type or length, range, etc., conditional check failure',
+	'1000003': 'User unauthorized',
+	'1000004': 'Request interface address error',
+	'1000005': 'Missing parameter or parameter error',
+	'1000006': 'Parameter type or length, range, etc., conditional check failure',
 
 	// Core 用户
 	'2000000': 'Username already exists',

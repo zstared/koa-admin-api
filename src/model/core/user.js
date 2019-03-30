@@ -10,16 +10,16 @@ class UserModel {
 
 	/**
 	 * 根据用户id获取用户
-	 * @param {string} user_id 
+	 * @param {string} id 
 	 * @param {string} password 
 	 * @param {array}  attr
 	 */
-	async getDetailsById(user_id, attr = null) {
+	async getDetailsById(id, attr = null) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_user.findById(user_id, option);
+		return await t_user.findById(id, option);
 	}
 
 	/**
@@ -46,16 +46,16 @@ class UserModel {
 	 * 根据手机号码获取用户
 	 * @param {string} mobile 
 	 */
-	async getUserByMobile(mobile, user_id = '') {
+	async getUserByMobile(mobile, id = '') {
 		let where = {
 			mobile: mobile,
 			status: {
 				[Op.ne]: 2
 			}
 		};
-		if (user_id) {
-			where.user_id = {
-				[Op.ne]: user_id
+		if (id) {
+			where.id = {
+				[Op.ne]: id
 			};
 		}
 		return await t_user.findOne({
@@ -64,14 +64,14 @@ class UserModel {
 	}
 
 	/**修改用户密码 */
-	async updatePassword(user_id, password, encrypt, strength) {
+	async updatePassword(id, password, encrypt, strength) {
 		return await t_user.update({
 			password: password,
 			encrypt: encrypt,
 			password_strength: strength
 		}, {
 			where: {
-				user_id
+				id
 			}
 		});
 	}
@@ -90,7 +90,7 @@ class UserModel {
 			let list_role = [];
 			for (let role_id of user.role) {
 				list_role.push({
-					user_id: user_new.user_id,
+					user_id: user_new.id,
 					role_id: role_id
 				});
 			}
@@ -115,7 +115,7 @@ class UserModel {
 		try {
 			await t_user.update(user, {
 				where: {
-					user_id: user.user_id
+					id: user.id
 				},
 				transaction: t
 			});
@@ -123,13 +123,13 @@ class UserModel {
 				//1.删除之前关联的角色
 				await t_user_role.destroy({
 					where: {
-						user_id: user.user_id
+						user_id: user.id
 					}
 				});
 				let list_role = [];
 				for (let role_id of user.role) {
 					list_role.push({
-						user_id: user.user_id,
+						user_id: user.id,
 						role_id: role_id
 					});
 				}
@@ -149,9 +149,9 @@ class UserModel {
 	/**
 	 * 关联角色
 	 * @param {*} user_id 
-	 * @param {*} lis_role 
+	 * @param {*} roles 
 	 */
-	async relateRole(user_id, lis_role) {
+	async relateRole(user_id, roles) {
 		const t = await db_common.transaction();
 		try {
 			//1.删除之前关联的角色
@@ -161,7 +161,7 @@ class UserModel {
 				}
 			});
 			let list_role = [];
-			for (let role_id of lis_role) {
+			for (let role_id of roles) {
 				list_role.push({
 					user_id: user_id,
 					role_id: role_id
@@ -181,14 +181,14 @@ class UserModel {
 
 	/**
 	 * 逻辑删除用户(只能删除非内置账号)
-	 * @param {*} user_id 
+	 * @param {*} id 
 	 */
-	async delete(user_id) {
+	async delete(id) {
 		let result = await t_user.update({
 			status: 2,
 		}, {
 			where: {
-				user_id: user_id,
+				id: id,
 				is_system: 0
 			}
 		});
@@ -255,22 +255,31 @@ class UserModel {
 	 * @param {*} user_id 
 	 */
 	async getRoleByUserId(user_id) {
-		return await db_common.query('select b.role_id,b.role_name from cs_user_role a join cs_role b on a.role_id=b.role_id where user_id=:user_id', {
+		return await db_common.query('select b.id,b.role_name from cs_user_role a join cs_role b on a.role_id=b.id where user_id=:user_id', {
 			user_id: user_id
 		});
 	}
 
 	/**
 	 * 获取用户权限
-	 * @param {Number} user_id 
+	 * @param {Number} id 
 	 */
-	async getPermissionByUserId(user_id) {
-		return await t_resource_user.findAll({
-			attributes:['resource_id'],
-			where: {
+	async getPermissionByUserId(user_id, oauth = false) {
+		if (!oauth) {
+			return await t_resource_user.findAll({
+				attributes: ['resource_id'],
+				where: {
+					user_id: user_id
+				}
+			});
+		}else{
+			//用于鉴权
+			let permissions = await db_common.query('SELECT b.path from cs_resource_user a join cs_resource b on a.resource_id=b.id  where user_id=:user_id and resource_type=3 ', {
 				user_id: user_id
-			}
-		});
+			});
+			permissions = permissions.map(item => item.path);
+			return permissions;
+		}
 	}
 
 }

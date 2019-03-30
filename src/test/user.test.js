@@ -12,7 +12,7 @@ describe('/core/user', () => {
 	let password = config.password
 	const default_password = config.default_password
 	let test_details = {
-		user_id: 0,
+		id: 0,
 		user_name: ''
 	}
 	/**运行前执行 */
@@ -129,7 +129,7 @@ describe('/core/user', () => {
 		it('update user success', async () => {
 			let res = await request.post(`${prefix}/update`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
-					'user_id': test_details.user_id,
+					'id': test_details.id,
 					'password': password,
 					'sex|1': [1, 2],
 					'mobile': reg_mobile,
@@ -147,7 +147,7 @@ describe('/core/user', () => {
 		it('relate role', async () => {
 			let res = await request.post(`${prefix}/relateRole`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
-					'user_id': test_details.user_id,
+					'id': test_details.id,
 					'role': [1, 2]
 				})).expect(200);
 			const body = res.body;
@@ -159,7 +159,7 @@ describe('/core/user', () => {
 		it('update user status success', async () => {
 			let res = await request.post(`${prefix}/updateState`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
-					'user_id': test_details.user_id,
+					'id': test_details.id,
 					'status': test_details.status ? 0 : 1
 				}).expect(200);
 			const body = res.body;
@@ -170,11 +170,11 @@ describe('/core/user', () => {
 	/**用户详情 */
 	describe(`GET ${prefix}/details`, () => {
 		it('get user details', async () => {
-			let res = await request.get(`${prefix}/details/${test_details.user_id}`).set('Accept', 'application/json')
+			let res = await request.get(`${prefix}/details/${test_details.id}`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);
-			assert.equal(body.data.user_id, test_details.user_id);
+			assert.equal(body.data.id, test_details.id);
 		})
 	})
 
@@ -218,7 +218,7 @@ describe('/core/user', () => {
 		it('user relate resource success', async () => {
 			let res = await request.post(`${prefix}/relateResource`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send(Mock.mock({
-					'user_id': test_details.user_id,
+					'id': test_details.id,
 					'resource_list|1-5':['@integer(21, 28)']
 				})).expect(200);
 			const body = res.body;
@@ -230,7 +230,7 @@ describe('/core/user', () => {
 		it('delete user success', async () => {
 			let res = await request.post(`${prefix}/delete`).set('Accept', 'application/json')
 				.expect('Content-Type', /json/).set('token', token).set('language',config.language).send({
-					'user_id': test_details.user_id
+					'id': test_details.id
 				}).expect(200);
 			const body = res.body;
 			assert.equal(body.code, 0, body.message + '|' + body.desc);

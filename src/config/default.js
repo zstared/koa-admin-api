@@ -22,6 +22,7 @@ export const config = {
 	/**过期时间 */
 	session_ttl: 60 * 60 * 24,
 	
+	
 	/**上传文件限制  */
 	uploadFileLimit:5*1024*1024,
 

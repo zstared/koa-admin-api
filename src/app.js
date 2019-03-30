@@ -3,6 +3,7 @@ import path from 'path';
 import koaBody from 'koa-body';
 import cors from 'koa2-cors';
 import koaStatic from 'koa-static';
+import boot from './boot';
 //路由
 const router = require('./router/index.js');
 //配置
@@ -40,6 +41,7 @@ app.use(async(ctx)=>{
 
 const server=app.listen(config.port, () => {
 	console.log(`WebAPI服务已启动!监听端口${config.port}...`);
+	boot.init();
 });
 
 module.exports=server;

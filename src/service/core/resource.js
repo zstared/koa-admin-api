@@ -70,7 +70,7 @@ class ResourceService {
 	 */
 	async update(params) {
 		const {
-			resource_id,
+			id,
 			resource_name,
 			resource_code,
 			resource_type,
@@ -80,16 +80,16 @@ class ResourceService {
 			path,
 			sort_no
 		} = params;
-		let is_exist = await m_resource.isExist(resource_name, parent_id, resource_id);
+		let is_exist = await m_resource.isExist(resource_name, parent_id, id);
 		if (is_exist) {
 			throw new ApiError(RCode.core.C2002000, '资源名称已存在');
 		}
-		let is_exist_code = await m_resource.isExistCode(resource_code, parent_id, resource_id);
+		let is_exist_code = await m_resource.isExistCode(resource_code, parent_id, id);
 		if (is_exist_code) {
 			throw new ApiError(RCode.core.C2002006, '资源编码已存在');
 		}
 		let resource = {
-			resource_id,
+			id,
 			resource_name,
 			resource_code,
 			resource_type,
@@ -99,12 +99,12 @@ class ResourceService {
 			icon,
 			sort_no
 		};
-		const role_exist = await m_resource.getDetailsById(resource_id);
+		const role_exist = await m_resource.getDetailsById(id);
 		if (!role_exist) {
 			throw new ApiError(RCode.common.C1, '资源不存在');
 		}
 		let result = await m_resource.update(resource);
-		return result[0];
+		return result;
 	}
 
 	/**
@@ -113,9 +113,9 @@ class ResourceService {
 	 */
 	async delete(params) {
 		const {
-			resource_id
+			id
 		} = params;
-		let result = await m_resource.delete(resource_id);
+		let result = await m_resource.delete(id);
 		return result;
 	}
 
@@ -125,16 +125,16 @@ class ResourceService {
 	 */
 	async details(params) {
 		const {
-			resource_id
+			id
 		} = params;
-		return await m_resource.getDetailsById(resource_id, ['resource_id', 'resource_name', 'resource_code', 'resource_type', 'icon', 'path', 'sort_no', 'parent_id', 'is_visiable', 'permission_type', 'permission_custom']);
+		return await m_resource.getDetailsById(id, ['id', 'resource_name', 'resource_code', 'resource_type', 'icon', 'path', 'sort_no', 'parent_id', 'is_visiable', 'permission_type', 'permission_custom']);
 	}
 
 	/**
 	 * 获取资源列表
 	 */
 	async getTreeList() {
-		let attrs = ['resource_id', 'resource_name', ['resource_id', 'key'],
+		let attrs = ['id', 'resource_name', ['id', 'key'],
 			['resource_name', 'title'], 'resource_code', 'resource_type', 'parent_id', 'icon', 'path', 'sort_no', 'is_visiable', 'create_time', 'permission_type', 'permission_custom'
 		];
 		return await m_resource.getTreeList(attrs);
@@ -145,9 +145,9 @@ class ResourceService {
 	 */
 	async getTreePermissionList() {
 		let attrs = [
-			['resource_id', 'value'],
-			['resource_id', 'key'],
-			['resource_name', 'title'], 'resource_id', 'resource_code', 'resource_type', 'parent_id'
+			['id', 'value'],
+			['id', 'key'],
+			['resource_name', 'title'], 'id', 'resource_code', 'resource_type', 'parent_id'
 		];
 		return await m_resource.getTreeList(attrs, {
 			resource_code: {
@@ -165,9 +165,9 @@ class ResourceService {
 	 */
 	async getTreeDropList() {
 		let attrs = [
-			['resource_id', 'value'],
-			['resource_id', 'key'],
-			['resource_name', 'title'], 'resource_id', 'resource_code', 'resource_type'
+			['id', 'value'],
+			['id', 'key'],
+			['resource_name', 'title'], 'id', 'resource_code', 'resource_type'
 		];
 		return await m_resource.getTreeList(attrs, {
 			resource_type: {
@@ -180,10 +180,10 @@ class ResourceService {
 	 * 判断资源名称是否存在 
 	 * @param {string} resource_name 
 	 * @param {number} parent_id
-	 * @param {number} resource_id
+	 * @param {number} id
 	 */
-	async existResource(resource_name, parent_id, resource_id) {
-		let user = await m_resource.isExist(resource_name, parent_id, resource_id);
+	async existResource(resource_name, parent_id, id) {
+		let user = await m_resource.isExist(resource_name, parent_id, id);
 		if (user) {
 			return {
 				exist: true
@@ -198,10 +198,10 @@ class ResourceService {
 	 * 判断资源编码是否存在 
 	 * @param {string} resource_code
 	 * @param {number} parent_id
-	 * @param {number} resource_id
+	 * @param {number} id
 	 */
-	async existResourceCode(resource_code, parent_id, resource_id) {
-		let user = await m_resource.isExistCode(resource_code, parent_id, resource_id);
+	async existResourceCode(resource_code, parent_id, id) {
+		let user = await m_resource.isExistCode(resource_code, parent_id, id);
 		if (user) {
 			return {
 				exist: true

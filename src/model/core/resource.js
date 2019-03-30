@@ -8,31 +8,31 @@ class ResourceModel {
 
 	/**
 	 * 根据资源id获取资源
-	 * @param {string} resource_id 
+	 * @param {string} id 
 	 * @param {array}  attr
 	 */
-	async getDetailsById(resource_id, attr = null, ) {
+	async getDetailsById(id, attr = null, ) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_resource.findById(resource_id, option);
+		return await t_resource.findById(id, option);
 	}
 
 	/**
 	 * 资源名称是否存在 在同层级内
 	 * @param {*} resource_name 
 	 * @param {*} parent_id 
-	 * @param {*} resource_id 不包含的自己
+	 * @param {*} id 不包含的自己
 	 */
-	async isExist(resource_name, parent_id, resource_id = null) {
+	async isExist(resource_name, parent_id, id = null) {
 		let where = {
 			resource_name: resource_name,
 			parent_id: parent_id
 		};
-		if (resource_id) {
-			where.resource_id = {
-				[Op.ne]: resource_id
+		if (id) {
+			where.id = {
+				[Op.ne]: id
 			};
 		}
 		return await t_resource.count({
@@ -44,16 +44,16 @@ class ResourceModel {
 	 * 资源编码是否存在 在同层级内
 	 * @param {*} resource_code
 	 * @param {*} parent_id 
-	 * @param {*} resource_id 不包含的自己
+	 * @param {*} id 不包含的自己
 	 */
-	async isExistCode(resource_code, parent_id, resource_id = null) {
+	async isExistCode(resource_code, parent_id, id = null) {
 		let where = {
 			resource_code: resource_code,
 			parent_id: parent_id
 		};
-		if (resource_id) {
-			where.resource_id = {
-				[Op.ne]: resource_id
+		if (id) {
+			where.id = {
+				[Op.ne]: id
 			};
 		}
 		return await t_resource.count({
@@ -76,23 +76,23 @@ class ResourceModel {
 	async update(resource) {
 		return await t_resource.update(resource, {
 			where: {
-				resource_id: resource.resource_id
+				id: resource.id
 			}
 		});
 	}
 
 	/**
 	 * 删除资源
-	 * @param {*} resource_id 
+	 * @param {*} id 
 	 */
-	async delete(resource_id) {
-		let child_list = await db.query(' SELECT resource_id FROM cs_resource WHERE FIND_IN_SET(resource_id, fn_getResourceChild(:resource_id)) ', {
-			resource_id: resource_id
+	async delete(id) {
+		let child_list = await db.query(' SELECT id FROM cs_resource WHERE FIND_IN_SET(id, fn_getResourceChild(:id)) ', {
+			id: id
 		});
-		let resource_ids = child_list.map((item) => (item.resource_id));
+		let resource_ids = child_list.map((item) => (item.id));
 		return await t_resource.destroy({
 			where: {
-				resource_id: {
+				id: {
 					[Op.in]: resource_ids
 				}
 			}
@@ -118,14 +118,14 @@ class ResourceModel {
 		});
 		for (let item of root_list) {
 			item.dataValues.locale = item.resource_code;
-			item.dataValues.children = await this._getChildList(item.resource_id, attrs, _where, order, item.resource_code);
+			item.dataValues.children = await this._getChildList(item.id, attrs, _where, order, item.resource_code);
 		}
 		return root_list;
 
 		// let root_list = await db.query('select * from cs_resource where parent_id=0 ');
 		// for (let item of root_list) {
-		// 	let child_list = await db.query(' SELECT * FROM cs_resource WHERE FIND_IN_SET(resource_id, fn_getResourceChild(:resource_id)) ', {
-		// 		resource_id: item.resource_id
+		// 	let child_list = await db.query(' SELECT * FROM cs_resource WHERE FIND_IN_SET(id, fn_getResourceChild(:id)) ', {
+		// 		id: item.id
 		// 	});
 		// 	item.children = this.filterChild(item, child_list);
 		// }
@@ -147,7 +147,7 @@ class ResourceModel {
 		});
 		for (let item of child_list) {
 			item.dataValues.locale = parent_code + '.' + item.resource_code;
-			item.dataValues.children = await this._getChildList(item.resource_id, attrs, where, order, item.dataValues.locale);
+			item.dataValues.children = await this._getChildList(item.id, attrs, where, order, item.dataValues.locale);
 		}
 		return child_list;
 	}
@@ -158,8 +158,8 @@ class ResourceModel {
 	 * @param {Number} user_id 用户ID
 	 */
 	async getMenuList(role_ids, user_id) {
-		let list = await db_common.query(` select  b.resource_name name,b.resource_id,b.path,b.icon,b.resource_code,b.parent_id,b.sort_no  from (select resource_id from cs_resource_role where role_id in (:role_id)  union
-			select resource_id from cs_resource_user where user_id=:user_id) a join cs_resource b on a.resource_id=b.resource_id 
+		let list = await db_common.query(` select  b.resource_name name,b.id,b.path,b.icon,b.resource_code,b.parent_id,b.sort_no  from (select resource_id from cs_resource_role where role_id in (:role_id)  union
+			select resource_id from cs_resource_user where user_id=:user_id) a join cs_resource b on a.resource_id=b.id 
 			where resource_type!=3
 			`, {
 			user_id: user_id,
@@ -172,7 +172,7 @@ class ResourceModel {
 		}
 		for (let item of menu_list) {
 			item.locale = item.resource_code;
-			item.children = await this._getMenuChild(item.resource_id, list, item.resource_code);
+			item.children = await this._getMenuChild(item.id, list, item.resource_code);
 		}
 		return menu_list;
 	}
@@ -185,7 +185,7 @@ class ResourceModel {
 		child_list = menu_list.filter(item => item.parent_id == parent_id);
 		for (let item of child_list) {
 			item.locale = parent_code + '.' + item.resource_code;
-			item.children = await this._getMenuChild(item.resource_id, menu_list, item.resource_code);
+			item.children = await this._getMenuChild(item.id, menu_list, item.resource_code);
 		}
 		return child_list;
 	}
@@ -199,7 +199,7 @@ class ResourceModel {
 		if (child_list && child_list.length > 0) {
 			let list_index = [];
 			let child_list_first = child_list.filter((item, index) => {
-				if (item.parent_id == father.resource_id) {
+				if (item.parent_id == father.id) {
 					list_index.push(index);
 					return item;
 				}

@@ -6,15 +6,15 @@ class LogModel {
 
 	/**
      * 根据用户id获取日志
-     * @param {string} log_id 
+     * @param {string} id 
      * @param {array}  attr
      */
-	async getDetailsById(log_id, attr = null) {
+	async getDetailsById(id, attr = null) {
 		let option = {};
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_log.findById(log_id, option);
+		return await t_log.findById(id, option);
 	}
 
 	/**

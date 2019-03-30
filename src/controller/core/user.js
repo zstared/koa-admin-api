@@ -185,7 +185,7 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户id
+	 * @apiParam  {Number} id 用户id
 	 * @apiParam  {String} password 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
@@ -195,7 +195,7 @@ class UserController extends BaseController {
 	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     user_id : '1',
+	 *     id : '1',
 	 *     password : '',
 	 *     sex : 1,
 	 *     mail : 'bruce@163.com',
@@ -207,7 +207,7 @@ class UserController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
@@ -272,11 +272,11 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户id
+	 * @apiParam  {Number} id 用户id
 	 * @apiParam  {Number} status 状态 0-正常；1-禁用；
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     user_id : '1',
+	 *     id : '1',
 	 *     status : 1,
 	 * }
 	 */
@@ -285,7 +285,7 @@ class UserController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
@@ -370,10 +370,10 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户id
+	 * @apiParam  {Number} id 用户id
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     user_id : '1',
+	 *     id : '1',
 	 * }
 	 */
 	async delete(ctx) {
@@ -381,7 +381,7 @@ class UserController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				}
@@ -400,7 +400,7 @@ class UserController extends BaseController {
 
 	/**
 	 * 用户详情
-	 * @api {get} /core/user/details/:user_id 6.用户详情
+	 * @api {get} /core/user/details/:id 6.用户详情
 	 * @apiName details
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0
@@ -414,7 +414,7 @@ class UserController extends BaseController {
 			const params = ctx.params;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				}
@@ -589,7 +589,7 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParam  {Number} id 用户ID
 	 * @apiParam  {Number[]} role[] 角色ID[]
 	 */
 	async relateRole(ctx) {
@@ -597,7 +597,7 @@ class UserController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
@@ -627,7 +627,7 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParam  {Number} id 用户ID
 	 * @apiParam  {Number[]} resource_list[] 资源ID[]
 	 */
 	async relateResource(ctx) {
@@ -635,7 +635,7 @@ class UserController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
@@ -669,13 +669,13 @@ class UserController extends BaseController {
 	async current(ctx) {
 		try {
 			const params = {
-				user_id: ctx.user_info.user_id
+				id: ctx.user_info.id
 			};
 			//接口参数验证规则
 			let user_info = {};
 			user_info.base = await userService.details(params);
 			if (user_info.base) {
-				user_info.menus = await userService.getMenus(params.user_id); //用户菜单
+				user_info.menus = await userService.getMenus(params.id); //用户菜单
 				ctx.success(user_info);
 			} else {
 				ctx.error();
@@ -695,7 +695,7 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户id
+	 * @apiParam  {Number} id 用户id
 	 * @apiParam  {String} password 密码
 	 * @apiParam  {Number} sex 性别 1-男；2-女；
 	 * @apiParam  {String} mail 邮箱
@@ -703,7 +703,7 @@ class UserController extends BaseController {
 	 * @apiParam  {Number} role[] 角色ID[]
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     user_id : '1',
+	 *     id : '1',
 	 *     password : '',
 	 *     sex : 1,
 	 *     mail : 'bruce@163.com',
@@ -741,7 +741,7 @@ class UserController extends BaseController {
 					allowEmpty: true
 				}
 			};
-			params.user_id = ctx.user_info.user_id;
+			params.id = ctx.user_info.id;
 			parameterValidate.validate(validRule, params);
 			let result = await userService.update(params);
 			if (result) {
@@ -804,11 +804,11 @@ class UserController extends BaseController {
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
 	 * @apiParam  {Number} mobile 手机号码
-	 * @apiParam  {Number} user_id? 用户ID
+	 * @apiParam  {Number} id? 用户ID
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     mobile : '13922882541',
-	 *     user_id: '2'
+	 *     id: '2'
 	 * }
 	 */
 	async existMobile(ctx) {
@@ -819,7 +819,7 @@ class UserController extends BaseController {
 				mobile: {
 					type: 'mobile',
 				},
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int',
 					required: false
@@ -827,7 +827,7 @@ class UserController extends BaseController {
 
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await userService.existMobile(params.mobile, params.user_id);
+			let result = await userService.existMobile(params.mobile, params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -848,10 +848,10 @@ class UserController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} user_id 用户ID
+	 * @apiParam  {Number} id 用户ID
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     user_id: '2'
+	 *     id: '2'
 	 * }
 	 */
 	async permission(ctx) {
@@ -859,14 +859,14 @@ class UserController extends BaseController {
 			const params = ctx.request.query;
 			//接口参数验证规则
 			const validRule = {
-				user_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
 			};
 			parameterValidate.validate(validRule, params);
 			//接口参数验证规则
-			let result = await userService.getPermission(params.user_id);
+			let result = await userService.getPermission(params.id);
 			if (result) {
 				ctx.success(result);
 			} else {

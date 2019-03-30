@@ -11,119 +11,49 @@ import {
 	randomString
 } from '../../lib/utils';
 import config from '../../config';
-import RedisClient from '../../lib/redis';
 import {
 	isNull
 } from '../../lib/utils';
 import {
 	Op
 } from 'sequelize';
-const redis = new RedisClient();
+
 class UserService {
 	constructor() {}
-	/**
-	 * 登录
-	 * @param {Object} params 
-	 */
-	async login(params) {
-		try {
-			const {
-				user_name,
-				password
-			} = params;
-			let user = await m_user.getUserByName(user_name);
-			if (!user) {
-				throw new ApiError(RCode.core.C2000001, '用户名或密码有误');
-			}
-			user = await m_user.getUserByName(user_name, md5(password + user.encrypt));
-			if (!user) {
-				throw new ApiError(RCode.core.C2000001, '用户名或密码有误');
-			}
-			if (user.status === 1) {
-				throw new ApiError(RCode.core.C2000003, '用户已禁用');
-			}
-			if (user.status === 2) {
-				throw new ApiError(RCode.core.C2000004, '用户已注销');
-			}
-			let token = md5(user.user_name + Date.now().toString());
-
-			let sign_token = await redis.get(config.session_token_prefix + user.user_name);
-			if (config.only_sign) {
-				//唯一登录
-				if (sign_token) {
-					await redis.del(config.session_user_prefix + sign_token);
-				}
-			} else {
-				if (sign_token) {
-					token = sign_token;
-				}
-			}
-			await redis.set(config.session_token_prefix + user.user_name, token, config.session_ttl); //设置token 缓存
-			let result = {
-				user_id: user.user_id,
-				user_name: user.user_name,
-				status: user.status,
-				sex: user.sex,
-				mobile: user.mobile
-			};
-			redis.set(config.session_user_prefix + token, JSON.stringify(result), config.session_ttl); //设置用户缓存
-			return {
-				token: token
-			};
-
-		} catch (e) {
-			throw e;
-		}
-	}
-
-	/**
-	 * 退出登录
-	 * @param {string} user_name
-	 */
-	async logout(user_name) {
-		const token = await redis.get(config.session_token_prefix + user_name);
-		if (token) {
-			await redis.del(config.session_user_prefix + token);
-			await redis.del(config.session_token_prefix + user_name);
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 	/**获取用户菜单*/
-	async getMenus(user_id) {
-		let role_list = await m_user.getRoleByUserId(user_id);
-		let role_ids = role_list.map(item => item.role_id);
-		return await m_resource.getMenuList(role_ids, user_id);
+	async getMenus(id) {
+		let role_list = await m_user.getRoleByUserId(id);
+		let role_ids = role_list.map(item => item.id);
+		return await m_resource.getMenuList(role_ids, id);
 		// return {
 		// 	menuData: [{
-		// 		resource_id: 1,
+		// 		id: 1,
 		// 		icon: 'cogs',
 		// 		name: '系统管理',
 		// 		path: '/system',
 		// 		locale: 'system',
 		// 		children: [{
-		// 			resource_id: 2,
+		// 			id: 2,
 		// 			name: '用户管理',
 		// 			locale: 'system.user',
 		// 			path: '/system/user',
 		// 			permission: ['']
 		// 		},
 		// 		{
-		// 			resource_id: 3,
+		// 			id: 3,
 		// 			name: '角色管理',
 		// 			locale: 'system.role',
 		// 			path: '/system/role'
 		// 		},
 		// 		{
-		// 			resource_id: 4,
+		// 			id: 4,
 		// 			name: '菜单管理',
 		// 			locale: 'system.menu',
 		// 			path: '/system/menu'
 		// 		},
 		// 		{
-		// 			resource_id: 5,
+		// 			id: 5,
 		// 			name: '资源管理',
 		// 			locale: 'system.resource',
 		// 			path: '/system/resource'
@@ -154,7 +84,7 @@ class UserService {
 
 		const encrypt = randomString(16); //密码加盐
 		const password_strength = this._checkPwdStrength(new_password);
-		let result = await m_user.updatePassword(user.user_id, md5(new_password + encrypt), encrypt, password_strength);
+		let result = await m_user.updatePassword(user.id, md5(new_password + encrypt), encrypt, password_strength);
 		if (result) {
 			return {
 				password_strength: password_strength
@@ -230,7 +160,7 @@ class UserService {
 	 */
 	async update(params) {
 		const {
-			user_id,
+			id,
 			sex,
 			mail,
 			mobile,
@@ -241,16 +171,16 @@ class UserService {
 			avatar
 		} = params;
 		let user = {
-			user_id,
+			id,
 			name_cn,
 			name_en,
 			avatar
 		};
-		const user_exist = await m_user.getDetailsById(user_id);
+		const user_exist = await m_user.getDetailsById(id);
 		if (!user_exist) {
 			throw new ApiError(RCode.common.C1, '用户不存在');
 		}
-		let user_mobile = await m_user.getUserByMobile(mobile, user_id);
+		let user_mobile = await m_user.getUserByMobile(mobile, id);
 		if (user_mobile) {
 			throw new ApiError(RCode.core.C2000006, '手机号码已存在');
 		}
@@ -280,7 +210,7 @@ class UserService {
 				if (user_exist.avatar) {
 					m_file.updateFileByCode(user_exist.avatar, null, null);
 				}
-				m_file.updateFileByCode(user.avatar, user.user_id, 'cs_user');
+				m_file.updateFileByCode(user.avatar, user.id, 'cs_user');
 			}
 		}
 
@@ -293,11 +223,11 @@ class UserService {
 	 */
 	async updateState(params) {
 		const {
-			user_id,
+			id,
 			status,
 		} = params;
 		let user = {
-			user_id,
+			id,
 			status
 		};
 		let result = await m_user.update(user, false);
@@ -310,9 +240,9 @@ class UserService {
 	 */
 	async delete(params) {
 		const {
-			user_id
+			id
 		} = params;
-		let result = await m_user.delete(user_id);
+		let result = await m_user.delete(id);
 		return result;
 	}
 
@@ -322,9 +252,9 @@ class UserService {
 	 */
 	async details(params) {
 		const {
-			user_id
+			id
 		} = params;
-		let user_info = await m_user.getDetailsById(user_id, ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength']);
+		let user_info = await m_user.getDetailsById(id, ['id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength']);
 		if (user_info.avatar) {
 			let avatar_file = await m_file.getFileByCode(user_info.avatar);
 			user_info.dataValues.avatar_file = avatar_file;
@@ -365,7 +295,7 @@ class UserService {
 		if (sorter) {
 			order.unshift(sorter.split('|'));
 		}
-		let attr = ['user_id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength', 'create_time', 'is_system'];
+		let attr = ['id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength', 'create_time', 'is_system'];
 		return await m_user.getList(attr, where, order);
 	}
 
@@ -383,7 +313,7 @@ class UserService {
 			sorter,
 		} = _params;
 
-		let attrs = ' user_id,user_name,name_cn,name_en,avatar,sex,mail,mobile,status,password_strength,create_time,is_system ';
+		let attrs = ' id,user_name,name_cn,name_en,avatar,sex,mail,mobile,status,password_strength,create_time,is_system ';
 		let table = ' cs_user ';
 		let where = ' where 1=1 ';
 		if (!isNull(user_name)) {
@@ -412,7 +342,7 @@ class UserService {
 		let pageList = await m_user.getPageList(params, attrs, table, where, order);
 		if (pageList.count) {
 			for (let item of pageList.rows) {
-				item.role = await m_user.getRoleByUserId(item.user_id);
+				item.role = await m_user.getRoleByUserId(item.id);
 			}
 		}
 		return pageList;
@@ -424,10 +354,10 @@ class UserService {
 	 */
 	async relateRole(params) {
 		const {
-			user_id,
+			id,
 			role
 		} = params;
-		return await m_user.relateRole(user_id, role);
+		return await m_user.relateRole(id, role);
 	}
 
 	/**
@@ -436,17 +366,17 @@ class UserService {
 	 */
 	async relateResource(resource_user) {
 		const {
-			user_id,
+			id,
 			resource_list
 		} = resource_user;
 		let list = [];
 		for (let resource_id of resource_list) {
 			list.push({
-				user_id: user_id,
+				user_id: id,
 				resource_id: resource_id
 			});
 		}
-		return await m_user.relateResource(user_id, list);
+		return await m_user.relateResource(id, list);
 	}
 
 	/**
@@ -469,8 +399,8 @@ class UserService {
 	 * 判断手机号是否存在 
 	 * @param {string} mobile 
 	 */
-	async existMobile(mobile, user_id) {
-		let user = await m_user.getUserByMobile(mobile, user_id);
+	async existMobile(mobile, id) {
+		let user = await m_user.getUserByMobile(mobile, id);
 		if (user) {
 			return {
 				exist: true
@@ -483,13 +413,13 @@ class UserService {
 
 	/**
 	 * 获取权限
-	 * @param {number} user_id
+	 * @param {number} id
 	 */
-	async getPermission(user_id) {
-		let role_list = await m_user.getRoleByUserId(user_id);
-		let role_ids = role_list.map(item => item.role_id);
+	async getPermission(id) {
+		let role_list = await m_user.getRoleByUserId(id);
+		let role_ids = role_list.map(item => item.id);
 
-		let user_per = await m_user.getPermissionByUserId(user_id);
+		let user_per = await m_user.getPermissionByUserId(id);
 		let role_per = await m_role.getPermissionByRoleIds(role_ids);
 		return {
 			user: user_per && user_per.length > 0?user_per.map(item => item.resource_id): [],

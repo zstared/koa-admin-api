@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true,
 			references: {
 				model: 'cs_user',
-				key: 'user_id'
+				key: 'id'
 			}
 		},
 		role_id: {
@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true,
 			references: {
 				model: 'cs_role',
-				key: 'role_id'
+				key: 'id'
 			}
 		}
 	}, {

@@ -1,6 +1,6 @@
 import BaseController from '../../lib/base_controller';
 import parameterValidate from '../../lib/parameter_validate';
-import userService from '../../service/core/user';
+import oauthService from '../../service/core/oauth';
 
 class OauthController extends BaseController {
 	/**
@@ -45,7 +45,7 @@ class OauthController extends BaseController {
 			};
 			//验证接口参数
 			parameterValidate.validate(validRule, params);
-			let user = await userService.login(params);
+			let user = await oauthService.login(params);
 			ctx.success(user);
 		} catch (e) {
 			throw e;
@@ -67,7 +67,7 @@ class OauthController extends BaseController {
 	async logout(ctx) {
 		try {
 
-			let result = await userService.logout(ctx.user_info.user_name);
+			let result = await oauthService.logout(ctx.user_info.user_name);
 			if (result) {
 				ctx.success();
 			} else {

@@ -68,13 +68,13 @@ class RoleController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {Number} id 角色ID
 	 * @apiParam  {String} role_name 角色名称
 	 * @apiParam  {String} role_desc 角色描述
 	 * @apiParam  {Number} sort_no 排序
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     role_id:2,
+	 *     id:2,
 	 *     role_name : 'test',
 	 *     role_desc:'',
 	 *     sort_no : 1,
@@ -83,7 +83,7 @@ class RoleController extends BaseController {
 	async update(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
-			role_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			},
@@ -122,16 +122,16 @@ class RoleController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {Number} id 角色ID
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     role_id:2,
+	 *     id:2,
 	 * }
 	 */
 	async delete(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
-			role_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			}
@@ -147,7 +147,7 @@ class RoleController extends BaseController {
 
 	/**
 	 * 角色详情
-	 * @api {get} /core/role/details/:role_id 4.角色详情
+	 * @api {get} /core/role/details/:id 4.角色详情
 	 * @apiName details
 	 * @apiGroup  role 
 	 * @apiVersion  0.1.0
@@ -159,7 +159,7 @@ class RoleController extends BaseController {
 	async details(ctx) {
 		const params = ctx.params;
 		const validRule = {
-			role_id: {
+			id: {
 				type: 'int',
 				convertType: 'int'
 			}
@@ -185,13 +185,13 @@ class RoleController extends BaseController {
 	 * @apiUse  ResultSuccessList
 	 * @apiParam  {String} role_name 用户名
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
-	 * @apiParam  (Response) {Number} data.role_id 角色ID
+	 * @apiParam  (Response) {Number} data.id 角色ID
 	 * @apiSuccess  (Response) {String} data.role_name 角色名称
 	 * @apiSuccess  (Response) {String} data.role_desc 角色描述
 	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
 	 * @apiSuccessExample  {json} data :
 	 * {
-	 *     role_id : 1,
+	 *     id : 1,
 	 *     role_name : 'test',
 	 *     role_desc : '角色描述',
 	 *     create_time : '2018-11-14T01:23:57.000Z',
@@ -235,13 +235,13 @@ class RoleController extends BaseController {
 	 * @apiParam  {String} page_index 页码
 	 * @apiParam  {String} page_size 页记录数
 	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
-	 * @apiParam  (Response) {Number} data.rows.role_id 角色ID
+	 * @apiParam  (Response) {Number} data.rows.id 角色ID
 	 * @apiSuccess  (Response) {String} data.rows.role_name 角色名称
 	 * @apiSuccess  (Response) {String} data.rows.role_desc 角色描述
 	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
 	 * @apiSuccessExample  {json} data.rows :
 	 * {
-     *     role_id : 1,
+     *     id : 1,
 	 *     role_name : 'test',
 	 *     role_desc : '角色描述',
 	 *     create_time : '2018-11-14T01:23:57.000Z',
@@ -291,7 +291,7 @@ class RoleController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {Number} id 角色ID
 	 * @apiParam  {[Number[]]} resource_list[] 资源ID[]
 	 */
 	async relateResource(ctx) {
@@ -299,7 +299,7 @@ class RoleController extends BaseController {
 			const params = ctx.request.body;
 			//接口参数验证规则
 			const validRule = {
-				role_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
@@ -333,7 +333,7 @@ class RoleController extends BaseController {
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
 	 *     role_name : 'test',
-	 *     role_id : '1',
+	 *     id : '1',
 	 * }
 	 */
 	async existRole(ctx) {
@@ -346,14 +346,14 @@ class RoleController extends BaseController {
 					min: 1,
 					max: 50
 				},
-				role_id:{
+				id:{
 					type: 'int',
 					convertType: 'int',
 					required: false
 				}
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await roleService.existRole(params.role_name,params.role_id);
+			let result = await roleService.existRole(params.role_name,params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -374,10 +374,10 @@ class RoleController extends BaseController {
 	 * @apiUse  Header
 	 * @apiUse  ResultError
 	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} role_id 角色ID
+	 * @apiParam  {Number} id 角色ID
 	 * @apiParamExample  {Object} Request-Example:
 	 * {
-	 *     role_id: '2'
+	 *     id: '2'
 	 * }
 	 */
 	async permission(ctx) {
@@ -385,14 +385,14 @@ class RoleController extends BaseController {
 			const params = ctx.request.query;
 			//接口参数验证规则
 			const validRule = {
-				role_id: {
+				id: {
 					type: 'int',
 					convertType: 'int'
 				},
 			};
 			parameterValidate.validate(validRule, params);
 			//接口参数验证规则
-			let result = await roleService.getPermission(params.role_id);
+			let result = await roleService.getPermission(params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
