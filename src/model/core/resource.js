@@ -1,8 +1,9 @@
 import sequelize from '../db_init';
-import db from '../db_common';
 import db_common from '../db_common';
 const Op = sequelize.Op;
 const t_resource = require('../table/cs_resource')(sequelize, sequelize.Sequelize);
+const t_resource_user = require('../table/cs_resource_user')(sequelize, sequelize.Sequelize);
+const t_resource_role = require('../table/cs_resource_role')(sequelize, sequelize.Sequelize);
 class ResourceModel {
 	constructor() {}
 
@@ -86,17 +87,42 @@ class ResourceModel {
 	 * @param {*} id 
 	 */
 	async delete(id) {
-		let child_list = await db.query(' SELECT id FROM cs_resource WHERE FIND_IN_SET(id, fn_getResourceChild(:id)) ', {
+		let child_list = await db_common.query(' SELECT id FROM cs_resource WHERE FIND_IN_SET(id, fn_getResourceChild(:id)) ', {
 			id: id
 		});
 		let resource_ids = child_list.map((item) => (item.id));
-		return await t_resource.destroy({
-			where: {
-				id: {
-					[Op.in]: resource_ids
-				}
-			}
-		});
+		let t = await db_common.transaction();
+		try {
+			await t_resource_user.destroy({
+				where: {
+					resource_id: {
+						[Op.in]: resource_ids
+					}
+				},
+				transaction: t
+			});
+			await t_resource_role.destroy({
+				where: {
+					resource_id: {
+						[Op.in]: resource_ids
+					}
+				},
+				transaction: t
+			});
+			await t_resource.destroy({
+				where: {
+					id: {
+						[Op.in]: resource_ids
+					}
+				},
+				transaction: t
+			});
+			t.commit();
+			return true;
+		} catch (e) {
+			t.rollback();
+			return false;
+		}
 	}
 
 	/**
@@ -108,7 +134,6 @@ class ResourceModel {
 		}, _where);
 		let order = [
 			['sort_no'],
-			['permission_type'],
 			['create_time']
 		];
 		let root_list = await t_resource.findAll({
@@ -158,12 +183,43 @@ class ResourceModel {
 	 * @param {Number} user_id 用户ID
 	 */
 	async getMenuList(role_ids, user_id) {
-		let list = await db_common.query(` select  b.resource_name name,b.id,b.path,b.icon,b.resource_code,b.parent_id,b.sort_no  from (select resource_id from cs_resource_role where role_id in (:role_id)  union
-			select resource_id from cs_resource_user where user_id=:user_id) a join cs_resource b on a.resource_id=b.id 
-			where resource_type!=3
-			`, {
+
+		let resource_ids = [];
+		//获取权限点
+		let permission_list = await db_common.query(` select  id  from (select resource_id from cs_resource_role where role_id in (:role_id)  union
+		select resource_id from cs_resource_user where user_id=:user_id) a join cs_resource b on a.resource_id=b.id 
+		where b.resource_type=3 `, {
 			user_id: user_id,
 			role_id: role_ids.join(',')
+		});
+		if (permission_list && permission_list.length > 0) {
+			resource_ids = permission_list.map(item => item.id);
+		}
+        //权限点的上级(菜单)
+		let permission_parent_list = await db_common.query(` select  parent_id from (			
+			select  id,parent_id  from (select resource_id from cs_resource_role where role_id in (:role_id)  union
+					   select resource_id from cs_resource_user where user_id=:user_id) a join cs_resource b on a.resource_id=b.id 
+					   where b.resource_type=3 ) d group by d.parent_id`, {
+			user_id: user_id,
+			role_id: role_ids.join(',')
+		});
+		if (permission_parent_list && permission_parent_list.length > 0) {
+			for (let item of permission_parent_list) {
+				//所有上级
+				let parent = await db_common.query('select fn_getResourceParent(:id) ids', {
+					id: item.parent_id
+				});
+				resource_ids = resource_ids.concat(parent[0].ids.split(','));
+			}
+		}
+		resource_ids=Array.from(new Set(resource_ids)); //去重
+		let list = await t_resource.findAll({
+			attributes: ['id', ['resource_name', 'name'], 'parent_id', 'path', 'sort_no', 'icon', 'resource_code','resource_type'],
+			where: {
+				id: {
+					[Op.in]: resource_ids
+				}
+			}
 		});
 
 		let menu_list = [];
@@ -171,10 +227,11 @@ class ResourceModel {
 			menu_list = list.filter(item => item.parent_id == 0);
 		}
 		for (let item of menu_list) {
-			item.locale = item.resource_code;
-			item.children = await this._getMenuChild(item.id, list, item.resource_code);
+			item.dataValues.locale = item.resource_code;
+			item.dataValues.children = await this._getMenuChild(item.id, list, item.resource_code);
 		}
 		return menu_list;
+
 	}
 
 	/**
@@ -184,8 +241,8 @@ class ResourceModel {
 		let child_list = [];
 		child_list = menu_list.filter(item => item.parent_id == parent_id);
 		for (let item of child_list) {
-			item.locale = parent_code + '.' + item.resource_code;
-			item.children = await this._getMenuChild(item.id, menu_list, item.resource_code);
+			item.dataValues.locale = parent_code + '.' + item.resource_code;
+			item.dataValues.children = await this._getMenuChild(item.id, menu_list, item.resource_code);
 		}
 		return child_list;
 	}

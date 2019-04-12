@@ -618,8 +618,8 @@ class UserController extends BaseController {
 	}
 
 	/**
-	 * 关联资源
-	 * @api {post} /core/user/relateResource A10.关联资源
+	 * 关联资源(赋权限)
+	 * @api {post} /core/user/relateResource A10.关联资源(赋权限)
 	 * @apiName relateResource
 	 * @apiGroup  user
 	 * @apiVersion  0.1.0

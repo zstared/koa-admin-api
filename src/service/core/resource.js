@@ -23,7 +23,6 @@ class ResourceService {
 			resource_type,
 			parent_id,
 			path,
-			permission_type,
 		} = params;
 		let is_exist = await m_resource.isExist(resource_name, parent_id);
 		if (is_exist) {
@@ -36,29 +35,27 @@ class ResourceService {
 		if (resource_type == 2 && path == '') {
 			throw new ApiError(RCode.core.C2002003, '菜单的路径不能为空');
 		}
-		if (resource_type == 3 && !permission_type) {
-			throw new ApiError(RCode.core.C2002005, '权限类型有误');
-		}
+
 		if (parent_id != 0) {
 			let parent_resource = await m_resource.getDetailsById(parent_id);
 			if (!parent_resource) {
 				throw new ApiError(RCode.core.C2002001, '上级资源不存在');
 			}
-			if (parent_resource.resource_type == 1 && resource_type == 3) {
+			if (parent_resource.resource_type == 1 && (resource_type == 3 || resource_type == 4)) {
 				throw new ApiError(RCode.core.C2002002, '资源类型有误,模块类型的下级资源只能模块与菜单');
 			}
 			if (parent_resource.resource_type == 2 && (resource_type == 2 || resource_type == 1)) {
-				throw new ApiError(RCode.core.C2002002, '资源类型有误,菜单类型的下级资源只能接口');
+				throw new ApiError(RCode.core.C2002002, '资源类型有误,菜单类型的下级资源只能权限');
 			}
-			if (parent_resource.resource_type == 3) {
-				throw new ApiError(RCode.core.C2002002, '资源类型有误,接口类型的没有下级资源');
+			if (parent_resource.resource_type == 3 && resource_type != 4) {
+				throw new ApiError(RCode.core.C2002002, '资源类型有误,权限类型的下级只能是接口');
 			}
-			if (resource_type == 3 && isNull(path)) {
+			if (resource_type == 4 && isNull(path)) {
 				throw new ApiError(RCode.core.C2002003, 'Path不能为空');
 			}
 		} else {
-			if (resource_type == 3) {
-				throw new ApiError(RCode.core.C2002004, '顶级资源类型只能是模块或类型');
+			if (resource_type != 1 && resource_type != 2) {
+				throw new ApiError(RCode.core.C2002004, '顶级资源类型只能是模块或菜单');
 			}
 		}
 		return m_resource.create(params);
@@ -74,7 +71,6 @@ class ResourceService {
 			resource_name,
 			resource_code,
 			resource_type,
-			permission_type,
 			parent_id,
 			icon,
 			path,
@@ -93,7 +89,6 @@ class ResourceService {
 			resource_name,
 			resource_code,
 			resource_type,
-			permission_type,
 			parent_id,
 			path,
 			icon,
@@ -127,7 +122,7 @@ class ResourceService {
 		const {
 			id
 		} = params;
-		return await m_resource.getDetailsById(id, ['id', 'resource_name', 'resource_code', 'resource_type', 'icon', 'path', 'sort_no', 'parent_id', 'is_visiable', 'permission_type', 'permission_custom']);
+		return await m_resource.getDetailsById(id, ['id', 'resource_name', 'resource_code', 'resource_type', 'icon', 'path', 'sort_no', 'parent_id', 'is_visiable']);
 	}
 
 	/**
@@ -135,7 +130,7 @@ class ResourceService {
 	 */
 	async getTreeList() {
 		let attrs = ['id', 'resource_name', ['id', 'key'],
-			['resource_name', 'title'], 'resource_code', 'resource_type', 'parent_id', 'icon', 'path', 'sort_no', 'is_visiable', 'create_time', 'permission_type', 'permission_custom'
+			['resource_name', 'title'], 'resource_code', 'resource_type', 'parent_id', 'icon', 'path', 'sort_no', 'is_visiable', 'create_time'
 		];
 		return await m_resource.getTreeList(attrs);
 	}
@@ -150,6 +145,9 @@ class ResourceService {
 			['resource_name', 'title'], 'id', 'resource_code', 'resource_type', 'parent_id'
 		];
 		return await m_resource.getTreeList(attrs, {
+			resource_type: {
+				[Op.ne]: 4,
+			},
 			resource_code: {
 				[Op.or]: {
 					[Op.ne]: 'resource',
@@ -171,7 +169,7 @@ class ResourceService {
 		];
 		return await m_resource.getTreeList(attrs, {
 			resource_type: {
-				[Op.ne]: 3
+				[Op.ne]: 4
 			}
 		});
 	}

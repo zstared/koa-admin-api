@@ -23,7 +23,6 @@ class ResourceController extends BaseController {
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
-	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
@@ -56,7 +55,7 @@ class ResourceController extends BaseController {
 			},
 			resource_type: {
 				type: 'enum',
-				values: [1, 2, 3],
+				values: [1, 2, 3,4],
 				convertType: 'int',
 			},
 			icon: {
@@ -85,12 +84,6 @@ class ResourceController extends BaseController {
 				convertType: 'int',
 				allowEmpty: true,
 				required:false,
-			},
-			permission_type:{
-				type:'enum',
-				values:[1,2,3,4,5,6,99],
-				convertType:'int',
-				required:false,
 			}
 		};
 		parameterValidate.validate(validRule, params);
@@ -116,7 +109,6 @@ class ResourceController extends BaseController {
      * @apiParam  {String} resource_name 资源名称
 	 * @apiParam  {String} resource_code 资源编码
      * @apiParam  {Number} resource_type 资源类型 1-模块; 2-菜单; 3-接口
-	 * @apiParam  {Number} permission_type 权限类型
 	 * @apiParam  {String} icon 资源图标
      * @apiParam  {String} path 资源路径（菜单路由、接口地址）
      * @apiParam  {int} parent_id 父级资源ID
@@ -154,7 +146,7 @@ class ResourceController extends BaseController {
 			},
 			resource_type: {
 				type: 'enum',
-				values: [1, 2, 3],
+				values: [1, 2, 3,4],
 				convertType: 'int',
 			},
 			icon: {
@@ -181,12 +173,6 @@ class ResourceController extends BaseController {
 			sort_no: {
 				type: 'int',
 				convertType: 'int',
-				required:false,
-			},
-			permission_type:{
-				type:'enum',
-				values:[1,2,3,4,5,6,99],
-				convertType:'int',
 				required:false,
 			}
 		};

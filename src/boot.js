@@ -10,8 +10,7 @@ const redis = new RedisClient({
  */
 class Boot {
 	async init() {
-		await this.initRolePermission();
-		await this.initUserPermission();
+
 	}
 
 	/**
@@ -20,7 +19,7 @@ class Boot {
 	async initRolePermission() {
 		let list_role = await db_common.query(' SELECT id FROM cs_role ');
 		for (let role of list_role) {
-			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.id  where role_id=:role_id and resource_type=3 ', {
+			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.parent_id  where role_id=:role_id and resource_type=4 ', {
 				role_id: role.id
 			});
 			permissions = permissions.map(item => item.path);
@@ -34,7 +33,7 @@ class Boot {
 	async initUserPermission() {
 		let list_user = await db_common.query(' select user_id from cs_resource_user a join cs_user b on a.user_id=b.id where b.status!=2  group by user_id ');
 		for (let user of list_user) {
-			let permissions = await db_common.query('SELECT b.path from cs_resource_user a join cs_resource b on a.resource_id=b.id  where user_id=:user_id and resource_type=3 ', {
+			let permissions = await db_common.query('SELECT b.path from cs_resource_user a join cs_resource b on a.resource_id=b.parent_id  where user_id=:user_id and resource_type=4 ', {
 				user_id: user.user_id
 			});
 			permissions = permissions.map(item => item.path);

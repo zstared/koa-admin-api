@@ -26,8 +26,7 @@ class UserService {
 		let role_list = await m_user.getRoleByUserId(id);
 		let role_ids = role_list.map(item => item.id);
 		return await m_resource.getMenuList(role_ids, id);
-		// return {
-		// 	menuData: [{
+		// return  [{
 		// 		id: 1,
 		// 		icon: 'cogs',
 		// 		name: '系统管理',
@@ -59,8 +58,7 @@ class UserService {
 		// 			path: '/system/resource'
 		// 		},
 		// 		]
-		// 	}]
-		// };
+		// 	}];
 	}
 
 	/**
@@ -255,7 +253,7 @@ class UserService {
 			id
 		} = params;
 		let user_info = await m_user.getDetailsById(id, ['id', 'user_name', 'name_cn', 'name_en', 'avatar', 'sex', 'mail', 'mobile', 'status', 'password_strength']);
-		if (user_info.avatar) {
+		if (user_info&&user_info.avatar) {
 			let avatar_file = await m_file.getFileByCode(user_info.avatar);
 			user_info.dataValues.avatar_file = avatar_file;
 		}
@@ -274,7 +272,7 @@ class UserService {
 			status,
 			sorter
 		} = params;
-		let where = {};
+		let where = {is_system:0};
 		if (!isNull(user_name)) {
 			where.user_name = {
 				[Op.like]: user_name + '%'
@@ -289,7 +287,6 @@ class UserService {
 			where.status = status;
 		}
 		let order = [
-			['is_system', 'desc'],
 			['create_time', 'desc']
 		]; //排序
 		if (sorter) {
@@ -315,7 +312,7 @@ class UserService {
 
 		let attrs = ' id,user_name,name_cn,name_en,avatar,sex,mail,mobile,status,password_strength,create_time,is_system ';
 		let table = ' cs_user ';
-		let where = ' where 1=1 ';
+		let where = ' where is_system=0 ';
 		if (!isNull(user_name)) {
 			user_name = user_name + '%';
 			where += ' and (user_name like  :user_name or name_cn like :user_name or name_en like :user_name) ';

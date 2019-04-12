@@ -282,8 +282,8 @@ class RoleController extends BaseController {
 	}
 
 	/**
-	 * 关联资源
-	 * @api {post} /core/role/relateResource 7.关联资源
+	 * 关联资源(赋权限)
+	 * @api {post} /core/role/relateResource 7.关联资源(赋权限)
 	 * @apiName relateResource
 	 * @apiGroup  role
 	 * @apiVersion  0.1.0

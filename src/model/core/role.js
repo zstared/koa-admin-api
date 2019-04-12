@@ -182,7 +182,7 @@ class RoleModel {
 			});
 		}else{
 			//用于鉴权
-			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.id  where role_id in (:role_id) and resource_type=3 ', {
+			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.parent_id  where role_id in (:role_id) and resource_type=4 ', {
 				role_id: role_ids.join(',')
 			});
 			permissions = permissions.map(item => item.path);

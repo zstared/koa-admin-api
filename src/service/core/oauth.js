@@ -95,6 +95,13 @@ class OauthService {
         let role_permissions = await m_role.getPermissionByRoleIds(roles, true);
         let user_permissions = await m_user.getPermissionByUserId(user_id, true);
         return Array.from(new Set(role_permissions.concat(user_permissions)));
+    }
+
+    /**
+     * 根据角色ID更新用户权限
+     * @param {*} role_id 
+     */
+    async updatePermissionByRole(){
         
     }
 }

@@ -96,9 +96,7 @@ class RoleService {
 			sorter
 		} = params;
 		let where = {
-			id: {
-				[Op.ne]: 1
-			}
+			is_system: 0
 		};
 		if (!isNull(role_name)) {
 			where.role_name = {
@@ -130,7 +128,7 @@ class RoleService {
 
 		let attrs = ' id,role_name,role_desc,sort_no,is_system,create_time ';
 		let table = ' cs_role ';
-		let where = ' where 1=1 ';
+		let where = ' where is_system=0 ';
 		if (!isNull(role_name)) {
 			role_name = role_name + '%';
 			where += ' and role_name like  :role_name ';

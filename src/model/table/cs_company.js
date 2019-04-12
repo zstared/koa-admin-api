@@ -1,71 +1,57 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('cs_file', {
+  return sequelize.define('cs_company', {
     id: {
       type: DataTypes.INTEGER(10).UNSIGNED,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    code: {
-      type: DataTypes.CHAR(36),
-      allowNull: false,
-      unique: true
-    },
-    name: {
-      type: DataTypes.STRING(200),
+    emp_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false
     },
-    table_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true
+    name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
     },
-    table_name: {
+    name_short: {
       type: DataTypes.STRING(50),
       allowNull: true
     },
-    size: {
-      type: "DOUBLE",
-      allowNull: false
-    },
-    ext: {
-      type: DataTypes.STRING(20),
+    summary: {
+      type: DataTypes.STRING(2000),
       allowNull: true
     },
-    type: {
+    phone: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    email: {
+      type: DataTypes.STRING(200),
+      allowNull: true
+    },
+    address: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    logo: {
       type: DataTypes.STRING(100),
       allowNull: true
     },
-    folder: {
-      type: DataTypes.STRING(50),
+    logo_url: {
+      type: DataTypes.STRING(4000),
       allowNull: true
     },
-    directory: {
-      type: DataTypes.STRING(500),
-      allowNull: false
-    },
-    origin: {
-      type: DataTypes.STRING(200),
+    app_start_img: {
+      type: DataTypes.STRING(255),
       allowNull: true
     },
-    path: {
-      type: DataTypes.STRING(500),
-      allowNull: true
-    },
-    thumb_path: {
-      type: DataTypes.STRING(500),
-      allowNull: true
-    },
-    is_static: {
-      type: DataTypes.INTEGER(4),
-      allowNull: true,
-      defaultValue: '0'
-    },
-    is_thumb: {
-      type: DataTypes.INTEGER(4),
-      allowNull: true,
-      defaultValue: '0'
+    register_time: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
     create_user: {
       type: DataTypes.STRING(50),
@@ -76,13 +62,17 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
+    update_user: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
     update_time: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'cs_file',
+    tableName: 'cs_company',
     timestamps: false
   });
 };

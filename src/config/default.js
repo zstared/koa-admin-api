@@ -28,7 +28,22 @@ export const config = {
 
 	core:{
 		default_password:'abc123456',
-	}
+	},
+
+	/**公开接口白名单  免token验证*/
+	public_white_list:[
+		'/core/oauth/login',
+		'/core/oauth/register'
+	],
+	/**公共接口白名单 只需token验证*/
+	common_white_list:[
+		'/core/file/upload',
+		'/core/file/download',
+		'/core/oauth/logout',
+		'/core/user/current',
+		'/core/user/updatePassword',
+		'/core/user/updateCurrent'
+	]
 };
 
 

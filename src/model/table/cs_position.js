@@ -1,52 +1,49 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('cs_resource', {
+  return sequelize.define('cs_position', {
     id: {
       type: DataTypes.INTEGER(10).UNSIGNED,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    resource_name: {
-      type: DataTypes.STRING(50),
-      allowNull: false
+    company_id: {
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      allowNull: true,
+      references: {
+        model: 'cs_company',
+        key: 'id'
+      }
     },
-    resource_code: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    resource_type: {
-      type: DataTypes.INTEGER(3).UNSIGNED,
-      allowNull: false
-    },
-    icon: {
+    name: {
       type: DataTypes.STRING(100),
       allowNull: true
     },
-    path: {
+    name_py: {
       type: DataTypes.STRING(200),
       allowNull: true
     },
-    parent_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
-      allowNull: false,
-      defaultValue: '0'
-    },
-    sort_no: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+    rank_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: true,
-      defaultValue: '1'
+      references: {
+        model: 'cs_rank',
+        key: 'id'
+      }
     },
-    is_visiable: {
-      type: DataTypes.INTEGER(4),
-      allowNull: true,
-      defaultValue: '1'
+    create_user: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
     create_time: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    update_user: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
     update_time: {
       type: DataTypes.DATE,
@@ -54,7 +51,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'cs_resource',
+    tableName: 'cs_position',
     timestamps: false
   });
 };
