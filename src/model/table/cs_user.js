@@ -8,10 +8,6 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    emp_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
-      allowNull: true
-    },
     user_name: {
       type: DataTypes.STRING(50),
       allowNull: false,
