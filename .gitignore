@@ -7,4 +7,3 @@ apidoc
 apidoc/*
 node_modules/
 /public
-package-lock.json
