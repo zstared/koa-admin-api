@@ -120,7 +120,7 @@ class FileService {
 			};
 			await m_file.create(file_data);
 
-			await fs.unlink(file.path); //删除临时目录
+			fs.unlink(file.path); //删除临时目录
 
 			return {
 				code: file_code,
