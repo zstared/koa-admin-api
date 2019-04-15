@@ -155,6 +155,7 @@ class FileService {
 					if (!err) {
 						resolve(true);
 					} else {
+						console.log(err);
 						reject(false);
 					}
 				});
