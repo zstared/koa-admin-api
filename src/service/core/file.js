@@ -84,7 +84,8 @@ class FileService {
 			const file_code = uuidv1();
 			const file_name = file_code + `.${ext}`;
 			const upStream = fs.createWriteStream(`${dir_path}/${file_name}`); // 创建可写流
-			reader.pipe(upStream); // 可读流通过管道写入可写流
+			reader.pipe(upStream,{end:true}); // 可读流通过管道写入可写流
+
 
 			//生成缩略图
 			let thumb_flag = false;
