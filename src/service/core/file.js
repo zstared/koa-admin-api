@@ -84,14 +84,14 @@ class FileService {
 			const file_code = uuidv1();
 			const file_name = file_code + `.${ext}`;
 			const upStream = fs.createWriteStream(`${dir_path}/${file_name}`); // 创建可写流
-			reader.pipe(upStream,{end:true}); // 可读流通过管道写入可写流
+			reader.pipe(upStream); // 可读流通过管道写入可写流
 
 
 			//生成缩略图
 			let thumb_flag = false;
 			if (is_thumb && is_image) {
 				try {
-					thumb_flag = await this.mkThumb(file_name, dir_path, thumb_w, thumb_h);
+					thumb_flag = await this.mkThumb(file.path,file_name, dir_path, thumb_w, thumb_h);
 				} catch (err) {
 					logger.error('【error】', 'message:', err.msg || '', 'desc:', err.desc || err.message || 'System Exception');
 					logger.error('【stack】\n ', err.stack || '');
@@ -137,19 +137,20 @@ class FileService {
 
 	/**
 	 * 生成缩略图
+	 * @param {string} 
 	 * @param {string} image_name 图片名称
 	 * @param {string} image_path 图片路径
 	 * @param {number} thumb_w 缩略图宽度
 	 * @param {number} thumb_h 缩略图高度
 	 */
-	async mkThumb(image_name, image_path, thumb_w = 120, thumb_h = 120) {
-
+	async mkThumb(upload_path,image_name, image_path, thumb_w = 120, thumb_h = 120) {
+        console.log(upload_path);
 		let name_arr = image_name.split('.');
 		let ext = name_arr.pop();
 		name_arr.push('-thumb');
 		let thumb_name = name_arr.join('') + `.${ext}`;
 		return new Promise((resolve, reject) => {
-			imageMagick(`${image_path}/${image_name}`)
+			imageMagick(upload_path)
 				.noProfile()
 				.autoOrient()
 				.thumb(thumb_w, thumb_h, `${image_path}/${thumb_name}`, 90, function (err) {

@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     size: {
-      type: "DOUBLE",
+      type: 'DOUBLE',
       allowNull: false
     },
     ext: {
