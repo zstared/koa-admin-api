@@ -1,5 +1,5 @@
 import sequelize from '../db_init';
-const Op = sequelize.Op;
+const Op = sequelize.Sequelize.Op;
 const t_file = require('../table/cs_file')(sequelize, sequelize.Sequelize);
 class FileModel {
 	constructor() {}

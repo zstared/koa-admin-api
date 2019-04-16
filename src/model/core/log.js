@@ -14,7 +14,7 @@ class LogModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_log.findById(id, option);
+		return await t_log.findByPk(id, option);
 	}
 
 	/**

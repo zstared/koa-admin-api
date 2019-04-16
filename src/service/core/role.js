@@ -105,6 +105,7 @@ class RoleService {
 		}
 		let order = [
 			['is_system', 'desc'],
+			['sort_no'],
 			['create_time']
 		]; //排序
 		if (sorter) {
@@ -133,7 +134,7 @@ class RoleService {
 			role_name = role_name + '%';
 			where += ' and role_name like  :role_name ';
 		}
-		let order = ' order by is_system desc,create_time ';
+		let order = ' order by is_system desc,sort_no,create_time ';
 		if (!isNull(sorter)) {
 			order = `order by ${sorter.split('|').join(' ')} `;
 		}

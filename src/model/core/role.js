@@ -1,6 +1,6 @@
 import sequelize from '../db_init';
 import db_common from '../db_common';
-const Op = sequelize.Op;
+const Op = sequelize.Sequelize.Op;
 const t_role = require('../table/cs_role')(sequelize, sequelize.Sequelize);
 const t_resource_role = require('../table/cs_resource_role')(sequelize, sequelize.Sequelize);
 const t_user_role = require('../table/cs_user_role')(sequelize, sequelize.Sequelize);
@@ -17,7 +17,7 @@ class RoleModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_role.findById(id, option);
+		return await t_role.findByPk(id, option);
 	}
 
 	/**
@@ -182,7 +182,7 @@ class RoleModel {
 			});
 		}else{
 			//用于鉴权
-			let permissions = await db_common.query('SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.parent_id  where role_id in (:role_id) and resource_type=4 ', {
+			let permissions = await db_common.query(`SELECT b.path from cs_resource_role a join cs_resource b on a.resource_id=b.parent_id  where role_id in (${role_ids.join(',')}) and resource_type=4 `, {
 				role_id: role_ids.join(',')
 			});
 			permissions = permissions.map(item => item.path);

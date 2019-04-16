@@ -1,6 +1,6 @@
 import sequelize from '../db_init';
 import db_common from '../db_common';
-const Op = sequelize.Op;
+const Op = sequelize.Sequelize.Op;
 const t_user = require('../table/cs_user')(sequelize, sequelize.Sequelize);
 const t_user_role = require('../table/cs_user_role')(sequelize, sequelize.Sequelize);
 const t_resource_user = require('../table/cs_resource_user')(sequelize, sequelize.Sequelize);
@@ -19,7 +19,7 @@ class UserModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_user.findById(id, option);
+		return await t_user.findByPk(id, option);
 	}
 
 	/**

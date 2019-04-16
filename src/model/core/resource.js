@@ -1,6 +1,6 @@
 import sequelize from '../db_init';
 import db_common from '../db_common';
-const Op = sequelize.Op;
+const Op = sequelize.Sequelize.Op;
 const t_resource = require('../table/cs_resource')(sequelize, sequelize.Sequelize);
 const t_resource_user = require('../table/cs_resource_user')(sequelize, sequelize.Sequelize);
 const t_resource_role = require('../table/cs_resource_role')(sequelize, sequelize.Sequelize);
@@ -17,7 +17,7 @@ class ResourceModel {
 		if (attr) {
 			option.attributes = attr;
 		}
-		return await t_resource.findById(id, option);
+		return await t_resource.findByPk(id, option);
 	}
 
 	/**
