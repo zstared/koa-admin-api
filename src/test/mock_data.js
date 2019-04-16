@@ -24,11 +24,12 @@ class MockData {
      */
     async init() {
         //获取token
-        let res = await request.post(`/core/user/login`)
+        let res = await request.post(`/core/oauth/login`)
             .send({
                 user_name: this.user_name,
                 password: this.password
             }).expect(200);
+        console.log(res.body)
         let body = res.body;
         assert.equal(body.code, 0, body.message + '|' + body.desc);
         this.token = body.data.token;
@@ -123,7 +124,7 @@ class MockData {
                 'name_cn': '@cname',
                 'name_en': '@name',
                 'mail': '@email',
-                'role': [1, 2]
+                'role': [1001, 1002, 1003, 1004, 1005, 1006, 1007].slice(Mock.Random.integer(0,6))
             })
             let res = await request.post(`/core/user/create`).set('Accept', 'application/json')
                 .expect('Content-Type', /json/).set('token', this.token).send(data).expect(200);
