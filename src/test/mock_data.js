@@ -116,7 +116,6 @@ class MockData {
         await this.init();
 
         for (let i = 0; i < 100; i++) {
-
             let data = Mock.mock({
                 'user_name': /^test\d{10}$/,
                 'sex|1': [1, 2],
