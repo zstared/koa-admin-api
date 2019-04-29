@@ -117,7 +117,7 @@ class ResourceModel {
 				},
 				transaction: t
 			});
-			t.commit();
+			t.rollback();
 			return true;
 		} catch (e) {
 			t.rollback();

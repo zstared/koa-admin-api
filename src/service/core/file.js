@@ -144,7 +144,6 @@ class FileService {
 	 * @param {number} thumb_h 缩略图高度
 	 */
 	async mkThumb(upload_path,image_name, image_path, thumb_w = 120, thumb_h = 120) {
-        console.log(upload_path);
 		let name_arr = image_name.split('.');
 		let ext = name_arr.pop();
 		name_arr.push('-thumb');
