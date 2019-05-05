@@ -75,7 +75,7 @@ class LogController extends BaseController {
      *     system : 'core',
      *     module : 'user',
      *     action : 'login',
-     *     url : '/core/user/login',
+     *     url : '/core/oauth/login',
      *     params : '{user_name:'test'}',
      *     status : '1',
      *     message : '请求成功',

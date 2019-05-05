@@ -14,7 +14,7 @@ describe('/core/file', () => {
 	/**运行前执行 */
 	before(async () => {
 		//获取token
-        let res = await request.post(`/core/user/login`)
+        let res = await request.post(`/core/oauth/login`)
 			.send({
 				user_name: user_name,
 				password: password

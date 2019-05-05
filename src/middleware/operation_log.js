@@ -5,7 +5,7 @@ import {
 
 
 const whiteList = [
-	'/core/user/login',
+	'/core/oauth/login',
 	'/core/user/register',
 	'/core/user/updatePassword'
 ];

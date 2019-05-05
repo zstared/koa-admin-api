@@ -33,6 +33,7 @@
     "mysql2": "^1.6.1",
     "parameter": "^3.4.0",
     "path-to-regexp": "^3.0.0",
+    "pinyin": "^2.8.3",
     "redis": "^2.8.0",
     "sequelize": "^5.3.5",
     "uuid": "^3.3.2"

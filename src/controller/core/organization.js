@@ -5,7 +5,7 @@ import organizationService from '../../service/core/organization';
  * 组织接口
  * @extends BaseController
  */
-class ResourceController extends BaseController {
+class OrganizationController extends BaseController {
 	constructor() {
 		super();
 	}
@@ -23,48 +23,49 @@ class ResourceController extends BaseController {
      * @apiParam  {String} name 组织名称
      * @apiParam  {String} name_short 组织名称
      * @apiParam  {Number} type 组织类型 1-公司/集团; 2-子公司; 3-部门
-	 * @apiParam  {String} 
-     * @apiParam  {String} path 组织路径(如001,001.002,001.002.001)  用于检索
-     * @apiParam  {int} parent_id 父级组织ID
+	 * @apiParam  {Number} leader 部门负责人 empId
+	 * @apiParam  {Number} reporter 部门负责人的汇报对象（默认上级层级负责人）empId
+     * @apiParam  {Number} parent_id 父级组织ID
      * @apiParam  {Number} sort_no 排序
      * @apiParamExample  {Object} Request-Example:
      * {
      *     name : '人力资源部门',
+     *     name_short : '人资部门',
      *     type:'3',
-	 *     icon:'cog',
-     *     path : /core/organization/create,
+	 *     leader:12,
+	 * 	   reporter:12,
      *     parent_id:10,
      *     sort_no:1
      * }
      */
 	async create(ctx) {
 		const params = ctx.request.body;
+		console.log(params);
 		const validRule = {
 			name: {
 				type: 'string',
 				min: 2,
 				max: 50
 			},
-			organization_code: {
+			name_short: {
 				type: 'string',
 				min: 2,
-				max: 50,
-				allowEmpty:true,
+				max: 20,
 				required:false,
 			},
 			type: {
 				type: 'enum',
-				values: [1, 2, 3,4],
+				values: [2, 3],
 				convertType: 'int',
 			},
-			icon: {
-				type: 'string',
-				allowEmpty: true,
+			leader: {
+				type: 'int',
+				convertType: 'int',
 				required:false,
 			},
-			path: {
-				type: 'string',
-				allowEmpty: true,
+			reporter: {
+				type: 'int',
+				convertType: 'int',
 				required:false,
 			},
 			parent_id: {
@@ -72,16 +73,9 @@ class ResourceController extends BaseController {
 				convertType: 'int',
 				required:false,
 			},
-			is_visiable:{
-				type:'enum',
-				values:[0,1],
-				convertType:'int',
-				required:false,
-			},
 			sort_no: {
 				type: 'int',
 				convertType: 'int',
-				allowEmpty: true,
 				required:false,
 			}
 		};
@@ -104,22 +98,20 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiParam  {String} id 组织id
      * @apiParam  {String} name 组织名称
-	 * @apiParam  {String} organization_code 组织编码
-     * @apiParam  {Number} type 组织类型 1-模块; 2-菜单; 3-接口
-	 * @apiParam  {String} icon 组织图标
-     * @apiParam  {String} path 组织路径（菜单路由、接口地址）
-     * @apiParam  {int} parent_id 父级组织ID
+     * @apiParam  {String} name_short 组织名称
+     * @apiParam  {Number} type 组织类型 1-公司/集团; 2-子公司; 3-部门
+	 * @apiParam  {Number} leader 部门负责人 empId
+	 * @apiParam  {Number} reporter 部门负责人的汇报对象（默认上级层级负责人）empId
+     * @apiParam  {Number} parent_id 父级组织ID
      * @apiParam  {Number} sort_no 排序
      * @apiParamExample  {Object} Request-Example:
      * {
-     *     id:20,
-     *     name : '新增组织',
-	 *     organization_code:'add',
+     *     name : '人力资源部门',
+     *     name_short : '人资部门',
      *     type:'3',
-	 *     icon:'cog',
-     *     path : /core/organization/create,
+	 *     leader:12,
+	 * 	   reporter:12,
      *     parent_id:10,
      *     sort_no:1
      * }
@@ -127,46 +119,35 @@ class ResourceController extends BaseController {
 	async update(ctx) {
 		const params = ctx.request.body;
 		const validRule = {
-			id: {
-				type: 'int',
-				convertType:'int'
-			},
 			name: {
 				type: 'string',
 				min: 2,
 				max: 50
 			},
-			organization_code: {
+			name_short: {
 				type: 'string',
 				min: 2,
-				max: 50,
-				allowEmpty:true,
+				max: 20,
 				required:false,
 			},
 			type: {
 				type: 'enum',
-				values: [1, 2, 3,4],
+				values: [1, 2, 3],
 				convertType: 'int',
 			},
-			icon: {
-				type: 'string',
-				allowEmpty: true,
+			leader: {
+				type: 'int',
+				convertType: 'int',
 				required:false,
 			},
-			path: {
-				type: 'string',
-				allowEmpty: true,
+			reporter: {
+				type: 'int',
+				convertType: 'int',
 				required:false,
 			},
 			parent_id: {
 				type: 'int',
 				convertType: 'int',
-				required:false,
-			},
-			is_visiable:{
-				type:'enum',
-				values:[0,1],
-				convertType:'int',
 				required:false,
 			},
 			sort_no: {
@@ -255,32 +236,30 @@ class ResourceController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
-     * @apiSuccess  {String} id 组织id
+	 * @apiSuccess  {Number} id 组织id
      * @apiSuccess  {String} name 组织名称
-	 * @apiSuccess  {String} organization_code 组织编码
-	 * @apiSuccess  {String} locale 本地化配置(前端配置)
-     * @apiSuccess  {Number} type 组织类型 1-模块; 2-菜单; 3-接口
-     * @apiSuccess  {String} icon 组织图标
-     * @apiSuccess  {String} path 组织路径（菜单路由、接口地址）
-     * @apiSuccess  {int} parent_id 父级组织ID
+     * @apiSuccess  {String} name_short 组织名称
+     * @apiSuccess  {Number} type 组织类型 1-公司/集团; 2-子公司; 3-部门
+	 * @apiSuccess  {Number} leader 部门负责人 empId
+	 * @apiSuccess  {Number} reporter 部门负责人的汇报对象（默认上级层级负责人）empId
+     * @apiSuccess  {Number} parent_id 父级组织ID
      * @apiSuccess  {Number} sort_no 排序
      * @apiSuccess  {Arrary} children 子级组织列表
      * @apiSuccessExample  {json} data :
      * {
      *     id:20,
-     *     name : '新增组织',
-	 *     organization_code :'add',
-	 *     locale:'organization.add',
+     *     name : '人力资源部门',
+     *     name_short : '人资部门',
      *     type:'3',
-	 *     icon:'cog',
-     *     path : /core/organization/create,
+	 *     leader:12,
+	 * 	   reporter:12,
      *     parent_id:10,
-     *     sort_no:1,
+     *     sort_no:1
      *     children:[]
      * }
      */
 	async treeList(ctx) {
-		let result = await organizationService.getTreeList();
+		let result = await organizationService.getTreeList(ctx.user_info.company_id);
 		if (result) {
 			ctx.success(result);
 		} else {
@@ -290,8 +269,8 @@ class ResourceController extends BaseController {
 
 	/**
 	 * 判断组织名称是否存在
-	 * @api {get} /core/organization/existResource 6.判断组织名称是否存在
-	 * @apiName existResource
+	 * @api {get} /core/organization/existOrganization 6.判断组织名称是否存在
+	 * @apiName existOrganization
 	 * @apiGroup  organization
 	 * @apiVersion  0.1.0
 	 * 
@@ -305,7 +284,7 @@ class ResourceController extends BaseController {
 	 *     id : '1',
 	 * }
 	 */
-	async existResource(ctx) {
+	async existOrganization(ctx) {
 		try {
 			const params = ctx.request.body;
 			//接口参数验证规则
@@ -326,7 +305,7 @@ class ResourceController extends BaseController {
 				}
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await organizationService.existResource(params.name,params.parent_id,params.id);
+			let result = await organizationService.existOrganization(params.name,params.parent_id,params.id);
 			if (result) {
 				ctx.success(result);
 			} else {
@@ -338,56 +317,8 @@ class ResourceController extends BaseController {
 	}
 
 	/**
-	 * 判断组织编码是否存在
-	 * @api {get} /core/organization/existResourceCode 7.判断组织编码是否存在
-	 * @apiName existResourceCode
-	 * @apiGroup  organization
-	 * @apiVersion  0.1.0
-	 * 
-	 * @apiUse  Header
-	 * @apiUse  ResultError
-	 * @apiUse  ResultSuccess
-	 * @apiParam  {Number} organization_code 组织编码
-	 * @apiParamExample  {Object} Request-Example:
-	 * {
-	 *     organization_code : 'test',
-	 *     id : '1',
-	 * }
-	 */
-	async existResourceCode(ctx) {
-		try {
-			const params = ctx.request.body;
-			//接口参数验证规则
-			const validRule = {
-				organization_code: {
-					type: 'string',
-					min: 1,
-					max: 50
-				},
-				parent_id:{
-					type: 'int',
-					convertType: 'int',
-				},
-				id:{
-					type: 'int',
-					convertType: 'int',
-					required: false
-				}
-			};
-			parameterValidate.validate(validRule, params);
-			let result = await organizationService.existResourceCode(params.organization_code,params.parent_id,params.id);
-			if (result) {
-				ctx.success(result);
-			} else {
-				ctx.error();
-			}
-		} catch (e) {
-			throw e;
-		}
-	}
-	/**
-     * 获取组织树形下拉列表(只有模块与菜单)
-     * @api {get} /core/organization/treeDropList 8.获取组织树形下拉列表(只有模块与菜单)
+     * 获取组织树形下拉列表
+     * @api {get} /core/organization/treeDropList 8.获取组织树形下拉列表
      * @apiName treeDropList
      * @apiGroup  organization
      * @apiVersion  0.1.0
@@ -397,22 +328,23 @@ class ResourceController extends BaseController {
      * @apiUse  ResultSuccess
      * @apiSuccess  {String} key 组织id
      * @apiSuccess  {String} title 组织名称
-	 * @apiSuccess  {String} organization_code 组织编码
-	 * @apiSuccess  {String} locale 本地化配置(前端配置)
      * @apiSuccess  {Number} type 组织类型 1-模块; 2-菜单; 3-接口
      * @apiSuccess  {Arrary} children 子级组织列表
      * @apiSuccessExample  {json} data :
      * {
      *     id:20,
-     *     name : '新增组织',
-	 *     organization_code :'add',
-	 *     locale:'organization.add',
+     *     name : '人力资源部门',
+     *     name_short : '人资部门',
      *     type:'3',
+	 *     leader:12,
+	 * 	   reporter:12,
+     *     parent_id:10,
+     *     sort_no:1
      *     children:[]
      * }
      */
 	async treeDropList(ctx) {
-		let result = await organizationService.getTreeDropList();
+		let result = await organizationService.getTreeDropList(ctx.user_info.company_id);
 		if (result) {
 			ctx.success(result);
 		} else {
@@ -420,40 +352,6 @@ class ResourceController extends BaseController {
 		}
 	}
 
-	/**
-     * 获取权限组织树形下拉列表
-     * @api {get} /core/organization/treePermissionList 9.获取权限组织树形下拉列表
-     * @apiName treePermissionList
-     * @apiGroup  organization
-     * @apiVersion  0.1.0
-     * 
-     * @apiUse  Header
-     * @apiUse  ResultError
-     * @apiUse  ResultSuccess
-     * @apiSuccess  {String} key 组织id
-     * @apiSuccess  {String} title 组织名称
-	 * @apiSuccess  {String} organization_code 组织编码
-	 * @apiSuccess  {String} locale 本地化配置(前端配置)
-     * @apiSuccess  {Number} type 组织类型 1-模块; 2-菜单; 3-接口
-     * @apiSuccess  {Arrary} children 子级组织列表
-     * @apiSuccessExample  {json} data :
-     * {
-     *     key:20,
-     *     title : '新增组织',
-	 *     organization_code :'add',
-	 *     locale:'organization.add',
-     *     type:'3',
-     *     children:[]
-     * }
-     */
-	async treePermissionList(ctx) {
-		let result = await organizationService.getTreePermissionList();
-		if (result) {
-			ctx.success(result);
-		} else {
-			ctx.error();
-		}
-	}
 }
 
-export default new ResourceController();
+export default new OrganizationController();

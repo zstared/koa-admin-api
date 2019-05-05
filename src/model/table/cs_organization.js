@@ -16,13 +16,13 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    path: {
-      type: DataTypes.STRING(500),
-      allowNull: false
-    },
     parent_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false
+    },
+    path: {
+      type: DataTypes.STRING(200),
+      allowNull: true
     },
     type: {
       type: DataTypes.INTEGER(4),
@@ -46,6 +46,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     leader: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true
+    },
+    reporter: {
       type: DataTypes.INTEGER(11),
       allowNull: true
     },

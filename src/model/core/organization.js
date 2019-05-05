@@ -2,8 +2,6 @@ import sequelize from '../db_init';
 import db_common from '../db_common';
 const Op = sequelize.Sequelize.Op;
 const t_organization = require('../table/cs_organization')(sequelize, sequelize.Sequelize);
-const t_organization_user = require('../table/cs_organization_user')(sequelize, sequelize.Sequelize);
-const t_organization_role = require('../table/cs_organization_role')(sequelize, sequelize.Sequelize);
 class ResourceModel {
 	constructor() {}
 
@@ -26,8 +24,9 @@ class ResourceModel {
 	 * @param {*} parent_id 
 	 * @param {*} id 不包含的自己
 	 */
-	async isExist(name, parent_id, id = null) {
+	async isExist(company_id,name, parent_id, id = null) {
 		let where = {
+			company_id:company_id,
 			name: name,
 			parent_id: parent_id
 		};
@@ -45,8 +44,15 @@ class ResourceModel {
 	 * 新增组织
 	 * @param {object} organization
 	 */
-	async create(organization) {
-		return await t_organization.create(organization);
+	async create(organization,parent_path) {
+		let org= await t_organization.create(organization);
+		if(parent_path){
+			let org_path=parent_path+'/'+org.id;
+			await t_organization.update({id:org.id,path:org_path},{where:{
+				id:org.id
+			}});
+		}
+		return org;
 	}
 
 	/**
@@ -72,22 +78,6 @@ class ResourceModel {
 		let organization_ids = child_list.map((item) => (item.id));
 		let t = await db_common.transaction();
 		try {
-			await t_organization_user.destroy({
-				where: {
-					organization_id: {
-						[Op.in]: organization_ids
-					}
-				},
-				transaction: t
-			});
-			await t_organization_role.destroy({
-				where: {
-					organization_id: {
-						[Op.in]: organization_ids
-					}
-				},
-				transaction: t
-			});
 			await t_organization.destroy({
 				where: {
 					id: {
