@@ -20,14 +20,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false
     },
-    path: {
-      type: DataTypes.STRING(200),
-      allowNull: true
-    },
     type: {
       type: DataTypes.INTEGER(4),
       allowNull: false,
-      defaultValue: '3'
+      defaultValue: '4'
     },
     name: {
       type: DataTypes.STRING(200),
@@ -57,6 +53,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       defaultValue: '1'
+    },
+    path: {
+      type: DataTypes.STRING(200),
+      allowNull: true
     },
     create_user: {
       type: DataTypes.STRING(50),

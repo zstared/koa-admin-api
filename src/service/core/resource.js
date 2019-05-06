@@ -58,6 +58,7 @@ class ResourceService {
 				throw new ApiError(RCode.core.C2002004, '顶级资源类型只能是模块或菜单');
 			}
 		}
+		params.resource_code=params.resource_code?params.resource_code:null;
 		return m_resource.create(params);
 	}
 
@@ -98,6 +99,7 @@ class ResourceService {
 		if (!role_exist) {
 			throw new ApiError(RCode.common.C1, '资源不存在');
 		}
+		resource.resource_code=resource.resource_code?resource.resource_code:null;
 		let result = await m_resource.update(resource);
 		return result;
 	}

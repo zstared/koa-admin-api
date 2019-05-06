@@ -29,16 +29,16 @@ class RedisClient {
 		});
 
 		//监控redis命令
-		this.client.monitor(function (err, res) {
-			if (!err) {
-				console.log('Entering monitoring mode.');
-			} else {
-				console.log(res);
-			}
-		});
-		this.client.on('monitor', function (time, args, raw_reply) {
-			console.log(time + ': ' + args, raw_reply);
-		});
+		// this.client.monitor(function (err, res) {
+		// 	if (!err) {
+		// 		console.log('Entering monitoring mode.');
+		// 	} else {
+		// 		console.log(res);
+		// 	}
+		// });
+		// this.client.on('monitor', function (time, args, raw_reply) {
+		// 	console.log(time + ': ' + args, raw_reply);
+		// });
 
 		//Bluebird Promises 支持 async/await 
 		bluebird.promisifyAll(this.client);

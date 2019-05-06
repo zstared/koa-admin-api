@@ -681,6 +681,7 @@ class UserController extends BaseController {
 				ctx.error();
 			}
 		} catch (e) {
+			console.log(e);
 			throw e;
 		}
 	}
