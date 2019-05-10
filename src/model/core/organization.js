@@ -22,9 +22,10 @@ class ResourceModel {
 	 * 组织名称是否存在 在同层级内
 	 * @param {*} name 
 	 * @param {*} parent_id 
-	 * @param {*} id 不包含的自己
+	 * @param {*} id 不包含的自己f
 	 */
 	async isExist(company_id,name, parent_id, id = null) {
+		console.log(company_id,name,parent_id,id);
 		let where = {
 			company_id:company_id,
 			name: name,
@@ -111,8 +112,7 @@ class ResourceModel {
 			order: order
 		});
 		for (let item of root_list) {
-			item.dataValues.locale = item.organization_code;
-			item.dataValues.children = await this._getChildList(item.id, attrs, _where, order, item.organization_code);
+			item.dataValues.children = await this._getChildList(item.id, attrs, _where, order);
 		}
 		return root_list;
 
@@ -123,7 +123,7 @@ class ResourceModel {
 	 * @param {number} parent_id 
 	 * @param {[]} attrs
 	 */
-	async _getChildList(parent_id, attrs, where, order, parent_code) {
+	async _getChildList(parent_id, attrs, where, order) {
 		let child_list = await t_organization.findAll({
 			where: Object.assign({
 				parent_id: parent_id
@@ -132,8 +132,7 @@ class ResourceModel {
 			order: order
 		});
 		for (let item of child_list) {
-			item.dataValues.locale = parent_code + '.' + item.organization_code;
-			item.dataValues.children = await this._getChildList(item.id, attrs, where, order, item.dataValues.locale);
+			item.dataValues.children = await this._getChildList(item.id, attrs, where, order);
 		}
 		return child_list;
 	}

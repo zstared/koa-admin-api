@@ -57,7 +57,8 @@ class OauthService {
                 status: user.status,
                 sex: user.sex,
                 mobile: user.mobile,
-                permissions:permissions
+                permissions:permissions,
+                company_id:900000,
             };
 
             redis.setSerializable(config.session_user_prefix + token, user_info, config.session_ttl); //设置用户缓存

@@ -8,19 +8,20 @@ class RedisClient {
 			port: config.redis_port,
 			auth_pass: config.redis_password,
 			db: config.redis_session_db,
-			retry_strategy: function (options) {
-				if (options.error && options.error.code === 'ECONNREFUSED') {
-					//服务器拒绝连接
-					//return new Error('The server refused the connection');
-					console.log('服务器拒绝连接');
-				}
-				if (options.attempt > 10) {
-					//重连次数超过10
-					console.log('重连次数超过10');
-				}
-				//1s后重连
-				return Math.min(options.attempt * 100, 3000);
-			}
+			// no_ready_check:true,
+			// retry_strategy: function (options) {
+			// 	if (options.error && options.error.code === 'ECONNREFUSED') {
+			// 		//服务器拒绝连接
+			// 		//return new Error('The server refused the connection');
+			// 		console.log('服务器拒绝连接');
+			// 	}
+			// 	if (options.attempt > 10) {
+			// 		//重连次数超过10
+			// 		console.log('重连次数超过10');
+			// 	}
+			// 	//1s后重连
+			// 	return Math.min(options.attempt * 100, 3000);
+			// }
 		}, _options));
 
 		//错误监听

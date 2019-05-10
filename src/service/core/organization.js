@@ -105,7 +105,7 @@ class OrganizationService {
 	 */
 	async getTreeList(company_id) {
 		let attrs = ['id', 'name', ['id', 'key'],
-			['name', 'title'],  'type', 'parent_id',  'path', 'sort_no',  'create_time'
+			['name', 'title'], 'name_short', 'type', 'parent_id',  'path', 'sort_no',  'create_time'
 		];
 		return await m_organization.getTreeList(attrs,{
 			company_id:company_id
@@ -120,7 +120,7 @@ class OrganizationService {
 		let attrs = [
 			['id', 'value'],
 			['id', 'key'],
-			['name', 'title'], 'id', 'code', 'type'
+			['name', 'title'], 'id', 'type'
 		];
 		return await m_organization.getTreeList(attrs,{company_id:company_id});
 	}

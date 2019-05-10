@@ -40,7 +40,6 @@ class OrganizationController extends BaseController {
      */
 	async create(ctx) {
 		const params = ctx.request.body;
-		console.log(params);
 		const validRule = {
 			name: {
 				type: 'string',
@@ -55,7 +54,7 @@ class OrganizationController extends BaseController {
 			},
 			type: {
 				type: 'enum',
-				values: [2, 3],
+				values: [2,3,4,5],
 				convertType: 'int',
 			},
 			leader: {
@@ -80,6 +79,7 @@ class OrganizationController extends BaseController {
 			}
 		};
 		parameterValidate.validate(validRule, params);
+		params.company_id=ctx.user_info.company_id;
 		let result = await organizationService.create(params);
 		if (result) {
 			ctx.success();
@@ -132,7 +132,7 @@ class OrganizationController extends BaseController {
 			},
 			type: {
 				type: 'enum',
-				values: [1, 2, 3],
+				values: [2,3,4,5],
 				convertType: 'int',
 			},
 			leader: {
@@ -157,6 +157,7 @@ class OrganizationController extends BaseController {
 			}
 		};
 		parameterValidate.validate(validRule, params);
+		params.company_id=ctx.user_info.company_id;
 		let result = await organizationService.update(params);
 		if (result) {
 			ctx.success();
@@ -305,7 +306,7 @@ class OrganizationController extends BaseController {
 				}
 			};
 			parameterValidate.validate(validRule, params);
-			let result = await organizationService.existOrganization(params.name,params.parent_id,params.id);
+			let result = await organizationService.existOrganization(ctx.user_info.company_id,params.name,params.parent_id,params.id);
 			if (result) {
 				ctx.success(result);
 			} else {

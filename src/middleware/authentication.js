@@ -42,7 +42,7 @@ export default async (ctx, next) => {
 			}
 			ctx.user_info = user; //缓存token用户信息
 		}
-		ctx.user_info={company_id:900000};
+		//ctx.user_info={company_id:900000};
 	}
 
 	/**
