@@ -4,6 +4,8 @@ import koaBody from 'koa-body';
 import cors from 'koa2-cors';
 import koaStatic from 'koa-static';
 import boot from './boot';
+import https from 'https';
+import fs from 'fs';
 //路由
 const router = require('./router/index.js');
 //配置
@@ -42,6 +44,16 @@ app.use(async(ctx)=>{
 const server=app.listen(config.port, () => {
 	console.log(`WebAPI服务已启动!监听端口${config.port}...`);
 	boot.init();
+});
+
+//https 配置
+const httpsOption = {
+	key : fs.readFileSync(path.join(__dirname,'../cert/2184091_www.zhengxinhong.top.key')),
+	cert: fs.readFileSync(path.join(__dirname,'../cert/2184091_www.zhengxinhong.top.crt'))
+};
+
+https.createServer(httpsOption,app.callback()).listen(8084,()=>{
+	console.log(`WebAPI服务已启动!监听端口${8084}...`);
 });
 
 module.exports=server;
