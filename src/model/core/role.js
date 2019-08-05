@@ -52,7 +52,7 @@ class RoleModel {
 	 * @param {object} role
 	 */
 	async update(role) {
-		return t_role.update(role, {
+		return await t_role.update(role, {
 			where: {
 				id: role.id
 			}
