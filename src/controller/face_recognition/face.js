@@ -1,0 +1,391 @@
+import BaseController from '../../lib/base_controller';
+import parameterValidate from '../../lib/parameter_validate';
+import faceService from '../../service/face_recognition/face';
+/**
+ * 人脸接口
+ * @extends BaseController
+ */
+class RoleController extends BaseController {
+	constructor() {
+		super();
+	}
+
+	/**
+	 * 新增人脸
+	 * @api {post} /face_recognition/face/create 1.新增人脸
+	 * @apiName create
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {String} face_name 人脸名称
+	 * @apiParam  {String} file_code 人脸文件code
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     face_name : 'test',
+	 *     file_code:'',
+	 * }
+	 */
+	async create(ctx) {
+		const params = ctx.request.body;
+		const validRule = {
+			face_name: {
+				type: 'string',
+				min: 2,
+				max: 50
+			},
+			file_code: {
+				type: 'string',
+				min: 0,
+				max: 36
+			}
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.create(params);
+		if (result) {
+			ctx.success();
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 修改人脸
+	 * @api {post} /face_recognition/face/update 2.修改人脸
+	 * @apiName update
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} id 人脸ID
+	 * @apiParam  {String} face_name 人脸名称
+	 * @apiParam  {String} desc 人脸描述
+	 * @apiParam  {Number} sort_no 排序
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     id:2,
+	 *     face_name : 'test',
+	 *     desc:'',
+	 *     sort_no : 1,
+	 * }
+	 */
+	async update(ctx) {
+		const params = ctx.request.body;
+		const validRule = {
+			id: {
+				type: 'int',
+				convertType: 'int'
+			},
+			face_name: {
+				type: 'string',
+				min: 2,
+				max: 50
+			}
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.update(params);
+		if (result) {
+			ctx.success();
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 删除人脸
+	 * @api {post} /face_recognition/face/delete 3.删除人脸
+	 * @apiName delete
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} id 人脸ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     id:2,
+	 * }
+	 */
+	async delete(ctx) {
+		const params = ctx.request.body;
+		const validRule = {
+			id: {
+				type: 'int',
+				convertType: 'int'
+			}
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.delete(params);
+		if (result) {
+			ctx.success();
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 人脸详情
+	 * @api {get} /face_recognition/face/details/:id 4.人脸详情
+	 * @apiName details
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 */
+	async details(ctx) {
+		const params = ctx.params;
+		const validRule = {
+			id: {
+				type: 'int',
+				convertType: 'int'
+			}
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.details(params);
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 获取人脸列表
+	 * @api {get} /face_recognition/face/list 5.获取人脸列表
+	 * @apiName list
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccessList
+	 * @apiParam  {String} face_name 用户名
+	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
+	 * @apiParam  (Response) {Number} data.id 人脸ID
+	 * @apiSuccess  (Response) {String} data.face_name 人脸名称
+	 * @apiSuccess  (Response) {String} data.face_desc 人脸描述
+	 * @apiSuccess  (Response) {Date} data.create_time 创建时间
+	 * @apiSuccessExample  {json} data :
+	 * {
+	 *     id : 1,
+	 *     face_name : 'test',
+	 *     face_desc : '人脸描述',
+	 *     create_time : '2018-11-14T01:23:57.000Z',
+	 * }
+	 */
+	async list(ctx) {
+		const params = ctx.request.query;
+		const validRule = {
+			face_name: {
+				allowEmpty: true,
+				required: false,
+				type: 'string',
+				max: 50
+			},
+			sorter: {
+				required: false,
+				allowEmpty: true,
+				type: 'order',
+			},
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.getList(params);
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 获取人脸分页列表
+	 * @api {get} /face_recognition/face/pageList 6.获取人脸分页列表
+	 * @apiName pageList
+	 * @apiGroup  face 
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccessPageList
+	 * @apiParam  {String} face_name 用户名
+	 * @apiParam  {String} page_index 页码
+	 * @apiParam  {String} page_size 页记录数
+	 * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
+	 * @apiParam  (Response) {Number} data.rows.id 人脸ID
+	 * @apiSuccess  (Response) {String} data.rows.face_name 人脸名称
+	 * @apiSuccess  (Response) {String} data.rows.face_desc 人脸描述
+	 * @apiSuccess  (Response) {Date} data.rows.create_time 创建时间
+	 * @apiSuccessExample  {json} data.rows :
+	 * {
+     *     id : 1,
+	 *     face_name : 'test',
+	 *     face_desc : '人脸描述',
+	 *     create_time : '2018-11-14T01:23:57.000Z',
+	 * }
+	 */
+	async pageList(ctx) {
+		const params = ctx.request.query;
+		const validRule = {
+			page_index: {
+				type: 'int',
+				convertType: 'int',
+				min: 1
+			},
+			page_size: {
+				type: 'int',
+				convertType: 'int',
+				min: 1
+			},
+			sorter: {
+				required: false,
+				allowEmpty: true,
+				type: 'order',
+			},
+			face_name: {
+				required: false,
+				allowEmpty: true,
+				type: 'string',
+				max: 50
+			}
+		};
+		parameterValidate.validate(validRule, params);
+		let result = await faceService.getPageList(params);
+		if (result) {
+			ctx.success(result);
+		} else {
+			ctx.error();
+		}
+	}
+
+	/**
+	 * 关联资源(赋权限)
+	 * @api {post} /face_recognition/face/relateResource 7.关联资源(赋权限)
+	 * @apiName relateResource
+	 * @apiGroup  face
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} id 人脸ID
+	 * @apiParam  {[Number[]]} resource_list[] 资源ID[]
+	 */
+	async relateResource(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				id: {
+					type: 'int',
+					convertType: 'int'
+				},
+				resource_list: {
+					type: 'array',
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await faceService.relateResource(params);
+			if (result) {
+				ctx.success();
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 判断人脸是否存在
+	 * @api {get} /face_recognition/face/existRole 8.判断人脸是否存在
+	 * @apiName existRole
+	 * @apiGroup  face
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} face_name 人脸
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     face_name : 'test',
+	 *     id : '1',
+	 * }
+	 */
+	async existRole(ctx) {
+		try {
+			const params = ctx.request.body;
+			//接口参数验证规则
+			const validRule = {
+				face_name: {
+					type: 'string',
+					min: 1,
+					max: 50
+				},
+				id:{
+					type: 'int',
+					convertType: 'int',
+					required: false
+				}
+			};
+			parameterValidate.validate(validRule, params);
+			let result = await faceService.existRole(params.face_name,params.id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * 获取人脸权限
+	 * @api {get} /face_recognition/face/permisson 9.获取人脸权限
+	 * @apiName current
+	 * @apiGroup  face
+	 * @apiVersion  0.1.0
+	 * 
+	 * @apiUse  Header
+	 * @apiUse  ResultError
+	 * @apiUse  ResultSuccess
+	 * @apiParam  {Number} id 人脸ID
+	 * @apiParamExample  {Object} Request-Example:
+	 * {
+	 *     id: '2'
+	 * }
+	 */
+	async permission(ctx) {
+		try {
+			const params = ctx.request.query;
+			//接口参数验证规则
+			const validRule = {
+				id: {
+					type: 'int',
+					convertType: 'int'
+				},
+			};
+			parameterValidate.validate(validRule, params);
+			//接口参数验证规则
+			let result = await faceService.getPermission(params.id);
+			if (result) {
+				ctx.success(result);
+			} else {
+				ctx.error();
+			}
+		} catch (e) {
+			throw e;
+		}
+	}
+	
+}
+
+export default new RoleController();

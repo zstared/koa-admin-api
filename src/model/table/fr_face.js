@@ -1,35 +1,27 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('xh_tanabata', {
+  return sequelize.define('fr_face', {
     id: {
       type: DataTypes.INTEGER(10).UNSIGNED,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    type: {
+    file_code: {
+      type: DataTypes.CHAR(36),
+      allowNull: false
+    },
+    face_name: {
       type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    tag: {
-      type: DataTypes.STRING(500),
-      allowNull: true
-    },
-    photo_code: {
-      type: DataTypes.STRING(36),
-      allowNull: true
-    },
-    title: {
-      type: DataTypes.STRING(500),
-      allowNull: true
-    },
-    sort_no: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true
+      allowNull: false
     },
     description: {
-      type: DataTypes.STRING(2000),
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    create_user: {
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     create_time: {
@@ -37,13 +29,17 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
+    update_user: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
     update_time: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'xh_tanabata',
+    tableName: 'fr_face',
     timestamps: false
   });
 };

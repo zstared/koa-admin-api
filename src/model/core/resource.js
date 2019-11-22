@@ -90,6 +90,7 @@ class ResourceModel {
 		let child_list = await db_common.query(' SELECT id FROM cs_resource WHERE FIND_IN_SET(id, fn_getResourceChild(:id)) ', {
 			id: id
 		});
+		console.log(child_list);
 		let resource_ids = child_list.map((item) => (item.id));
 		let t = await db_common.transaction();
 		try {
@@ -117,7 +118,7 @@ class ResourceModel {
 				},
 				transaction: t
 			});
-			t.rollback();
+			t.commit();
 			return true;
 		} catch (e) {
 			t.rollback();
@@ -224,7 +225,7 @@ class ResourceModel {
 
 		let menu_list = [];
 		if (list && list.length > 0) {
-			menu_list = list.filter(item => item.parent_id == 0);
+			menu_list = list.filter(item => item.parent_id == 0).sort((a,b)=>a.sort_no-b.sort_no);
 		}
 		for (let item of menu_list) {
 			item.dataValues.locale = item.resource_code;
@@ -239,7 +240,7 @@ class ResourceModel {
 	 */
 	async _getMenuChild(parent_id, menu_list, parent_code) {
 		let child_list = [];
-		child_list = menu_list.filter(item => item.parent_id == parent_id);
+		child_list = menu_list.filter(item => item.parent_id == parent_id).sort((a,b)=>a.sort_no-b.sort_no);
 		for (let item of child_list) {
 			item.dataValues.locale = parent_code + '.' + item.resource_code;
 			item.dataValues.children = await this._getMenuChild(item.id, menu_list, item.resource_code);

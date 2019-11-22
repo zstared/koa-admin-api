@@ -36,21 +36,13 @@ class DbCommon {
 			page_index,
 			page_size
 		} = params;
-		let sql = `call sp_paging(:page_index,:page_size,"${attrs}","${table} ${where}","${order}","${group}");`;
-		let option = {
-			type: sequelize.QueryTypes.SELECT,
-			replacements: params,
-		};
-		let data = await sequelize.query(sql, option);
-		let list = [];
-		for (let key in data[0]) {
-			list.push(data[0][key]);
-		}
-		let count = data[1][0].count;
+		const list=await this.query(`select ${attrs} from ${table} ${where} ${group} ${order} limit ${page_size*page_index-page_size},${page_size} `,params);
+		const count_data=await this.query(`select count(*) count from ${table} ${where} ${group} ${order}  `,params);
+		const count=count_data[0].count;
 		return {
-			rows: list,
-			count: count,
-			page_index: count > ((page_index - 1) * page_size) ? page_index : 1,
+			rows:list,
+			count:count,
+			page_index: count > ((page_index-1) * page_size)?page_index:1,
 			page_size: page_size,
 			is_paging: true,
 			is_more: count > (page_index * page_size)
