@@ -669,7 +669,7 @@ class UserController extends BaseController {
 	async current(ctx) {
 		try {
 			const params = {
-				id: ctx.user_info.id
+				id: ctx.user_info.user_id
 			};
 			//接口参数验证规则
 			let user_info = {};

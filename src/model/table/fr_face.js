@@ -16,8 +16,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(50),
       allowNull: false
     },
-    description: {
-      type: DataTypes.TEXT,
+    descriptor: {
+      type: DataTypes.JSON,
       allowNull: false
     },
     create_user: {

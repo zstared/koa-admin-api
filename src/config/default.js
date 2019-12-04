@@ -24,7 +24,7 @@ export const config = {
 	
 	
 	/**上传文件限制  */
-	uploadFileLimit:5*1024*1024,
+	uploadFileLimit:15*1024*1024,
 
 	core:{
 		default_password:'abc123456',

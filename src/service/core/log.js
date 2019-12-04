@@ -10,7 +10,7 @@ class LogService {
      * @param {*} params 
      */
 	async create(params) {
-		return m_log.create(params);
+		return await  m_log.create(params);
 	}
 
 	/**

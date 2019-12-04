@@ -19,10 +19,12 @@ class FileController extends BaseController {
      * 
      * @apiParam  {String} module 模块 如avatar、
      * @apiParam  {Boolean} is_thumb 是否要生成缩略图 仅用于图片格式文件
+	 * @apiParam  {Boolean} is_compress 是否要压缩图片 仅用于图片格式文件 
      * @apiParamExample  {type} Request-Example:
      * {
      *     folder_name:'avatar', //目录名称
      *     is_thumb:false,
+	 *     is_compress:false, --false 不压缩  true 自动按比例压缩
      *     is_static:'false', --false 私人的、需调接口下载；true 公开的 静态资源
      * }
      * 
@@ -54,10 +56,23 @@ class FileController extends BaseController {
 			is_static: {
 				required: false,
 				type: 'boolean',
+				convertType:(val)=>{
+					return parameterValidate.convertToBoolean(val);
+				}
+			},
+			is_compress: {
+				required: false,
+				type: 'boolean',
+				convertType:(val)=>{
+					return parameterValidate.convertToBoolean(val);
+				}
 			},
 			is_thumb: {
 				required: false,
 				type: 'boolean',
+				convertType:(val)=>{
+					return parameterValidate.convertToBoolean(val);
+				}
 			},
 			thumb_w: {
 				required: false,
@@ -77,7 +92,7 @@ class FileController extends BaseController {
 		}
 		for (let file of upload_files) {
 			if (file && file.size) {
-				const file_data=await fileService.save(file,Object.assign(params,ctx.user_info));
+				const file_data=await fileService.save(file,Object.assign(params,{user_id:ctx.user_info.user_id}));
 				if(file_data){
 					ctx.success(file_data);
 				}else{

@@ -1,6 +1,6 @@
 import config_default  from './default';
 import config_dev from './dev';
-import config_prod from './prod';
+import config_prod from './pro';
 import config_test from './test';
 
 function initConfig() {

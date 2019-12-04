@@ -31,7 +31,7 @@ class RoleService {
 			role_desc,
 			sort_no
 		};
-		return m_role.create(role);
+		return await m_role.create(role);
 	}
 
 	/**

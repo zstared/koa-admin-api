@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     size: {
-      type: 'DOUBLE',
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     ext: {
@@ -53,11 +53,20 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(500),
       allowNull: true
     },
+    hd_path: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
     thumb_path: {
       type: DataTypes.STRING(500),
       allowNull: true
     },
     is_static: {
+      type: DataTypes.INTEGER(4),
+      allowNull: true,
+      defaultValue: '0'
+    },
+    is_compress: {
       type: DataTypes.INTEGER(4),
       allowNull: true,
       defaultValue: '0'

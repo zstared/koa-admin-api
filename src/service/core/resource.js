@@ -60,7 +60,7 @@ class ResourceService {
         throw new ApiError(RCode.core.C2002004, '顶级资源类型只能是模块或菜单');
       }
     }
-    return m_resource.create(params);
+    return await m_resource.create(params);
   }
 
   /**

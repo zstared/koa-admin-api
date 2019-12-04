@@ -9,8 +9,7 @@ const face = new Router({
 face.post('/create', faceController.create);
 face.post('/update', faceController.update);
 face.post('/delete', faceController.delete);
-face.get('/details/:id', faceController.details);
-face.get('/list', faceController.list);
+face.get('/doropList', faceController.dropList);
 face.get('/pageList', faceController.pageList);
 
 module.exports = face;

@@ -52,7 +52,8 @@ class OauthService {
             await redis.set(config.session_token_prefix + user.user_name, token, config.session_ttl); //设置token 缓存
             let permissions = await this.getUserPermission(user.id);
             let user_info = {
-                id: user.id,
+                id:user.id,
+                user_id: user.id,
                 user_name: user.user_name,
                 status: user.status,
                 sex: user.sex,

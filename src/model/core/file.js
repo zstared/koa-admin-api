@@ -47,6 +47,7 @@ class FileModel {
      * @param {string} table_name  文件对应关联表名称
      */
 	async updateFileByCode(code, table_id, table_name) {
+
 		return await t_file.update({
 			code: code,
 			table_id,
@@ -68,6 +69,38 @@ class FileModel {
 		return await t_file.update({
 			table_id,
 			table_name,
+		}, {
+			where: {
+				code:{
+					[Op.in]:codes
+				}
+			}
+		});
+	}
+
+	/**
+     * 根据code清除文件关联信息
+     * @param {array} code 文件唯一code 
+     */
+	async clearFileByCode(code) {
+		return await t_file.update({
+			table_id:'',
+			table_name:'',
+		}, {
+			where: {
+				code:code
+			}
+		});
+	}
+
+	/**
+     * 根据code清除文件关联信息
+     * @param {array} codes 文件唯一code 
+     */
+	async clearFileByCodes(codes) {
+		return await t_file.update({
+			table_id:'',
+			table_name:'',
 		}, {
 			where: {
 				code:{

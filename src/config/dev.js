@@ -1,5 +1,8 @@
 
 const config={
+
+	origin:'http://localhost:8081',
+
 	/**监听端口 */
 	port:8081,
 

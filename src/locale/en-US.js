@@ -33,6 +33,7 @@ export default {
 
   // Core 文件上传
   '2003000': 'File upload failed',
+  '2003001': 'File does not exist',
 
   // Core 组织架构
   '2004000': 'Organization name already exists',
