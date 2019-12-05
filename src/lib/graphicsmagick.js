@@ -114,7 +114,6 @@ class Graphicsmagick {
 			width=size.width;
 			height=size.height;
 		}
-        console.log(width,height);
         magic = magic.quality(100).resize(width, height).autoOrient();
         return await this.write(magic, img_target_path?img_target_path:img_source_path);
 	}

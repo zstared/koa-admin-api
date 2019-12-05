@@ -8,12 +8,13 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    file_code: {
-      type: DataTypes.CHAR(36),
-      allowNull: false
-    },
     face_name: {
       type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true
+    },
+    file_code: {
+      type: DataTypes.JSON,
       allowNull: false
     },
     descriptor: {

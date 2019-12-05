@@ -148,12 +148,14 @@ class FileService {
 
             fs.unlink(file.path); //删除临时目录
 
+             
             return {
                 code: file_code,
                 url: file_data.origin + file_data.path,
                 type: file_data.type,
                 thumb_url: file_data.thumb_path ? file_data.origin + file_data.thumb_path : '',
             };
+      
 
         } catch (e) {
             throw new ApiError(RCode.core.C2003000, '文件上传失败', e.message);
