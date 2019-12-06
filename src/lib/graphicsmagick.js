@@ -152,7 +152,7 @@ class Graphicsmagick {
 
         });
 
-        let img = _gm.mosaic().minify().quality(100).in('-background', 'none');
+        let img = _gm.mosaic().quality(100).in('-background', 'none');
 
         return await this.write(img, img_target_path);
 
