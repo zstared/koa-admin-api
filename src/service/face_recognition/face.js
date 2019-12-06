@@ -5,6 +5,9 @@ import { isNull } from '../../lib/utils';
 import { Op } from 'sequelize';
 import m_file from '../../model/core/file';
 import { faceDetection } from '../../lib/face_api';
+import graphicsmagick from '../../lib/graphicsmagick';
+import path from 'path';
+
 class FaceService {
     constructor() {}
 
@@ -50,6 +53,7 @@ class FaceService {
         if (result) {
             m_file.updateFileByCodes(file_code, result.id, 'fr_face');
         }
+        this._sprite();
         return result;
     }
 
@@ -80,17 +84,17 @@ class FaceService {
             }
         });
 
-        console.log('del_code',del_code);
-        console.log('add_code',add_code);
+        console.log('del_code', del_code);
+        console.log('add_code', add_code);
 
         let add_descriptor = [];
         let descriptor = face_exist.descriptor;
         if (del_code.length > 0) {
-            let del_index=del_code.map((item)=>{
-                return face_exist.file_code.findIndex(code=>code==item);
+            let del_index = del_code.map((item) => {
+                return face_exist.file_code.findIndex(code => code == item);
             });
-            descriptor=descriptor.filter((item,index)=>{
-                return !del_index.some(code=>code==index);
+            descriptor = descriptor.filter((item, index) => {
+                return !del_index.some(code => code == index);
             });
         }
 
@@ -112,11 +116,11 @@ class FaceService {
                     }
                 });
 
-                if (add_descriptor.length == 0&&del_code.length==face_exist.file_code.length) {
+                if (add_descriptor.length == 0 && del_code.length == face_exist.file_code.length) {
                     throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
                 }
-            }else{
-                if(del_code.length==face_exist.file_code.length){
+            } else {
+                if (del_code.length == face_exist.file_code.length) {
                     throw new ApiError(RCode.core.C2003001, '文件不存在');
                 }
             }
@@ -124,12 +128,12 @@ class FaceService {
         }
 
         face.descriptor = descriptor.concat(add_descriptor);
-        console.log(file_code,face.descriptor);
-        
+        console.log(file_code, face.descriptor);
+
         let result = await m_face.update(face);
         if (result) {
-            if(add_code.length>0) m_file.updateFileByCodes(add_code, face_exist.id, 'fr_face'); //更新文件关联
-            if(del_code.length>0) m_file.clearFileByCodes(del_code); //清除之前文件关联
+            if (add_code.length > 0) m_file.updateFileByCodes(add_code, face_exist.id, 'fr_face'); //更新文件关联
+            if (del_code.length > 0) m_file.clearFileByCodes(del_code); //清除之前文件关联
         }
         return result;
     }
@@ -209,6 +213,26 @@ class FaceService {
             }
         }
         return pageList;
+    }
+
+    /**
+     * 拼图
+     */
+    async _sprite() {
+        let list = await m_face.getList(['file_code']);
+        let file_codes = [];
+        list.forEach(item => {
+            file_codes = file_codes.concat(item.file_code);
+        });
+
+        const file_info = await m_file.getFileByCodes(file_codes);
+
+        const img_source_paths = file_info.map(item => {
+            return path.join(__dirname, '../../../', item.directory + '/' + item.code + '.' + item.ext);
+        });
+
+        const img_taget_path = path.join(__dirname, '../../../', '/public/static/face/face_sprite.jpg');
+        return await graphicsmagick.sprite(img_source_paths, img_taget_path);
     }
 }
 

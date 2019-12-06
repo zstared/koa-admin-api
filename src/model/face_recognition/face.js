@@ -77,9 +77,10 @@ class FaceModel {
      * @param {array} order   排序
      */
     async getList(attrs, where, order) {
-        let option = {
-            where: where
-        };
+        let option={};
+        if(where){
+           option.where=where;
+        }
         if (order) {
             option.order = order;
         }

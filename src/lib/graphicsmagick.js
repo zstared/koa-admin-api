@@ -1,4 +1,3 @@
-
 import gm from 'gm';
 const graphicsmagick = gm.subClass({
     graphicsmagick: true
@@ -6,44 +5,44 @@ const graphicsmagick = gm.subClass({
 
 class Graphicsmagick {
 
-	constructor(){}
-	
+    constructor() {}
 
-	/**
+
+    /**
      * 图片伸缩  保持宽高比
      * @param {*} img_source_path  源图片路径
      * @param {*} img_target_path  目标图片保存路径
      * @param {*} width 宽度
      * @param {*} height 高度
      */
-    async resize(img_source_path, img_target_path=null, width = null, height = null) {
+    async resize(img_source_path, img_target_path = null, width = null, height = null) {
         const magic = graphicsmagick(img_source_path).resize(width, height).autoOrient();
-        return await this.write(magic, img_target_path?img_target_path:img_source_path);
-	}
-	
-	/**
-	 * 裁剪图片
-	 * @param {*} img_source_path 源图片路径
-	 * @param {*} img_target_path  目标图片保存路径
-	 * @param {*} width 
-	 * @param {*} height 
-	 * @param {*} x 
-	 * @param {*} y 
-	 */
-	async crop(img_source_path,img_target_path,width,height,x,y){
-		const magic = graphicsmagick(img_source_path).crop(width,height,x,y).quality(100);
-		return await this.write(magic, img_target_path?img_target_path:img_source_path);
-	}
+        return await this.write(magic, img_target_path ? img_target_path : img_source_path);
+    }
 
-	/**
-	 * 复制图片
-	 * @param {*} img_source_path 
-	 * @param {*} img_target_path 
-	 */
-	async copy(img_source_path,img_target_path){
-		const magic=graphicsmagick(img_source_path);
-		return await this.write(magic,img_target_path);
-	}
+    /**
+     * 裁剪图片
+     * @param {*} img_source_path 源图片路径
+     * @param {*} img_target_path  目标图片保存路径
+     * @param {*} width 
+     * @param {*} height 
+     * @param {*} x 
+     * @param {*} y 
+     */
+    async crop(img_source_path, img_target_path, width, height, x, y) {
+        const magic = graphicsmagick(img_source_path).quality(100).crop(width, height, x, y);
+        return await this.write(magic, img_target_path ? img_target_path : img_source_path);
+    }
+
+    /**
+     * 复制图片
+     * @param {*} img_source_path 
+     * @param {*} img_target_path 
+     */
+    async copy(img_source_path, img_target_path) {
+        const magic = graphicsmagick(img_source_path);
+        return await this.write(magic, img_target_path);
+    }
 
     /**
      * 输出图片
@@ -60,75 +59,128 @@ class Graphicsmagick {
                 }
             });
         });
-	}
-	
-	/**
+    }
+
+    /**
      * 生成缩略图
-	 * @param {*} img_source_path 源图片路径
-	 * @param {*} img_target_path  目标图片保存路径
+     * @param {*} img_source_path 源图片路径
+     * @param {*} img_target_path  目标图片保存路径
      * @param {number} thumb_w 缩略图宽度
      * @param {number} thumb_h 缩略图高度
      */
-    async thumb(img_source_path,  img_target_path,thumb_w = null, thumb_h = null) {
-		if(!thumb_w&&!thumb_h){
-			const size=this.getImageSize(img_source_path);
-			if(size.width>size.height){
-				thumb_w=120;
-			}else{
-				thumb_h=120;
-			}
+    async thumb(img_source_path, img_target_path, thumb_w = null, thumb_h = null) {
+        if (!thumb_w && !thumb_h) {
+            const size = this.getImageSize(img_source_path);
+            if (size.width > size.height) {
+                thumb_w = 120;
+            } else {
+                thumb_h = 120;
+            }
 
-		} 
-		const magic=graphicsmagick(img_source_path).noProfile().autoOrient().resize(thumb_w,thumb_h);
-		return await this.write(magic,img_target_path);
-	}
+        }
+        const magic = graphicsmagick(img_source_path).noProfile().autoOrient().resize(thumb_w, thumb_h);
+        return await this.write(magic, img_target_path);
+    }
 
-	/**
+    /**
      * 图片压缩  保持宽高比
      * @param {*} img_source_path  源图片路径
      * @param {*} img_target_path  目标图片保存路径
      * @param {*} width 宽度
      * @param {*} height 高度
      */
-    async compress(img_source_path, img_target_path=null) {
-		let  magic = graphicsmagick(img_source_path);
-		let fileSize =await this.getImageFileSize(img_source_path,magic);
-		const size=await this.getImageSize(img_source_path,magic);
-		if(fileSize.indexOf('M')>0){
+    async compress(img_source_path, img_target_path = null) {
+        let magic = graphicsmagick(img_source_path);
+        let fileSize = await this.getImageFileSize(img_source_path, magic);
+        const size = await this.getImageSize(img_source_path, magic);
+        if (fileSize.indexOf('M') > 0) {
             //magic.quality(80);
-		}else if(fileSize.indexOf('K')>0){
-			fileSize=fileSize.substring(0,fileSize.indexOf('K')-1);
-			if(fileSize>300){
-				//magic.quality(80);
-			}
-		}
-		let width=null;
-		let height=null;
-		if(size.width>800||size.height>800){
-			if(size.width>size.height){
-                width=800;
-			}else{
-				height=800;
-			}
-		}else{
-			width=size.width;
-			height=size.height;
-		}
+        } else if (fileSize.indexOf('K') > 0) {
+            fileSize = fileSize.substring(0, fileSize.indexOf('K') - 1);
+            if (fileSize > 300) {
+                //magic.quality(80);
+            }
+        }
+        let width = null;
+        let height = null;
+        if (size.width > 800 || size.height > 800) {
+            if (size.width > size.height) {
+                width = 800;
+            } else {
+                height = 800;
+            }
+        } else {
+            width = size.width;
+            height = size.height;
+        }
         magic = magic.quality(100).resize(width, height).autoOrient();
-        return await this.write(magic, img_target_path?img_target_path:img_source_path);
-	}
+        return await this.write(magic, img_target_path ? img_target_path : img_source_path);
+    }
 
-	/**
-	 * 获取文件大小
-	 * @param {*} img_path 
-	 */
-    async getImageFileSize(img_path,_magic=null) {
-		let magic=null;
-		if(_magic){
-			magic=_magic;
-		}else{
-			magic = graphicsmagick(img_path);
-		}
+
+    /**
+     * 合并图片
+     * @param {*} img_source_paths 
+     * @param {*} img_target_path 
+     */
+    async sprite(img_source_paths, img_target_path) {
+
+        const _gm = graphicsmagick();
+
+        const col_max = 6,
+            row_max = 10,
+            width = 108,
+            height = 120;
+
+        img_source_paths.forEach((img, index) => {
+            let x = 0,
+                y = 0;
+            let curIndex = index + 1;
+            const row = Math.ceil(curIndex / col_max);
+            let col = curIndex;
+            if (row > 1) {
+                col = curIndex - ((row - 1) * col_max);
+            }
+            x = (col - 1) * width;
+            y = (row - 1) * height;
+
+            console.log('x:' + x, 'y:' + y);
+            if (row > row_max) {
+                return false;
+            }
+            _gm.in('-resize', '108x120!').in('-page', `+${x}+${y}`).in(img);
+
+        });
+
+        let img = _gm.mosaic().minify().quality(100).in('-background', 'none');
+
+        return await this.write(img, img_target_path);
+
+    }
+
+    /**
+     * 文件名添加后缀
+     * @param {string} file_name 
+     */
+    _fixFileName(file_name, fix) {
+        let name_arr = file_name.split('.');
+        let ext = name_arr.pop();
+        name_arr.push(fix);
+        let fix_name = name_arr.join('') + `.${ext}`;
+        return fix_name;
+    }
+
+    /**
+     * 获取文件大小
+     * @param {*} img_path 
+     */
+    async getImageFileSize(img_path, _magic = null) {
+        let magic = null;
+        if (_magic) {
+            magic = _magic;
+        } else {
+            magic = graphicsmagick(img_path);
+        }
         return new Promise((resolve, reject) => {
             magic.filesize((err, value) => {
                 if (!err) {
@@ -138,19 +190,19 @@ class Graphicsmagick {
                 }
             });
         });
-	}
-	
-	/**
-	 * 获取文件尺寸
-	 * @param {*} img_path 
-	 */
-    async getImageSize(img_path,_magic=null) {
-		let magic=null;
-		if(_magic){
-			magic=_magic;
-		}else{
-			magic = graphicsmagick(img_path);
-		}
+    }
+
+    /**
+     * 获取文件尺寸
+     * @param {*} img_path 
+     */
+    async getImageSize(img_path, _magic = null) {
+        let magic = null;
+        if (_magic) {
+            magic = _magic;
+        } else {
+            magic = graphicsmagick(img_path);
+        }
         return new Promise((resolve, reject) => {
             magic.size((err, value) => {
                 if (!err) {
@@ -161,8 +213,8 @@ class Graphicsmagick {
             });
         });
     }
-	
-	/**
+
+    /**
      * 获取图片详细信息
      * @param {string|buffer} iamge 图片路径或文件流
      */

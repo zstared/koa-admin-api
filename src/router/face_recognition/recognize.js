@@ -6,6 +6,7 @@ const recognize = new Router({
   prefix: '/face_recognition/recognize'
 });
 
-recognize.post('/recognize', recognizeController.recognize);
+recognize.post('/matching', recognizeController.matching);
+recognize.get('/pageList', recognizeController.pageList);
 
 module.exports = recognize;

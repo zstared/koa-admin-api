@@ -155,6 +155,12 @@ class FileService {
                 type: file_data.type,
                 thumb_url: file_data.thumb_path ? file_data.origin + file_data.thumb_path : '',
             };
+
+            // return new Promise((resolve)=>{
+            //     setTimeout(()=>{
+            //        resolve();
+            //     },300000);
+            // });
       
 
         } catch (e) {
