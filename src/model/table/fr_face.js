@@ -17,6 +17,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.JSON,
       allowNull: false
     },
+    type_id: {
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      allowNull: false
+    },
     descriptor: {
       type: DataTypes.JSON,
       allowNull: false

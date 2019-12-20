@@ -1,59 +1,88 @@
-// import ApiError from '../../lib/api_error';
-// import {
-//     RCode
-// } from '../../lib/enum';
+import ApiError from '../../lib/api_error';
+import {
+    RCode
+} from '../../lib/enum';
 import m_face from '../../model/face_recognition/face';
 import m_file from '../../model/core/file';
+import m_face_type from '../../model/face_recognition/face_type';
+import RedisClient from '../../lib/redis';
+const redis = new RedisClient();
+import { faceRecognize, faceMatch } from '../../lib/face_api';
+const prefix = 'recognize';
 
-// import { faceDetection } from '../../lib/face_api';
-import graphicsmagick from '../../lib/graphicsmagick';
-import path from 'path';
 class FaceService {
     constructor() {}
-
 
     /**
      * 识别人脸
      * @param {*} params 
      */
+    async detect(params) {
+        const {
+            user_id,
+            file_code,
+        } = params;
+
+        const face_file = await m_file.getFileByCode(file_code);
+        if (!face_file) {
+            throw new ApiError(RCode.core.C2003001, '文件不存在');
+        }
+
+        const descriptor = await faceRecognize(face_file.directory + '/' + face_file.code + '.' + face_file.ext);
+        if (descriptor.length == 0) {
+            throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
+        }
+
+        redis.setSerializable(prefix + user_id, descriptor);
+
+        return { is_single: descriptor.length == 1 ? true : false, number: descriptor.length };
+    }
+
+    /**
+     * 比对人脸
+     * @param {*} params 
+     */
     async matching(params) {
-        console.log(params);
-        // const {
-        //     file_code,
-        // } = params;
+        const {
+            face_code,
+            face_id,
+            user_id,
+        } = params;
 
-        // const face_file = await m_file.getFileByCode(file_code);
-        // if (!face_file) {
-        //     throw new ApiError(RCode.core.C2003001, '文件不存在');
-        // }
+        const descriptor = await redis.getSerializable(prefix + user_id);
 
-        // const descriptor = await faceDetection(face_file.directory + '/' + face_file.code + '.' + face_file.ext);
-        // if (descriptor.length == 0) {
-        //     throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
-        // } else if (descriptor.length > 1) {
-        //     throw new ApiError(RCode.fr.C3000001, '检测到多张人脸');
-        // }
+        const face = await m_face.getDetailsById(face_id, ['face_name', 'file_code', 'descriptor']);
+        const index = face.file_code.findIndex((code) => {
+            return code == face_code;
+        });
+        const distances = await faceMatch(face.face_name, face.descriptor[index][0], descriptor);
 
-        return await this._sprite();
+        let result = {
+            distance: distances.sort((a, b) => a - b)[0],
+            label: face.face_name
+        };
+        console.log(result);
+
+        return result;
 
 
     }
 
-    async _sprite() {
-        let list = await m_face.getList(['file_code']);
-        let file_codes = [];
-        list.forEach(item => {
-            file_codes = file_codes.concat(item.file_code);
-        });
-
-        const file_info = await m_file.getFileByCodes(file_codes);
-
-        const img_source_paths = file_info.map(item => {
-            return path.join(__dirname, '../../../', item.directory + '/' + item.code + '.' + item.ext);
-        });
-
-        const img_taget_path = path.join(__dirname, '../../../', '/public/static/face/face_sprite.jpg');
-        return await graphicsmagick.sprite(img_source_paths, img_taget_path);
+    /**
+     * 获取人脸拼图
+     * @param {*} params 
+     */
+    async sprite() {
+        const list = await m_face_type.getList();
+        if (list.length) {
+            console.log(list[0].dataValues);
+            list.forEach(async item => {
+                if (item.dataValues.cover_code) {
+                    item.dataValues.file_info = await m_file.getFileByCode(item.cover_code);
+                }
+            });
+        }
+        return list;
     }
 
     /**
@@ -79,11 +108,14 @@ class FaceService {
             where,
             order
         );
+        let face_count = 0;
         if (pageList.count) {
             for (let item of pageList.rows) {
-                item.file_info = await m_file.getFileByCodes(item.file_code);
+                item.file_info = await m_file.getFaceFileByCodes(item.file_code);
+                face_count = face_count + item.file_code.length;
             }
         }
+        pageList.face_count = face_count;
         return pageList;
     }
 }

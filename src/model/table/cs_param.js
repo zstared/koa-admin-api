@@ -14,6 +14,10 @@ module.exports = function(sequelize, DataTypes) {
       unique: true
     },
     param_value: {
+      type: DataTypes.STRING(4000),
+      allowNull: true
+    },
+    param_value_json: {
       type: DataTypes.JSON,
       allowNull: true
     },
@@ -21,6 +25,15 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(4),
       allowNull: true,
       defaultValue: '1'
+    },
+    is_constant: {
+      type: DataTypes.INTEGER(4),
+      allowNull: true,
+      defaultValue: '0'
+    },
+    description: {
+      type: DataTypes.STRING(500),
+      allowNull: true
     },
     update_time: {
       type: DataTypes.DATE,

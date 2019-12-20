@@ -22,38 +22,39 @@ const app = new Koa();
 
 //挂载中间件
 app.use(cors()); //跨域
-app.use(koaStatic(path.join(__dirname,'../public/static'))); //静态资源
+app.use(koaStatic(path.join(__dirname, '../public/static'))); //静态资源
+app.use(koaStatic(path.join(__dirname, '../public/upload'))); //静态资源
 app.use(koaBody({
-	multipart:true,
-	formidable:{
-		multiples:true,
-		maxFileSize: config.uploadFileLimit //最大文件 支持10M
-	}
+    multipart: true,
+    formidable: {
+        multiples: true,
+        maxFileSize: config.uploadFileLimit //最大文件 支持10M
+    }
 }));
-app.use(exception);//异常捕获
-app.use(authentication);//鉴权
-app.use(operationLog);//操作日志
+app.use(exception); //异常捕获
+app.use(authentication); //鉴权
+app.use(operationLog); //操作日志
 
 
 //挂载路由
 app.use(router.routes());
-app.use(async(ctx)=>{
-	ctx.error(RCode.common.C1000003,`请求地址[${ctx.URL}]有误!`);
+app.use(async (ctx) => {
+    ctx.error(RCode.common.C1000003, `请求地址[${ctx.URL}]有误!`);
 });
 
-const server=app.listen(config.port, () => {
-	console.log(`WebAPI服务已启动!监听端口${config.port}...`);
-	boot.init();
+const server = app.listen(config.port, () => {
+    console.log(`WebAPI服务已启动!监听端口${config.port}...`);
+    boot.init();
 });
 
 //https 配置
 const httpsOption = {
-	key : fs.readFileSync(path.join(__dirname,'../cert/2184091_www.zhengxinhong.top.key')),
-	cert: fs.readFileSync(path.join(__dirname,'../cert/2184091_www.zhengxinhong.top.crt'))
+    key: fs.readFileSync(path.join(__dirname, '../cert/2184091_www.zhengxinhong.top.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../cert/2184091_www.zhengxinhong.top.crt'))
 };
 
-https.createServer(httpsOption,app.callback()).listen(8084,()=>{
-	console.log(`WebAPI服务已启动!监听端口${8084}...`);
+https.createServer(httpsOption, app.callback()).listen(8084, () => {
+    console.log(`WebAPI服务已启动!监听端口${8084}...`);
 });
 
-module.exports=server;
+module.exports = server;

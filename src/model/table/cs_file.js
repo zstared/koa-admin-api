@@ -37,10 +37,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: true
     },
-    folder: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
     directory: {
       type: DataTypes.STRING(500),
       allowNull: false
@@ -53,11 +49,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(500),
       allowNull: true
     },
-    hd_path: {
+    path_hd: {
       type: DataTypes.STRING(500),
       allowNull: true
     },
-    thumb_path: {
+    path_thumb: {
       type: DataTypes.STRING(500),
       allowNull: true
     },
@@ -68,13 +64,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     is_compress: {
       type: DataTypes.INTEGER(4),
-      allowNull: true,
-      defaultValue: '0'
+      allowNull: true
     },
     is_thumb: {
       type: DataTypes.INTEGER(4),
-      allowNull: true,
-      defaultValue: '0'
+      allowNull: true
     },
     create_user: {
       type: DataTypes.STRING(50),

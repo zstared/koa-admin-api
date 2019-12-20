@@ -22,6 +22,7 @@
     "archiver": "^3.0.0",
     "bluebird": "^3.5.2",
     "canvas": "^2.6.0",
+    "cheerio": "^1.0.0-rc.3",
     "face-api.js": "^0.21.0",
     "fs-extra": "^7.0.1",
     "gm": "^1.23.1",
@@ -33,12 +34,14 @@
     "koa2-cors": "^2.0.6",
     "lodash": "^4.17.11",
     "log4js": "^3.0.6",
+    "moment": "^2.24.0",
     "mysql2": "^1.6.1",
     "parameter": "^3.4.0",
     "path-to-regexp": "^3.0.0",
     "pinyin": "^2.8.3",
     "redis": "^2.8.0",
     "sequelize": "^5.3.5",
+    "superagent": "^5.1.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

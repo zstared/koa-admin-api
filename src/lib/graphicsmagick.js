@@ -53,6 +53,7 @@ class Graphicsmagick {
         return new Promise((resolve, reject) => {
             magic.write(img_target_path, err => {
                 if (err) {
+                    console.log(err);
                     reject(false);
                 } else {
                     resolve(true);
@@ -141,8 +142,8 @@ class Graphicsmagick {
             if (row > 1) {
                 col = curIndex - ((row - 1) * col_max);
             }
-            x = (col - 1) * width;
-            y = (row - 1) * height;
+            x = (col - 1) * width + (col - 1) * 8;
+            y = (row - 1) * height + (row - 1) * 8;
 
             console.log('x:' + x, 'y:' + y);
             if (row > row_max) {
@@ -152,22 +153,9 @@ class Graphicsmagick {
 
         });
 
-        let img = _gm.mosaic().quality(100).in('-background', 'none');
-
+        let img = _gm.mosaic().quality(100).in('-background', 'white');
         return await this.write(img, img_target_path);
 
-    }
-
-    /**
-     * 文件名添加后缀
-     * @param {string} file_name 
-     */
-    _fixFileName(file_name, fix) {
-        let name_arr = file_name.split('.');
-        let ext = name_arr.pop();
-        name_arr.push(fix);
-        let fix_name = name_arr.join('') + `.${ext}`;
-        return fix_name;
     }
 
     /**

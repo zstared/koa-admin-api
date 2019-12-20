@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import uuidv1 from 'uuid/v1';
 import path from 'path';
 import ApiError from '../../lib/api_error';
 import {
@@ -8,12 +7,10 @@ import {
 import m_file from '../../model/core/file';
 import config from '../../config';
 import log4js from '../../lib/log';
+import { genFileCode } from '../../lib/utils';
 const logger = log4js.logger('file');
-//import gm from 'gm';
-// const graphicsmagick = gm.subClass({
-//     graphicsmagick: true
-// });
 import graphicsmagick from '../../lib/graphicsmagick';
+
 //图片文件类型
 const file_image_type = [
     'image/jpg',
@@ -55,7 +52,7 @@ class FileService {
      */
     async save(file, params = {}) {
         try {
-			console.log(params);
+            console.log(params);
             let {
                 folder_name,
                 is_thumb,
@@ -64,9 +61,7 @@ class FileService {
                 thumb_h,
                 thumb_w
             } = params;
-            const reader = fs.createReadStream(file.path); // 创建可读流
 
-            const ext = file.name.split('.').pop(); // 文件扩展名
             //是否为图片
             let is_image = false;
             if (file_image_type.some(type => type == file.type)) {
@@ -77,28 +72,32 @@ class FileService {
             if (!folder_name || !folder_names.some(item => item == folder_name)) {
                 folder_name = 'common';
             }
+
             //存储目录
-            let dir = is_static ? `/static/${folder_name}` : is_image ? `/images/${folder_name}` : `/files/${folder_name}`;
-            dir = `/public${dir}`;
+            const file_code = genFileCode();
+            let folder = is_static ? `/public/static/${folder_name}` : is_image ? `/public/images/${folder_name}` : `/public/files/${folder_name}`;
+            let dir = folder + '/' + file_code;
             let dir_path = path.join(process.cwd(), dir);
             //判断目录是否存在
             let is_access = await this.isExistDir(dir_path);
             if (!is_access) {
                 await fs.mkdirs(dir_path); //创建目录
             }
-            const file_code = uuidv1();
-            const file_name = file_code + `.${ext}`;
-            const upStream = fs.createWriteStream(`${dir_path}/${file_name}`); // 创建可写流
-            reader.pipe(upStream); // 可读流通过管道写入可写流
+
+            const ext = file.name.split('.').pop(); // 文件扩展名
+            const file_name = file.name;
+
+            const reader = fs.createReadStream(file.path); // 创建可读流
+            reader.pipe(fs.createWriteStream(`${dir_path}/${file_name}`)); // 可读流通过管道写入可写流
 
             //压缩图片
-			let compress_flag = false;
-			let hd_name='';
+            let compress_flag = false;
+            let hd_name = '';
             if (is_compress && is_image) {
                 try {
-                     hd_name = this._fixFileName(file_name, '-hd');
+                    hd_name = this._fixFileName(file_name, '_hd');
                     let img_target_path = dir_path + '/' + hd_name;
-					await fs.copy(file.path, img_target_path);//复制
+                    await fs.copy(file.path, img_target_path); //复制
                     compress_flag = await graphicsmagick.compress(dir_path + '/' + file_name);
                 } catch (err) {
                     logger.error('【error】', 'message:', err.msg || '', 'desc:', err.desc || err.message || 'System Exception');
@@ -107,11 +106,11 @@ class FileService {
             }
 
             //生成缩略图
-			let thumb_flag = false;
-			let thumb_name='';
+            let thumb_flag = false;
+            let thumb_name = '';
             if (is_thumb && is_image) {
                 try {
-                     thumb_name = this._fixFileName(file_name, '-thumb');
+                    thumb_name = this._fixFileName(file_name, '_thumb');
                     let img_target_path = dir_path + '/' + thumb_name;
                     thumb_flag = await graphicsmagick.thumb(file.path, img_target_path, thumb_w, thumb_h);
                 } catch (err) {
@@ -120,8 +119,8 @@ class FileService {
                 }
             }
 
-			//获取文件信息
-			// console.log(`${dir_path}/${file_name}`);
+            //获取文件信息
+            // console.log(`${dir_path}/${file_name}`);
             // const fileInfo = await graphicsmagick.getImageInfo(`${dir_path}/${file_name}`);
             // console.log('fileInfo:',fileInfo);
 
@@ -131,16 +130,15 @@ class FileService {
                 size: file.size,
                 ext: ext,
                 type: file.type,
-                folder: folder_name,
                 directory: dir,
-				is_static: is_static ? 1 : 0,
-				is_compress:is_compress?1:0,
+                is_static: is_static ? 1 : 0,
+                is_compress: is_compress ? 1 : 0,
                 is_thumb: is_thumb ? 1 : 0,
                 origin: is_static ? config.origin : '',
-				path: is_static ? dir.replace('/public/static', '') + `/${file_name}` : '',
-				hd_path: is_static && is_compress && is_image && compress_flag ? dir.replace('/public/static', '') +
+                path: is_static ? dir.replace('/public/static', '') + `/${file_name}` : '',
+                path_hd: is_static && is_compress && is_image && compress_flag ? dir.replace('/public/static', '') +
                     `/${hd_name?hd_name:file_name}` : '',
-                thumb_path: is_static && is_thumb && is_image && thumb_flag ? dir.replace('/public/static', '') +
+                path_thumb: is_static && is_thumb && is_image && thumb_flag ? dir.replace('/public/static', '') +
                     `/${thumb_name}` : '',
                 create_user: params.user_id
             };
@@ -148,12 +146,12 @@ class FileService {
 
             fs.unlink(file.path); //删除临时目录
 
-             
+
             return {
                 code: file_code,
                 url: file_data.origin + file_data.path,
                 type: file_data.type,
-                thumb_url: file_data.thumb_path ? file_data.origin + file_data.thumb_path : '',
+                thumb_url: file_data.path_thumb ? file_data.origin + file_data.path_thumb : '',
             };
 
             // return new Promise((resolve)=>{
@@ -161,7 +159,7 @@ class FileService {
             //        resolve();
             //     },300000);
             // });
-      
+
 
         } catch (e) {
             throw new ApiError(RCode.core.C2003000, '文件上传失败', e.message);

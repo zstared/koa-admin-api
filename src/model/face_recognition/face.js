@@ -101,7 +101,16 @@ class FaceModel {
      * @returns {object}
      */
     async getPageList(params, attrs, table, where, order = '', group = '') {
-        return db_common.excutePagingProc(params, attrs, table, where, group, order);
+        return await db_common.excutePagingProc(params, attrs, table, where, group, order);
+    }
+
+    /**
+     * 执行sql语句
+     * @param {*}} sql 
+     * @param {*} params 
+     */
+    async query(sql,params=null){
+        return await db_common.query(sql,params);
     }
 
 }

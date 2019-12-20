@@ -21,6 +21,7 @@ class RoleController extends BaseController {
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
      * @apiParam  {String} face_name 人脸名称
+     * @apiParam  {String} type_id 人脸类型
      * @apiParam  {String} file_code 人脸文件code
      * @apiParamExample  {Object} Request-Example:
      * {
@@ -35,6 +36,10 @@ class RoleController extends BaseController {
                 type: 'string',
                 min: 2,
                 max: 50
+            },
+            type_id: {
+                type: 'int',
+                convertType: 'int'
             },
             file_code: {
                 type: 'array',
@@ -66,6 +71,7 @@ class RoleController extends BaseController {
      * @apiUse  ResultError
      * @apiUse  ResultSuccess
      * @apiParam  {Number} id 人脸ID
+     * @apiParam  {String} type_id 人脸类型
      * @apiParam  {String} face_name 人脸名称
      * @apiParam  {String} file_code 文件编码
      * @apiParamExample  {Object} Request-Example:
@@ -86,6 +92,10 @@ class RoleController extends BaseController {
                 type: 'string',
                 min: 2,
                 max: 50
+            },
+            type_id: {
+                type: 'int',
+                convertType: 'int'
             },
             file_code: {
                 type: 'array',
@@ -176,7 +186,8 @@ class RoleController extends BaseController {
      * @apiUse  Header
      * @apiUse  ResultError
      * @apiUse  ResultSuccessPageList
-     * @apiParam  {String} face_name 用户名
+     * @apiParam  {String} face_name 名称
+     * @apiParam  {String} type_id 类型
      * @apiParam  {String} page_index 页码
      * @apiParam  {String} page_size 页记录数
      * @apiParam  {String} sorter 排序字段 '字段名|排序规则'
@@ -207,6 +218,12 @@ class RoleController extends BaseController {
                 required: false,
                 allowEmpty: true,
                 type: 'order'
+			},
+			type_id: {
+                required: false,
+                allowEmpty: true,
+                type: 'string',
+                max: 50
             },
             face_name: {
                 required: false,
@@ -217,6 +234,33 @@ class RoleController extends BaseController {
         };
         parameterValidate.validate(validRule, params);
         let result = await faceService.getPageList(params);
+        if (result) {
+            ctx.success(result);
+        } else {
+            ctx.error();
+        }
+    }
+
+    /**
+     * 获取人脸类型列表
+     * @api {get} /face_recognition/face/typeList 7.获取人脸类型列表
+     * @apiName typeList
+     * @apiGroup  face
+     * @apiVersion  0.1.0
+     *
+     * @apiUse  Header
+     * @apiUse  ResultError
+     * @apiUse  ResultSuccessList
+     * @apiSuccess  (Response) {String} data.type_name 类型名称
+     * @apiSuccess  (Response) {String} data.id 类型ID
+     * @apiSuccessExample  {json} data :
+     * {
+     *     id : 1,
+     *     type_name : 'test',
+     * }
+     */
+    async typeList(ctx) {
+        let result = await faceService.getFaceTypeList();
         if (result) {
             ctx.success(result);
         } else {
