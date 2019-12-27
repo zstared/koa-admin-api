@@ -10,6 +10,7 @@ import log4js from '../../lib/log';
 import { genFileCode } from '../../lib/utils';
 const logger = log4js.logger('file');
 import graphicsmagick from '../../lib/graphicsmagick';
+import moment from 'moment';
 
 //图片文件类型
 const file_image_type = [
@@ -76,7 +77,7 @@ class FileService {
             //存储目录
             const file_code = genFileCode();
             let folder = is_static ? `/public/static/${folder_name}` : is_image ? `/public/images/${folder_name}` : `/public/files/${folder_name}`;
-            let dir = folder + '/' + file_code;
+            let dir = folder + '/' + moment().format('YYYYMMDD') + '/' + file_code;
             let dir_path = path.join(process.cwd(), dir);
             //判断目录是否存在
             let is_access = await this.isExistDir(dir_path);

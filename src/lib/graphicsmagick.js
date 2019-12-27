@@ -149,6 +149,7 @@ class Graphicsmagick {
             if (row > row_max) {
                 return false;
             }
+            console.log('img:' + img);
             _gm.in('-resize', '108x120!').in('-page', `+${x}+${y}`).in(img);
 
         });

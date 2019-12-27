@@ -13,6 +13,15 @@ class FileModel {
     }
 
     /**
+     * 批量新增文件
+     * @param {array} files
+     */
+    async bulkCreate(files) {
+        return await t_file.bulkCreate(files);
+    }
+
+
+    /**
      * 修改文件 
      * @param {object}} file 
      */
@@ -30,7 +39,7 @@ class FileModel {
      */
     async getFileByCode(code) {
         return await t_file.findOne({
-            attributes: ['id', ['code', 'uid'], 'code', 'type', 'name', 'size', 'ext', [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.col('path_thumb')), 'thumbUrl'],
+            attributes: ['id', ['code', 'uid'], 'code', 'type', 'name', 'size', 'directory', [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.col('path_thumb')), 'thumbUrl'],
                 [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.col('path')), 'src']
             ],
             where: {
@@ -67,7 +76,7 @@ class FileModel {
         return await t_file.findAll({
             attributes: ['id', ['code', 'uid'], 'code', 'type', 'name', 'size', 'directory', [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.col('path_thumb')), 'thumbUrl'],
                 [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.col('path')), 'src'],
-                [sequelize.fn('CONCAT', sequelize.col('origin'), '/', sequelize.col('folder'), '/', sequelize.col('code'), '-face.', sequelize.col('ext')), 'faceSrc']
+                [sequelize.fn('CONCAT', sequelize.col('origin'), sequelize.fn('REPLACE', sequelize.col('path'), sequelize.col('name'), 'face.'), sequelize.col('ext')), 'faceSrc']
             ],
             where: {
                 code: {
@@ -124,7 +133,7 @@ class FileModel {
      */
     async clearFileByCode(code) {
         return await t_file.update({
-            table_id: '',
+            table_id: null,
             table_name: '',
         }, {
             where: {
@@ -139,7 +148,7 @@ class FileModel {
      */
     async clearFileByCodes(codes) {
         return await t_file.update({
-            table_id: '',
+            table_id: null,
             table_name: '',
         }, {
             where: {

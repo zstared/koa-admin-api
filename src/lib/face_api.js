@@ -3,7 +3,7 @@ import * as canvas from 'canvas';
 import * as faceapi from 'face-api.js';
 import path from 'path';
 import fs from 'fs-extra';
-import { fixFileName } from './utils';
+import { updateFileName } from './utils';
 
 import graphicsmagick from './graphicsmagick';
 
@@ -37,9 +37,9 @@ const faceDetectionOptions = getFaceDetectorOptions(faceDetectionNet);
 
 /**
  * @method 检测人脸
- * @param {*} faceImgUrl
+ * @param {*} img_path
  */
-const faceDetection = async faceImgUrl => {
+const faceDetection = async img_path => {
     await faceDetectionNet.loadFromDisk(
         path.join(__dirname, '../asset/weights')
     );
@@ -53,8 +53,7 @@ const faceDetection = async faceImgUrl => {
         path.join(__dirname, '../asset/weights')
     );
 
-    const img_path = path.join(__dirname, '../../', faceImgUrl);
-    console.log(img_path);
+    //console.log(img_path);
 
     //调整图片尺寸
     const imgSize = await graphicsmagick.getImageSize(img_path);
@@ -67,16 +66,19 @@ const faceDetection = async faceImgUrl => {
     const detections = await faceapi.detectAllFaces(img, faceDetectionOptions);
     if (detections.length > 0) {
         detections.sort((a, b) => a.score - b.score);
-        const box = detections[0].box;
 
-        await graphicsmagick.crop(
-            img_path,
-            null,
-            box.width + 80,
-            box.height + 80,
-            box.x - 40,
-            box.y - 40
-        );
+        //多张人脸 截取人脸得分最高的人脸
+        if (detections.length > 1) {
+            const box = detections[0].box;
+            await graphicsmagick.crop(
+                img_path,
+                null,
+                box.width + 80,
+                box.height + 80,
+                box.x - 40,
+                box.y - 40
+            );
+        }
 
         img = await canvas.loadImage(img_path);
         const descriptors = await faceapi
@@ -89,7 +91,7 @@ const faceDetection = async faceImgUrl => {
             //人脸标识图
             const out = faceapi.createCanvasFromMedia(img);
             new faceapi.draw.DrawFaceLandmarks(descriptors[0].landmarks, { drawLines: true, drawPoints: true, pointSize: 2, lineWidth: 2 }).draw(out);
-            fs.writeFile(fixFileName(img_path, '_face'), out.toBuffer('image/jpeg'));
+            fs.writeFile(updateFileName(img_path, 'face'), out.toBuffer('image/jpeg'));
 
             result = descriptors.map(item => {
                 return item.descriptor;

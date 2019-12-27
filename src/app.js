@@ -42,6 +42,10 @@ app.use(async (ctx) => {
     ctx.error(RCode.common.C1000003, `请求地址[${ctx.URL}]有误!`);
 });
 
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
+
 const server = app.listen(config.port, () => {
     console.log(`WebAPI服务已启动!监听端口${config.port}...`);
     boot.init();

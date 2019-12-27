@@ -28,7 +28,9 @@ class FaceService {
             throw new ApiError(RCode.core.C2003001, '文件不存在');
         }
 
-        const descriptor = await faceRecognize(face_file.directory + '/' + face_file.code + '.' + face_file.ext);
+        console.log(face_file.directory + '/' + face_file.name);
+
+        const descriptor = await faceRecognize(face_file.directory + '/' + face_file.name);
         if (descriptor.length == 0) {
             throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
         }
@@ -74,15 +76,16 @@ class FaceService {
      */
     async sprite() {
         const list = await m_face_type.getList();
+        const images = [];
         if (list.length) {
-            console.log(list[0].dataValues);
-            list.forEach(async item => {
+            for (let item of list) {
                 if (item.dataValues.cover_code) {
-                    item.dataValues.file_info = await m_file.getFileByCode(item.cover_code);
+                    const file_info = await m_file.getFileByCode(item.cover_code);
+                    images.push({ id: item.id, type_name: item.type_name, url: file_info ? file_info.dataValues.src : '' });
                 }
-            });
+            }
         }
-        return list;
+        return images;
     }
 
     /**

@@ -27,17 +27,21 @@ class RoleController extends BaseController {
      * }
      */
     async detect(ctx) {
-        const params = ctx.request.body;
-        const validRule = {
-            file_code: { type: 'string', min: 36, max: 36 },
-        };
-        parameterValidate.validate(validRule, params);
-        params.user_id = ctx.user_info.user_id;
-        let result = await recognizeService.detect(params);
-        if (result) {
-            ctx.success(result);
-        } else {
-            ctx.error();
+        try {
+            const params = ctx.request.body;
+            const validRule = {
+                file_code: { type: 'string', min: 36, max: 36 },
+            };
+            parameterValidate.validate(validRule, params);
+            params.user_id = ctx.user_info.user_id;
+            let result = await recognizeService.detect(params);
+            if (result) {
+                ctx.success(result);
+            } else {
+                ctx.error();
+            }
+        } catch (e) {
+            throw e;
         }
     }
 

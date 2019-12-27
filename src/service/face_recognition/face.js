@@ -13,7 +13,7 @@ import config from '../../config';
 import { getMingXingImgs } from '../../lib/crawler';
 
 const img_folder = 'public/static/face/mingxing';
-const mingxing_img_path = path.join(__dirname, '../../', img_folder);
+const mingxing_img_path = path.join(__dirname, '../../../', img_folder);
 
 
 class FaceService {
@@ -36,7 +36,7 @@ class FaceService {
         }
         const tasks = face_files.map(face_file =>
             faceDetection(
-                face_file.directory + '/' + face_file.name
+                path.join(__dirname, '../../../', face_file.directory + '/' + face_file.name)
             )
         );
 
@@ -123,7 +123,7 @@ class FaceService {
             if (face_files && face_files.length > 0) {
                 const tasks = face_files.map(face_file =>
                     faceDetection(
-                        face_file.directory + '/' + face_file.name
+                        path.join(__dirname, '../../../', face_file.directory + '/' + face_file.name)
                     )
                 );
                 let results = [];
@@ -155,6 +155,7 @@ class FaceService {
         let result = await m_face.update(face);
         if (result) {
             if (add_code.length > 0) m_file.updateFileByCodes(add_code, face_exist.id, 'fr_face'); //更新文件关联
+            console.log('del_code:' + del_code);
             if (del_code.length > 0) m_file.clearFileByCodes(del_code); //清除之前文件关联
             this._sprite(type_id);
         }
@@ -256,7 +257,7 @@ class FaceService {
         let face_type = await m_face_type.getDetailsById(type_id);
         const { cover_code, type_code } = face_type;
         if (cover_code) {
-            const img_taget_path = path.join(__dirname, '../../../', `/public/static/face/${cover_code}/${type_code}.jpg`);
+            const img_taget_path = path.join(__dirname, '../../../', `/public/static/face/sprites/${cover_code}/${type_code}.jpg`);
             await graphicsmagick.sprite(img_source_paths, img_taget_path);
             const file = await fs.stat(img_taget_path);
             await m_file.updateByCode({
@@ -265,9 +266,10 @@ class FaceService {
             });
         } else {
             let code = genFileCode();
-            const dir = path.join(__dirname, '../../../', `/public/static/face/${code}/`);
-            await fs.mkdir(dir);
-            const img_taget_path = dir + `${type_code}.jpg`;
+            const dir = `/public/static/face/sprites/${code}/`;
+            const file_path = path.join(__dirname, '../../../', dir);
+            await fs.mkdirs(file_path);
+            const img_taget_path = file_path + `${type_code}.jpg`;
             await graphicsmagick.sprite(img_source_paths, img_taget_path);
             const file = await fs.stat(img_taget_path);
 
@@ -277,17 +279,17 @@ class FaceService {
                 size: file.size,
                 ext: 'jpg',
                 type: 'image/jpeg',
-                'table_id': face_type.id,
-                'table_name': 'fr_face_type',
+                table_id: face_type.id,
+                table_name: 'fr_face_type',
                 folder: 'face',
-                directory: '/public/static/face/' + code,
+                directory: dir,
                 is_static: 1,
                 is_compress: 0,
                 is_thumb: 0,
                 origin: config.origin,
-                path: `/face/${code}/${type_code}.jpg`,
+                path: `/face/sprites/${code}/${type_code}.jpg`,
                 path_hd: '',
-                path_thumb: '',
+                path_thumb: '/face/sprites/${code}/${type_code}.jpg',
             });
             await m_face_type.update({ id: face_type.id, cover_code: code });
         }
@@ -309,12 +311,69 @@ class FaceService {
     /**
      * 初始明星脸库
      */
-    async initMingXingImg() {
-        const mingxing = await getMingXingImgs(mingxing_img_path);
-        for (let i = 0; i < mingxing.length; i++) {
+    async initMingXingImg(type_id, pages = 0) {
 
+        const type = await m_face_type.getDetailsById(type_id);
+
+        const result = await m_face.query('select count(*) num from fr_face where type_id=:type_id', { type_id });
+        const rows = result[0].num;
+        const cur_pages = Math.ceil(rows / 24);
+        if (pages - cur_pages > 0) {
+            for (let i = cur_pages + 1; i <= pages; i++) {
+                const mingxing = await getMingXingImgs(mingxing_img_path, type.dataValues.type_code, i);
+                for (let i = 0; i < mingxing.length; i++) {
+                    let name = mingxing[i].name;
+                    console.log(name);
+                    const imgs = mingxing[i].imgs;
+                    //1.保存文件
+                    m_file.bulkCreate(imgs.files);
+
+                    //2.检测人脸
+                    const tasks = imgs.files.map(face_file =>
+                        faceDetection(face_file.img_path)
+                    );
+
+                    let results = [];
+                    try {
+                        results = await Promise.all(tasks);
+                    } catch (e) {
+                        throw e;
+                    }
+                    const descriptor = results.filter((item, index) => {
+                        if (item.length == 0) {
+                            imgs.codes.splice(index, 1);
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+
+                    if (descriptor.length > 0) {
+                        //3.录入人脸库
+                        try {
+                            const result = await m_face.create({
+                                face_name: name,
+                                type_id: type_id,
+                                file_code: imgs.codes,
+                                descriptor: descriptor,
+                            });
+                            if (result) {
+                                await m_file.updateFileByCodes(imgs.codes, result.id, 'fr_face');
+                            }
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    } else {
+                        console.log('未检测到人脸');
+                    }
+
+                }
+            }
+            await this._sprite(type_id);
+
+        } else {
+            console.log('当前页数内的图片已下载');
         }
-
     }
 }
 

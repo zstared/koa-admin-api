@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import uuidv1 from 'uuid/v1';
 import uuidv4 from 'uuid/v4';
-
+import pinyin from 'pinyin';
 /**
  * 转换日期格式
  * @param {DATE} date
@@ -227,8 +227,29 @@ export const fixFileName = (file_name, fix) => {
 
 
 /**
+ * 修改文件名
+ * @param {*} file_name  包含目录与后缀
+ * @param {*} new_name   不包含目录与后缀
+ */
+export const updateFileName = (file_name, new_name) => {
+    let lastDotIndex = file_name.lastIndexOf('.');
+    let ext = file_name.substring(lastDotIndex, file_name.length);
+    let lastDiaIndex = file_name.lastIndexOf('/');
+    return file_name.substring(0, lastDiaIndex + 1) + new_name + ext;
+};
+
+/**
  * 生成36位的文件code
  */
 export const genFileCode = () => {
     return uuidv1().replace(/-/g, '') + uuidv4().split('-')[2];
+};
+
+
+/**
+ * 中文转拼音
+ * @param {*} zhongwen 
+ */
+export const zhongWenToPinyin = (zhongwen) => {
+    return pinyin(zhongwen, { style: pinyin.STYLE_NORMAL }).map(item => item[0]).join('');
 };

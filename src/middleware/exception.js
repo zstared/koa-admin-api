@@ -13,8 +13,8 @@ export default async (ctx, next) => {
         await next();
     } catch (err) {
         const language = ctx.header['language']; //请求的语言
+        console.log('err:', err);
         if (err) {
-            console.log(err);
             logger.error('【error】', 'message:', err.msg || '', 'desc:', err.desc || err.message || 'System Exception');
             logger.error('【stack】\n ', err.stack || '');
             let body = {

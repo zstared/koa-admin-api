@@ -10,8 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     face_name: {
       type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     file_code: {
       type: DataTypes.JSON,
