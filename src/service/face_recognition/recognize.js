@@ -8,6 +8,8 @@ import m_face_type from '../../model/face_recognition/face_type';
 import RedisClient from '../../lib/redis';
 const redis = new RedisClient();
 import { faceRecognize, faceMatch } from '../../lib/face_api';
+import { isNull } from '../../lib/utils';
+
 const prefix = 'recognize';
 
 class FaceService {
@@ -93,7 +95,7 @@ class FaceService {
      * @param {*} _params
      */
     async getPageList(_params) {
-        let { page_index, page_size, face_name } = _params;
+        let { page_index, page_size, type_id } = _params;
 
         let attrs = ' id,file_code,face_name,create_time ';
         let table = ' fr_face ';
@@ -102,8 +104,12 @@ class FaceService {
         let params = {
             page_index,
             page_size,
-            face_name
+            type_id
+
         };
+        if (!isNull(type_id)) {
+            where += ' and type_id=:type_id ';
+        }
         const pageList = await m_face.getPageList(
             params,
             attrs,

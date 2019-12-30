@@ -206,7 +206,7 @@ class FaceService {
      * @param {*} _params
      */
     async getPageList(_params) {
-        let { page_index, page_size, face_name, sorter } = _params;
+        let { page_index, page_size, type_id, face_name, sorter } = _params;
 
         let attrs = ' a.id,file_code,face_name,create_time,type_id,type_name ';
         let table = ' fr_face a join fr_face_type b on a.type_id=b.id ';
@@ -215,6 +215,9 @@ class FaceService {
             face_name = face_name + '%';
             where += ' and face_name like  :face_name ';
         }
+        if (!isNull(type_id)) {
+            where += ' and type_id=:type_id ';
+        }
         let order = ' order by face_name ,a.id desc ';
         if (!isNull(sorter)) {
             order = `order by ${sorter.split('|').join(' ')} `;
@@ -222,7 +225,8 @@ class FaceService {
         let params = {
             page_index,
             page_size,
-            face_name
+            face_name,
+            type_id
         };
         const pageList = await m_face.getPageList(
             params,
