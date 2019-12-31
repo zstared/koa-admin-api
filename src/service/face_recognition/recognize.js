@@ -29,17 +29,19 @@ class FaceService {
         if (!face_file) {
             throw new ApiError(RCode.core.C2003001, '文件不存在');
         }
+        try {
+            const descriptor = await faceRecognize(face_file.directory + '/' + face_file.name);
+            if (descriptor.length == 0) {
+                throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
+            }
 
-        console.log(face_file.directory + '/' + face_file.name);
+            redis.setSerializable(prefix + user_id, descriptor);
 
-        const descriptor = await faceRecognize(face_file.directory + '/' + face_file.name);
-        if (descriptor.length == 0) {
-            throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
+            return { is_single: descriptor.length == 1 ? true : false, number: descriptor.length };
+        } catch (e) {
+            console.log(e);
+            throw e;
         }
-
-        redis.setSerializable(prefix + user_id, descriptor);
-
-        return { is_single: descriptor.length == 1 ? true : false, number: descriptor.length };
     }
 
     /**

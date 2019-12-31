@@ -150,7 +150,7 @@ const faceRecognize = async faceImgUrl => {
 const faceMatch = async (label, refDesc, queryDesc) => {
     const result = [];
     queryDesc.forEach(desc => {
-        const res = faceapi.round(faceapi.euclideanDistance(_convertToFloat32Array(refDesc), _convertToFloat32Array(desc)), 4);
+        const res = faceapi.utils.round(faceapi.euclideanDistance(_convertToFloat32Array(refDesc), _convertToFloat32Array(desc)), 4);
         result.push(res);
     });
     return result;
