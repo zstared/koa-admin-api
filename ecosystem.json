@@ -1,0 +1,23 @@
+{
+    "apps": [{
+        "name": "xinhong-admin-api",
+        "script": "./dist/app.js",
+        "env_production": {
+            "NODE_ENV": "production"
+        }
+    }],
+    "deploy": {
+        "production": {
+            "user": "root",
+            "host": "47.112.194.62",
+            "ref": "origin/master",
+            "repo": "git@github.com:zstared/koa-admin-api.git",
+            "path": "/home/xinhong",
+            "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
+            "post-deploy": "npm install && pm2 startOrRestart ecosystem.json --env production",
+            "env": {
+                "NODE_ENV": "production"
+            }
+        }
+    }
+}
