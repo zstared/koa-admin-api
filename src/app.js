@@ -46,10 +46,10 @@ process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
-const server = app.listen(config.port, () => {
-    console.log(`WebAPI服务已启动!监听端口${config.port}...`);
-    boot.init();
-});
+// const server = app.listen(config.port, () => {
+//     console.log(`WebAPI服务已启动!监听端口${config.port}...`);
+
+// });
 
 //https 配置
 const httpsOption = {
@@ -57,8 +57,9 @@ const httpsOption = {
     cert: fs.readFileSync(path.join(__dirname, '../cert/2184091_www.zhengxinhong.top.crt'))
 };
 
-https.createServer(httpsOption, app.callback()).listen(8084, () => {
-    console.log(`WebAPI服务已启动!监听端口${8084}...`);
+const server=https.createServer(httpsOption, app.callback()).listen(config.port, () => {
+    console.log(`WebAPI服务已启动!监听端口${config.port}...`);
+    boot.init();
 });
 
 module.exports = server;
