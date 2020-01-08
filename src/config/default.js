@@ -1,6 +1,5 @@
 export const config = {
 
-	origin:'http://47.112.194.62:8081',
 
 	test_token:'123456',
 
