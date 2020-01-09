@@ -40,67 +40,72 @@ const faceDetectionOptions = getFaceDetectorOptions(faceDetectionNet);
  * @param {*} img_path
  */
 const faceDetection = async img_path => {
-    await faceDetectionNet.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
-    await faceapi.nets.faceLandmark68Net.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
-    await faceapi.nets.faceLandmark68TinyNet.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
-    await faceapi.nets.faceRecognitionNet.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
+    try {
+        await faceDetectionNet.loadFromDisk(
+            path.join(__dirname, '../asset/weights')
+        );
+        await faceapi.nets.faceLandmark68Net.loadFromDisk(
+            path.join(__dirname, '../asset/weights')
+        );
+        await faceapi.nets.faceLandmark68TinyNet.loadFromDisk(
+            path.join(__dirname, '../asset/weights')
+        );
+        await faceapi.nets.faceRecognitionNet.loadFromDisk(
+            path.join(__dirname, '../asset/weights')
+        );
 
-    //console.log(img_path);
+        //console.log(img_path);
 
-    //调整图片尺寸
-    const imgSize = await graphicsmagick.getImageSize(img_path);
-    const imgFileSize = await graphicsmagick.getImageFileSize(img_path);
-    if (imgFileSize.indexOf('M') > 0 && imgSize.width > 1000) {
-        await graphicsmagick.resize(img_path, null, 1000);
-    }
-
-    let img = await canvas.loadImage(img_path);
-    const detections = await faceapi.detectAllFaces(img, faceDetectionOptions);
-    if (detections.length > 0) {
-        detections.sort((a, b) => a.score - b.score);
-
-        //多张人脸 截取人脸得分最高的人脸
-        if (detections.length > 1) {
-            const box = detections[0].box;
-            await graphicsmagick.crop(
-                img_path,
-                null,
-                box.width + 80,
-                box.height + 80,
-                box.x - 40,
-                box.y - 40
-            );
+        //调整图片尺寸
+        const imgSize = await graphicsmagick.getImageSize(img_path);
+        const imgFileSize = await graphicsmagick.getImageFileSize(img_path);
+        if (imgFileSize.indexOf('M') > 0 && imgSize.width > 1000) {
+            await graphicsmagick.resize(img_path, null, 1000);
         }
 
-        img = await canvas.loadImage(img_path);
-        const descriptors = await faceapi
-            .detectAllFaces(img, faceDetectionOptions)
-            .withFaceLandmarks()
-            .withFaceDescriptors();
+        let img = await canvas.loadImage(img_path);
+        const detections = await faceapi.detectAllFaces(img, faceDetectionOptions);
+        if (detections.length > 0) {
+            detections.sort((a, b) => a.score - b.score);
 
-        let result = [];
-        if (descriptors.length > 0) {
-            //人脸标识图
-            const out = faceapi.createCanvasFromMedia(img);
-            new faceapi.draw.DrawFaceLandmarks(descriptors[0].landmarks, { drawLines: true, drawPoints: true, pointSize: 2, lineWidth: 2 }).draw(out);
-            fs.writeFile(updateFileName(img_path, 'face'), out.toBuffer('image/jpeg'));
+            //多张人脸 截取人脸得分最高的人脸
+            if (detections.length > 1) {
+                const box = detections[0].box;
+                await graphicsmagick.crop(
+                    img_path,
+                    null,
+                    box.width + 80,
+                    box.height + 80,
+                    box.x - 40,
+                    box.y - 40
+                );
+            }
 
-            result = descriptors.map(item => {
-                return item.descriptor;
-            });
+            img = await canvas.loadImage(img_path);
+            const descriptors = await faceapi
+                .detectAllFaces(img, faceDetectionOptions)
+                .withFaceLandmarks()
+                .withFaceDescriptors();
+
+            let result = [];
+            if (descriptors.length > 0) {
+                //人脸标识图
+                const out = faceapi.createCanvasFromMedia(img);
+                new faceapi.draw.DrawFaceLandmarks(descriptors[0].landmarks, { drawLines: true, drawPoints: true, pointSize: 2, lineWidth: 2 }).draw(out);
+                fs.writeFile(updateFileName(img_path, 'face'), out.toBuffer('image/jpeg'));
+
+                result = descriptors.map(item => {
+                    return item.descriptor;
+                });
+            }
+            return result;
         }
-        return result;
-    }
 
-    return [];
+        return [];
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
 };
 
 /**
