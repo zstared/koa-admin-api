@@ -92,7 +92,7 @@ const _downloadImg = async (urls, save_path, name) => {
                 size: file.size,
                 name: img_name,
                 ext: ext.replace('.', ''),
-                directory: (dir + code + '/').split('xinhong-api')[1],
+                directory: '/public/static'+(dir + code + '/').split('public/static')[1],
                 origin: config.origin,
                 is_static: 1,
                 is_thumb: 0,
