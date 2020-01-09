@@ -328,7 +328,7 @@ class FaceService {
                 console.log(mingxing);
                 for (let i = 0; i < mingxing.length; i++) {
                     let name = mingxing[i].name;
-                    console.log(name);
+                    console.log(name, mingxing[i].imgs);
                     const imgs = mingxing[i].imgs;
                     //1.保存文件
                     m_file.bulkCreate(imgs.files);
