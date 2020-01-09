@@ -325,10 +325,9 @@ class FaceService {
         if (pages - cur_pages > 0) {
             for (let i = cur_pages + 1; i <= pages; i++) {
                 const mingxing = await getMingXingImgs(mingxing_img_path, type.dataValues.type_code, i);
-                console.log(mingxing);
                 for (let i = 0; i < mingxing.length; i++) {
                     let name = mingxing[i].name;
-                    console.log(1,name, mingxing[i].imgs);
+                    console.log(name);
                     const imgs = mingxing[i].imgs;
                     //1.保存文件
                     m_file.bulkCreate(imgs.files);
@@ -343,7 +342,6 @@ class FaceService {
                     try {
                         results = await Promise.all(tasks);
                     } catch (e) {
-                        console.log(2,e);
                         throw e;
                     }
                     const descriptor = results.filter((item, index) => {
@@ -354,7 +352,6 @@ class FaceService {
                             return true;
                         }
                     });
-                    console.log(3)
                     if (descriptor.length > 0) {
                         //3.录入人脸库
                         try {
@@ -364,12 +361,11 @@ class FaceService {
                                 file_code: imgs.codes,
                                 descriptor: descriptor,
                             });
-                            console.log(4);
                             if (result) {
                                 await m_file.updateFileByCodes(imgs.codes, result.id, 'fr_face');
                             }
                         } catch (e) {
-                            console.log(5,e);
+                            console.log(e);
                         }
                     } else {
                         console.log('未检测到人脸');
