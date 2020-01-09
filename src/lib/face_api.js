@@ -57,7 +57,12 @@ const faceDetection = async img_path => {
         console.log(img_path);
         console.log(1);
         //调整图片尺寸
-        const imgSize = await graphicsmagick.getImageSize(img_path);
+        let imgSize = 0;
+        try {
+            imgSize = await graphicsmagick.getImageSize(img_path);
+        } catch (e) {
+            console.log(e);
+        }
         console.log(imgSize);
         const imgFileSize = await graphicsmagick.getImageFileSize(img_path);
         console.log(imgFileSize);
