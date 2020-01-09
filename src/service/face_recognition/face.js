@@ -325,6 +325,7 @@ class FaceService {
         if (pages - cur_pages > 0) {
             for (let i = cur_pages + 1; i <= pages; i++) {
                 const mingxing = await getMingXingImgs(mingxing_img_path, type.dataValues.type_code, i);
+                console.log(mingxing);
                 for (let i = 0; i < mingxing.length; i++) {
                     let name = mingxing[i].name;
                     console.log(name);
