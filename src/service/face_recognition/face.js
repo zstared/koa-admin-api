@@ -337,11 +337,13 @@ class FaceService {
                     const tasks = imgs.files.map(face_file =>
                         faceDetection(face_file.img_path)
                     );
+                    
 
                     let results = [];
                     try {
                         results = await Promise.all(tasks);
                     } catch (e) {
+                        console.log(e);
                         throw e;
                     }
                     const descriptor = results.filter((item, index) => {
@@ -352,7 +354,7 @@ class FaceService {
                             return true;
                         }
                     });
-
+                    console.log(descriptor);
                     if (descriptor.length > 0) {
                         //3.录入人脸库
                         try {
@@ -362,6 +364,7 @@ class FaceService {
                                 file_code: imgs.codes,
                                 descriptor: descriptor,
                             });
+                            console.log(result);
                             if (result) {
                                 await m_file.updateFileByCodes(imgs.codes, result.id, 'fr_face');
                             }
