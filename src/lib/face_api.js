@@ -54,12 +54,15 @@ const faceDetection = async img_path => {
             path.join(__dirname, '../asset/weights')
         );
 
+        console.log(img_path);
         console.log(1);
-
         //调整图片尺寸
         const imgSize = await graphicsmagick.getImageSize(img_path);
+        console.log(imgSize);
         const imgFileSize = await graphicsmagick.getImageFileSize(img_path);
+        console.log(imgFileSize);
         if (imgFileSize.indexOf('M') > 0 && imgSize.width > 1000) {
+            console.log(1.1);
             await graphicsmagick.resize(img_path, null, 1000);
         }
         console.log(2);
