@@ -328,7 +328,7 @@ class FaceService {
                 console.log(mingxing);
                 for (let i = 0; i < mingxing.length; i++) {
                     let name = mingxing[i].name;
-                    console.log(name, mingxing[i].imgs);
+                    console.log(1,name, mingxing[i].imgs);
                     const imgs = mingxing[i].imgs;
                     //1.保存文件
                     m_file.bulkCreate(imgs.files);
@@ -337,13 +337,13 @@ class FaceService {
                     const tasks = imgs.files.map(face_file =>
                         faceDetection(face_file.img_path)
                     );
-                    
+
 
                     let results = [];
                     try {
                         results = await Promise.all(tasks);
                     } catch (e) {
-                        console.log(e);
+                        console.log(2,e);
                         throw e;
                     }
                     const descriptor = results.filter((item, index) => {
@@ -354,7 +354,7 @@ class FaceService {
                             return true;
                         }
                     });
-                    console.log(descriptor);
+                    console.log(3)
                     if (descriptor.length > 0) {
                         //3.录入人脸库
                         try {
@@ -364,12 +364,12 @@ class FaceService {
                                 file_code: imgs.codes,
                                 descriptor: descriptor,
                             });
-                            console.log(result);
+                            console.log(4);
                             if (result) {
                                 await m_file.updateFileByCodes(imgs.codes, result.id, 'fr_face');
                             }
                         } catch (e) {
-                            console.log(e);
+                            console.log(5,e);
                         }
                     } else {
                         console.log('未检测到人脸');

@@ -28,7 +28,7 @@ const run = async () => {
                 const type_id = face_types.findIndex(item => item == type);
                 await s_face.initMingXingImg(type_id + 1, pages);
             } catch (e) {
-                console.log(e);
+                console.log(6,e);
             }
             break;
         default:
