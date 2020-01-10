@@ -35,27 +35,29 @@ function getFaceDetectorOptions(net) {
 
 const faceDetectionOptions = getFaceDetectorOptions(faceDetectionNet);
 
+const initFaceApi = async () => {
+    await faceDetectionNet.loadFromDisk(
+        path.join(__dirname, '../asset/weights')
+    );
+    await faceapi.nets.faceLandmark68Net.loadFromDisk(
+        path.join(__dirname, '../asset/weights')
+    );
+    await faceapi.nets.faceLandmark68TinyNet.loadFromDisk(
+        path.join(__dirname, '../asset/weights')
+    );
+    await faceapi.nets.faceRecognitionNet.loadFromDisk(
+        path.join(__dirname, '../asset/weights')
+    );
+};
+
 /**
  * @method 检测人脸
  * @param {*} img_path
  */
 const faceDetection = async img_path => {
     try {
-        await faceDetectionNet.loadFromDisk(
-            path.join(__dirname, '../asset/weights')
-        );
-        await faceapi.nets.faceLandmark68Net.loadFromDisk(
-            path.join(__dirname, '../asset/weights')
-        );
-        await faceapi.nets.faceLandmark68TinyNet.loadFromDisk(
-            path.join(__dirname, '../asset/weights')
-        );
-        await faceapi.nets.faceRecognitionNet.loadFromDisk(
-            path.join(__dirname, '../asset/weights')
-        );
 
-        console.log(img_path);
-        console.log(1);
+        console.log(process.memoryUsage().rss);
         //调整图片尺寸
         let imgSize = 0;
         try {
@@ -63,19 +65,12 @@ const faceDetection = async img_path => {
         } catch (e) {
             console.log(e);
         }
-        console.log(imgSize);
         const imgFileSize = await graphicsmagick.getImageFileSize(img_path);
-        console.log(imgFileSize);
         if (imgFileSize.indexOf('M') > 0 && imgSize.width > 1000) {
-            console.log(1.1);
             await graphicsmagick.resize(img_path, null, 1000);
         }
-        console.log(2);
-
         let img = await canvas.loadImage(img_path);
-        console.log(3);
         const detections = await faceapi.detectAllFaces(img, faceDetectionOptions);
-        console.log(4);
         if (detections.length > 0) {
             detections.sort((a, b) => a.score - b.score);
 
@@ -91,26 +86,20 @@ const faceDetection = async img_path => {
                     box.y - 40
                 );
             }
-            console.log(5);
-
             img = await canvas.loadImage(img_path);
-            console.log(6);
             const descriptors = await faceapi
                 .detectAllFaces(img, faceDetectionOptions)
                 .withFaceLandmarks()
                 .withFaceDescriptors();
-            console.log(7);
             let result = [];
             if (descriptors.length > 0) {
                 //人脸标识图
                 const out = faceapi.createCanvasFromMedia(img);
                 new faceapi.draw.DrawFaceLandmarks(descriptors[0].landmarks, { drawLines: true, drawPoints: true, pointSize: 2, lineWidth: 2 }).draw(out);
                 fs.writeFile(updateFileName(img_path, 'face'), out.toBuffer('image/jpeg'));
-                console.log(8);
                 result = descriptors.map(item => {
                     return item.descriptor;
                 });
-                console.log(9);
             }
             return result;
         }
@@ -127,15 +116,6 @@ const faceDetection = async img_path => {
  * @param {*} faceImgUrl
  */
 const faceRecognize = async faceImgUrl => {
-    await faceDetectionNet.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
-    await faceapi.nets.faceLandmark68Net.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
-    await faceapi.nets.faceRecognitionNet.loadFromDisk(
-        path.join(__dirname, '../asset/weights')
-    );
 
     const img_path = path.join(__dirname, '../../', faceImgUrl);
 
@@ -191,5 +171,6 @@ export {
     faceDetectionOptions,
     faceDetection,
     faceRecognize,
-    faceMatch
+    faceMatch,
+    initFaceApi
 };

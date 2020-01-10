@@ -5,7 +5,7 @@ import m_face_type from '../../model/face_recognition/face_type';
 import { isNull, genFileCode } from '../../lib/utils';
 import { Op } from 'sequelize';
 import m_file from '../../model/core/file';
-import { faceDetection } from '../../lib/face_api';
+import { faceDetection, initFaceApi } from '../../lib/face_api';
 import graphicsmagick from '../../lib/graphicsmagick';
 import path from 'path';
 import fs from 'fs-extra';
@@ -34,6 +34,7 @@ class FaceService {
         if (!face_files || face_files.length == 0) {
             throw new ApiError(RCode.core.C2003001, '文件不存在');
         }
+        await initFaceApi();
         const tasks = face_files.map(face_file =>
             faceDetection(
                 path.join(__dirname, '../../../', face_file.directory + '/' + face_file.name)
@@ -118,6 +119,7 @@ class FaceService {
             });
         }
 
+        await initFaceApi();
         if (add_code.length > 0) {
             const face_files = await m_file.getFileByCodes(add_code);
             if (face_files && face_files.length > 0) {
@@ -318,7 +320,7 @@ class FaceService {
     async initMingXingImg(type_id, pages = 0) {
 
         const type = await m_face_type.getDetailsById(type_id);
-
+        await initFaceApi();
         const result = await m_face.query('select count(*) num from fr_face where type_id=:type_id', { type_id });
         const rows = result[0].num;
         const cur_pages = Math.ceil(rows / 24);

@@ -175,8 +175,7 @@ class Graphicsmagick {
                 if (!err) {
                     resolve(value);
                 } else {
-                    console.log(err);
-                    reject(null);
+                    reject(err);
                 }
             });
         });
@@ -198,8 +197,7 @@ class Graphicsmagick {
                 if (!err) {
                     resolve(value);
                 } else {
-                    console.log(err);
-                    reject(null);
+                    reject(err);
                 }
             });
         });

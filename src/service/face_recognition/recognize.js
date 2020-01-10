@@ -7,7 +7,7 @@ import m_file from '../../model/core/file';
 import m_face_type from '../../model/face_recognition/face_type';
 import RedisClient from '../../lib/redis';
 const redis = new RedisClient();
-import { faceRecognize, faceMatch } from '../../lib/face_api';
+import { faceRecognize, faceMatch, initFaceApi } from '../../lib/face_api';
 import { isNull } from '../../lib/utils';
 
 const prefix = 'recognize';
@@ -30,6 +30,7 @@ class FaceService {
             throw new ApiError(RCode.core.C2003001, '文件不存在');
         }
         try {
+            await initFaceApi();
             const descriptor = await faceRecognize(face_file.directory + '/' + face_file.name);
             if (descriptor.length == 0) {
                 throw new ApiError(RCode.fr.C3000000, '未检测到人脸');
