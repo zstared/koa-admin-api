@@ -63,7 +63,7 @@ class FaceService {
             return code == face_code;
         });
         const distances = await faceMatch(face.face_name, face.descriptor[index][0], descriptor);
-
+        console.log(process.memoryUsage().rss);
         let result = {
             distance: distances.sort((a, b) => a - b)[0],
             label: face.face_name
