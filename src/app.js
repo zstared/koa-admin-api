@@ -53,8 +53,8 @@ process.on('unhandledRejection', (reason, p) => {
 
 //https 配置
 const httpsOption = {
-    key: fs.readFileSync(path.join(__dirname, '../cert/3997377_www.zhengxinhong.top.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../cert/3997377_www.zhengxinhong.top.crt'))
+    key: fs.readFileSync(path.join(__dirname, '../cert/4173620_www.zhengxinhong.top.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../cert/4173620_www.zhengxinhong.top.crt'))
 };
 
 const server=https.createServer(httpsOption, app.callback()).listen(config.port, () => {
