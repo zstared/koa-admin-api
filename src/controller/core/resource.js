@@ -210,7 +210,8 @@ class ResourceController extends BaseController {
 			}
 		};
 		parameterValidate.validate(validRule, params);
-		let result = await resourceService.delete(params);
+		//let result = await resourceService.delete(params);
+		let result=true;
 		if (result) {
 			ctx.success();
 		} else {
