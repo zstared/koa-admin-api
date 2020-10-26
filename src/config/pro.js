@@ -8,7 +8,7 @@ const config = {
     /**数据库连接配置 */
     mysql_host: '127.0.0.1',
     mysql_port: 3306,
-    mysql_db: 'xinhong_admin',
+    mysql_db: 'mes',
     mysql_userid: 'root',
     mysql_password: 'Abc@123456',
 

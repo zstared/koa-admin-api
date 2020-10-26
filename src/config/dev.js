@@ -9,7 +9,7 @@ const config={
 	/**数据库连接配置 */
 	mysql_host: '47.112.194.62',
 	mysql_port:3306,
-	mysql_db: 'xinhong_dev',
+	mysql_db: 'mes',
 	mysql_userid: 'root',
 	mysql_password: 'Abc@123456',
 
