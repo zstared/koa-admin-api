@@ -9,8 +9,8 @@
         "test:file": "mocha ./src/test  --reporter spec -t 5000 -g ",
         "prod": "cross-env NODE_ENV=production node src/index.js ",
         "build": "cross-env BABEL_ENV=production babel src -d dist && node ./build.js ",
-        "model": "sequelize-auto -o ./src/model/table  -h 47.112.194.62 -d xinhong_admin -u root -x Abc@123456 -p 3306 -e mysql -a ./sequelize-auto.json ",
-        "model:table": "sequelize-auto -o ./src/model/table  -h 47.112.194.62 -d xinhong_admin -u root -x Abc@123456 -p 3306 -e mysql -a ./sequelize-auto.json -t ",
+        "model": "sequelize-auto -o ./src/model/table  -h 47.112.194.62 -d mes -u root -x Abc@123456 -p 3306 -e mysql -a ./sequelize-auto.json ",
+        "model:table": "sequelize-auto -o ./src/model/table  -h 47.112.194.62 -d mes -u root -x Abc@123456 -p 3306 -e mysql -a ./sequelize-auto.json -t ",
         "doc": "apidoc -i ./src/controller/ -o apidoc/ && node ./apidoc_server.js",
         "eslint": "eslint . --fix",
         "mock": "node ./src/test/mock_data.js -m "

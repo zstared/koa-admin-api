@@ -41,7 +41,9 @@ export const config = {
 		'/core/oauth/logout',
 		'/core/user/current',
 		'/core/user/updatePassword',
-		'/core/user/updateCurrent'
+		'/core/user/updateCurrent',
+
+		'/core/table/columns'
 	]
 };
 
