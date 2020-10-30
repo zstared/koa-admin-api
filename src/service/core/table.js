@@ -9,10 +9,7 @@ class UserService {
    */
   async getTableColumn(table_code) {
     const table = await m_table.getTableByCode(table_code);
-    console.log(table);
     const columns = await m_table.getTableColumns(table.dataValues.id);
-    console.log(columns);
-
     table.dataValues.columns = columns;
 
     return table;
