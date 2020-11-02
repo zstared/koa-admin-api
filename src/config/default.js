@@ -43,7 +43,11 @@ export const config = {
 		'/core/user/updatePassword',
 		'/core/user/updateCurrent',
 
-		'/core/table/columns'
+		'/core/table/columns',
+		'/core/table/list',
+		'/core/table/createColumn',
+		'/core/table/updateColumn',
+		'/core/table/deleteColumn'
 	]
 };
 

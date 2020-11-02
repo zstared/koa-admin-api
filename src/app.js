@@ -46,20 +46,20 @@ process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
-// const server = app.listen(config.port, () => {
-//     console.log(`WebAPI服务已启动!监听端口${config.port}...`);
-
-// });
-
-//https 配置
-const httpsOption = {
-    key: fs.readFileSync(path.join(__dirname, '../ssl/4175416_www.zhengxinhong.top.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../ssl/4175416_www.zhengxinhong.top.crt'))
-};
-
-const server=https.createServer(httpsOption, app.callback()).listen(config.port, () => {
+const server = app.listen(config.port, () => {
     console.log(`WebAPI服务已启动!监听端口${config.port}...`);
-    boot.init();
+
 });
 
-module.exports = server;
+//https 配置
+// const httpsOption = {
+//     key: fs.readFileSync(path.join(__dirname, '../ssl/4175416_www.zhengxinhong.top.key')),
+//     cert: fs.readFileSync(path.join(__dirname, '../ssl/4175416_www.zhengxinhong.top.crt'))
+// };
+
+// const server=https.createServer(httpsOption, app.callback()).listen(config.port, () => {
+//     console.log(`WebAPI服务已启动!监听端口${config.port}...`);
+//     boot.init();
+// });
+
+//module.exports = server;
