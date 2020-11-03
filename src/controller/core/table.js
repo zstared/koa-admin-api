@@ -107,17 +107,13 @@ class TableController extends BaseController {
         min: 1,
         max: 50,
       },
-      key: {
-        type: "string",
-        min: 1,
-        max: 50,
-      },
       width: {
         type: "int",
         convertType: "int",
       },
     };
     parameterValidate.validate(validRule, params);
+    params.key=params.data_index;
     let result = await tableService.createTableColumn(params);
     if (result) {
       ctx.success();
