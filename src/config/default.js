@@ -45,6 +45,7 @@ export const config = {
 
 		'/core/table/columns',
 		'/core/table/list',
+		'/core/table/tableColumns',
 		'/core/table/createColumn',
 		'/core/table/updateColumn',
 		'/core/table/deleteColumn'

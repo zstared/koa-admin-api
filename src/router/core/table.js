@@ -8,6 +8,7 @@ const table = new Router({
 
 table.get("/columns", tableController.columns);
 table.get("/list", tableController.list);
+table.get("/tableColumns", tableController.tableColumns);
 table.post("/createColumn", tableController.createColumn);
 table.post("/updateColumn", tableController.updateColumn);
 table.post("/deleteColumn", tableController.deleteColumn);
