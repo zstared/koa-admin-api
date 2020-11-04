@@ -113,7 +113,7 @@ class TableController extends BaseController {
       },
     };
     parameterValidate.validate(validRule, params);
-    params.key=params.data_index;
+    params.key = params.data_index;
     let result = await tableService.createTableColumn(params);
     if (result) {
       ctx.success();
@@ -176,6 +176,79 @@ class TableController extends BaseController {
     };
     parameterValidate.validate(validRule, params);
     let result = await tableService.deleteTableColumn(params.id);
+    if (result) {
+      ctx.success();
+    } else {
+      ctx.error();
+    }
+  }
+
+  /**
+   * 修改表格字段
+   * @param {*} ctx
+   */
+  async updateColumn(ctx) {
+    const params = ctx.request.body;
+    const validRule = {
+      id: {
+        type: "int",
+        convertType: "int",
+      },
+      title: {
+        type: "string",
+        min: 1,
+        max: 50,
+      },
+      data_index: {
+        type: "string",
+        min: 1,
+        max: 50,
+      },
+      key: {
+        type: "string",
+        min: 1,
+        max: 50,
+      },
+      width: {
+        type: "int",
+        convertType: "int",
+      },
+    };
+    parameterValidate.validate(validRule, params);
+    let result = await tableService.updateTableColumn(params);
+    if (result) {
+      ctx.success();
+    } else {
+      ctx.error();
+    }
+  }
+
+  /**
+   * 字段排序
+   * @param {*} ctx
+   */
+  async sortColumn(ctx) {
+    const params = ctx.request.body;
+    const validRule = {
+      drag_id: {
+        type: "int",
+        convertType: "int",
+      },
+      hover_id: {
+        type: "int",
+        convertType: "int",
+      },
+      drag_no: {
+        type: "int",
+        convertType: "int",
+      },
+      hover_no: {
+        type: "int",
+        convertType: "int",
+      },
+    };
+    parameterValidate.validate(validRule, params);
+    let result = await tableService.sortColum(params);
     if (result) {
       ctx.success();
     } else {

@@ -16,13 +16,25 @@ class TableService {
     return table;
   }
 
-    /**
+  /**
    * 获取表格字段
    * @param {number} id
    */
   async getTableColumn(table_id) {
     const columns = await m_table.getTableColumns(table_id);
     return columns;
+  }
+
+  /**
+   * 排序
+   * @param {*} drag_id
+   * @param {*} hover_id
+   */
+  async sortColum(params) {
+    const { drag_id, hover_id, drag_no, hover_no } = params;
+    await m_table.update({ id: drag_id, sort: hover_no });
+    await m_table.update({ id: hover_id, sort: drag_no });
+    return true;
   }
 
   /**
@@ -36,7 +48,7 @@ class TableService {
         [Op.like]: table_name + "%",
       };
     }
-    let order = [['id']];
+    let order = [["id"]];
     //排序
     if (sorter) {
       order.unshift(sorter.split("|"));

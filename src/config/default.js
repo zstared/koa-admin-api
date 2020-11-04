@@ -48,7 +48,8 @@ export const config = {
 		'/core/table/tableColumns',
 		'/core/table/createColumn',
 		'/core/table/updateColumn',
-		'/core/table/deleteColumn'
+		'/core/table/deleteColumn',
+		'/core/table/sortColum'
 	]
 };
 

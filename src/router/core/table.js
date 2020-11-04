@@ -12,5 +12,6 @@ table.get("/tableColumns", tableController.tableColumns);
 table.post("/createColumn", tableController.createColumn);
 table.post("/updateColumn", tableController.updateColumn);
 table.post("/deleteColumn", tableController.deleteColumn);
+table.post("/sortColum", tableController.sortColumn);
 
 module.exports = table;

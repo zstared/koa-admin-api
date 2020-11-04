@@ -29,63 +29,66 @@ class TableModel {
     let where = {
       table_id: table_id,
     };
+    let order = [["sort"]];
     return await t_table_column.findAll({
       where: where,
+      order: order,
     });
   }
 
-  	/**
-	 * 获取表格列表
-	 * @param {array} attrs  查询字段
-	 * @param {object} where  查询条件
-	 * @param {array} order   排序
-	 */
-	async getList(attrs, where, order) {
-		let option = {
-			where: where
-		};
-		if (order) {
-			option.order = order;
-		}
-		if (attrs) {
-			option.attributes = attrs;
-		}
-		return await t_table.findAll(option);
-	}
+  /**
+   * 获取表格列表
+   * @param {array} attrs  查询字段
+   * @param {object} where  查询条件
+   * @param {array} order   排序
+   */
+  async getList(attrs, where, order) {
+    let option = {
+      where: where,
+    };
+    if (order) {
+      option.order = order;
+    }
+    if (attrs) {
+      option.attributes = attrs;
+    }
+    return await t_table.findAll(option);
+  }
 
   /**
    * 创建列
-   * @param {*} column 
+   * @param {*} column
    */
-  async create(column){
-    return await  t_table_column.create(column)
+  async create(column) {
+    const newColumn = await t_table_column.create(column);
+    newColumn.dataValues.sort = newColumn.dataValues.id;
+    return this.update(newColumn.dataValues);
   }
 
   /**
-	 * 修改列
-	 * @param {object} column
-	 */
-	async update(column) {
-		return await t_table_column.update(column, {
-			where: {
-				id: column.id
-			}
-		});
-  }
-  
-  /**
-	 * 删除列
-	 * @param {*} id 
-	 */
-	async delete(id) {
-		let result = await t_table_column.destroy({
-      where:{
-        id:id
-      }
+   * 修改列
+   * @param {object} column
+   */
+  async update(column) {
+    return await t_table_column.update(column, {
+      where: {
+        id: column.id,
+      },
     });
-		return result;
-	}
-}
+  }
 
+  /**
+   * 删除列
+   * @param {*} id
+   */
+  async delete(id) {
+    let result = await t_table_column.destroy({
+      where: {
+        id: id,
+      },
+    });
+    return result;
+  }
+}
 
 export default new TableModel();
